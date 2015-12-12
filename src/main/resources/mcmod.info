@@ -1,0 +1,16 @@
+[
+{
+  "modid": "flatcoloredblocks",
+  "name": "Flat Colored Blocks",
+  "description": "A Minecraft mod about building with vast quantities of colored blocks.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "http://minecraft.curseforge.com/projects/flat-colored-blocks",
+  "updateUrl": "",
+  "authorList": ["AlgorithmX2"],
+  "credits": "AlgorithmX2",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
