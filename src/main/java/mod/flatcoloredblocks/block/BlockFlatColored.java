@@ -381,7 +381,7 @@ public class BlockFlatColored extends Block
 			}
 			else
 			{
-				return EnumSet.of( EnumFlatColorAttributes.gray );
+				return EnumSet.of( EnumFlatColorAttributes.grey );
 			}
 		}
 

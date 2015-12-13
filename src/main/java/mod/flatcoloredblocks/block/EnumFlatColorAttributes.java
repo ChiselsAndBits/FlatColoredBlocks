@@ -7,7 +7,7 @@ public enum EnumFlatColorAttributes
 {
 	// non-colors
 	black( true, true, EnumDyeColor.BLACK, MapColor.blackColor ),
-	gray( true, true, EnumDyeColor.GRAY, MapColor.grayColor ),
+	grey( true, true, EnumDyeColor.GRAY, MapColor.grayColor ),
 	silver( true, true, EnumDyeColor.SILVER, MapColor.silverColor ),
 	white( true, true, EnumDyeColor.WHITE, MapColor.snowColor ),
 
