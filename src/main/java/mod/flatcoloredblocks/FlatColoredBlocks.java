@@ -41,7 +41,7 @@ public class FlatColoredBlocks
 
 	public static final String MODNAME = "FlatColoredBlocks";
 	public static final String MODID = "flatcoloredblocks";
-	public static final String VERSION = "mc1.8.x-v1.0";
+	public static final String VERSION = "mc1.8.x-v1.1";
 
 	public static final String DEPENDENCIES = "required-after:Forge@[11.14.4.1563,)";
 
