@@ -1,6 +1,8 @@
 package mod.flatcoloredblocks;
 
 import mod.flatcoloredblocks.block.BlockFlatColored;
+import mod.flatcoloredblocks.block.BlockHSVConfiguration;
+import mod.flatcoloredblocks.block.EnumFlatBlockType;
 import mod.flatcoloredblocks.block.ItemBlockFlatColored;
 import mod.flatcoloredblocks.client.ClientSide;
 import mod.flatcoloredblocks.client.DummyClientSide;
@@ -41,7 +43,7 @@ public class FlatColoredBlocks
 
 	public static final String MODNAME = "FlatColoredBlocks";
 	public static final String MODID = "flatcoloredblocks";
-	public static final String VERSION = "mc1.8.x-v1.1";
+	public static final String VERSION = "mc1.8.x-v1.2";
 
 	public static final String DEPENDENCIES = "required-after:Forge@[11.14.4.1563,)";
 
@@ -56,6 +58,32 @@ public class FlatColoredBlocks
 	private final IntegerationJEI jei = new IntegerationJEI();
 	private IClientSide clientSide;
 
+	private BlockHSVConfiguration normal;
+	private BlockHSVConfiguration transparent;
+	private BlockHSVConfiguration glowing;
+
+	public void initHSVFromConfiguration(
+			final ModConfig config )
+	{
+		normal = new BlockHSVConfiguration( EnumFlatBlockType.NORMAL, config );
+		transparent = new BlockHSVConfiguration( EnumFlatBlockType.TRANSPARENT, config );
+		glowing = new BlockHSVConfiguration( EnumFlatBlockType.GLOWING, config );
+	}
+
+	public int getFullNumberOfShades()
+	{
+		return normal.getNumberOfShades()
+				+ transparent.getNumberOfShades() * FlatColoredBlocks.instance.config.TRANSPARENCY_SHADES
+				+ glowing.getNumberOfShades() * FlatColoredBlocks.instance.config.GLOWING_SHADES;
+	}
+
+	public int getFullNumberOfBlocks()
+	{
+		return normal.getNumberOfBlocks()
+				+ transparent.getNumberOfBlocks() * FlatColoredBlocks.instance.config.TRANSPARENCY_SHADES
+				+ glowing.getNumberOfBlocks() * FlatColoredBlocks.instance.config.GLOWING_SHADES;
+	}
+
 	public FlatColoredBlocks()
 	{
 		instance = this;
@@ -66,8 +94,7 @@ public class FlatColoredBlocks
 			final FMLPreInitializationEvent event )
 	{
 		config = new ModConfig( event.getSuggestedConfigurationFile() );
-
-		BlockFlatColored.loadConfig( config );
+		initHSVFromConfiguration( config );
 
 		if ( FMLCommonHandler.instance().getSide().isClient() )
 		{
@@ -98,21 +125,29 @@ public class FlatColoredBlocks
 				'C', "dyeCyan" );
 		GameRegistry.addRecipe( craftingItemRecipe );
 
+		final BlockHSVConfiguration configs[] = new BlockHSVConfiguration[] { normal, transparent, glowing };
+
 		// create and configure all blocks.
-		for ( int x = 0; x < BlockFlatColored.getNumberOfBlocks(); x++ )
+		for ( final BlockHSVConfiguration hsvconfig : configs )
 		{
-			BlockFlatColored.offset = x * BlockFlatColored.META_SCALE;
-			final BlockFlatColored cb = new BlockFlatColored();
-
-			GameRegistry.registerBlock( cb, ItemBlockFlatColored.class, "flatcoloredblock" + x );
-
-			// blacklist with JEI
-			if ( !config.ShowBlocksInJEI )
+			for ( int v = 0; v < hsvconfig.MAX_SHADE_VARIANT; ++v )
 			{
-				jei.blackListBlock( cb );
-			}
+				for ( int x = 0; x < hsvconfig.getNumberOfBlocks(); ++x )
+				{
+					final int offset = x * BlockHSVConfiguration.META_SCALE;
+					final BlockFlatColored cb = BlockFlatColored.construct( hsvconfig, offset, v );
 
-			clientSide.configureBlockRender( cb );
+					GameRegistry.registerBlock( cb, ItemBlockFlatColored.class, hsvconfig.getBlockName( v ) + x );
+
+					// blacklist with JEI
+					if ( !config.ShowBlocksInJEI )
+					{
+						jei.blackListBlock( cb );
+					}
+
+					clientSide.configureBlockRender( cb );
+				}
+			}
 		}
 	}
 
@@ -147,7 +182,7 @@ public class FlatColoredBlocks
 			final GuiOpenEvent event )
 	{
 		// if the max shades has changed in form the user of the new usage.
-		if ( config.LAST_MAX_SHADES != BlockFlatColored.getNumberOfShades() )
+		if ( config.LAST_MAX_SHADES != FlatColoredBlocks.instance.getFullNumberOfShades() )
 		{
 			if ( event.gui != null && event.gui.getClass() == GuiMainMenu.class )
 			{

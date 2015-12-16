@@ -11,6 +11,11 @@ import net.minecraft.util.StatCollector;
 public class ItemBlockFlatColored extends ItemBlock
 {
 
+	public BlockFlatColored getColoredBlock()
+	{
+		return (BlockFlatColored) block;
+	}
+
 	private IBlockState getStateFromStack(
 			final ItemStack stack )
 	{
@@ -66,14 +71,28 @@ public class ItemBlockFlatColored extends ItemBlock
 			final ItemStack stack )
 	{
 		final IBlockState state = getStateFromStack( stack );
-		final int shadeNum = BlockFlatColored.getShadeNumber( state );
+		final int shadeNum = getColoredBlock().getShadeNumber( state );
 
-		final EnumSet<EnumFlatColorAttributes> colorChars = BlockFlatColored.getFlatColorAttributes( state );
+		final EnumSet<EnumFlatColorAttributes> colorChars = getColoredBlock().getFlatColorAttributes( state );
 
+		final String type = getTypeLocalization();
 		final String prefix = getColorPrefix( colorChars );
 		final String hue = getColorHueName( colorChars );
 
-		return StatCollector.translateToLocal( prefix + hue + ".name" ) + " #" + shadeNum;
+		return type + StatCollector.translateToLocal( prefix + hue + ".name" ) + " #" + shadeNum;
+	}
+
+	private String getTypeLocalization()
+	{
+		switch ( getColoredBlock().getType() )
+		{
+			case GLOWING:
+				return StatCollector.translateToLocal( "flatcoloredblocks.Glowing.name" ) + " ";
+			case TRANSPARENT:
+				return StatCollector.translateToLocal( "flatcoloredblocks.Transparent.name" ) + " ";
+			default:
+				return "";
+		}
 	}
 
 	@Override
@@ -82,7 +101,7 @@ public class ItemBlockFlatColored extends ItemBlock
 			final int renderPass )
 	{
 		final IBlockState state = getStateFromStack( stack );
-		return BlockFlatColored.colorFromState( state );
+		return getColoredBlock().colorFromState( state );
 	}
 
 }

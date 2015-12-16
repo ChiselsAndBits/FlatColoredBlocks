@@ -5,7 +5,6 @@ import java.util.List;
 import org.lwjgl.opengl.GL11;
 
 import mod.flatcoloredblocks.FlatColoredBlocks;
-import mod.flatcoloredblocks.block.BlockFlatColored;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.EnumChatFormatting;
@@ -30,9 +29,9 @@ public class GuiScreenStartup extends GuiScreen
 		final String msgf = StatCollector.translateToLocal( "flatcoloredblocks.startup_f" );
 
 		String msg = msga + "\n\n" + msgb + "\n\n";
-		msg += BlockFlatColored.getNumberOfShades() + " ";
+		msg += FlatColoredBlocks.instance.getFullNumberOfShades() + " ";
 		msg += msgc;
-		msg += " " + BlockFlatColored.getNumberOfBlocks() + " ";
+		msg += " " + FlatColoredBlocks.instance.getFullNumberOfBlocks() + " ";
 		msg += msgd + "\n\n" + msge + "\n\n" + msgf;
 
 		lines = msg.split( "\n" );

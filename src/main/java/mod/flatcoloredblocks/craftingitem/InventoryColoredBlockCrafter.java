@@ -124,7 +124,7 @@ public class InventoryColoredBlockCrafter implements IInventory
 			final Block blk = Block.getBlockFromItem( is.getItem() );
 			final IBlockState state = blk.getStateFromMeta( is.getItemDamage() );
 
-			final EnumSet<EnumFlatColorAttributes> charistics = BlockFlatColored.getFlatColorAttributes( state );
+			final EnumSet<EnumFlatColorAttributes> charistics = ( (BlockFlatColored) blk ).getFlatColorAttributes( state );
 			boolean isGood = true;
 
 			for ( final EnumFlatColorAttributes cc : charistics )
@@ -247,7 +247,7 @@ public class InventoryColoredBlockCrafter implements IInventory
 		final Block blk = Block.getBlockFromItem( out.getItem() );
 		final IBlockState state = blk.getStateFromMeta( out.getItemDamage() );
 
-		final EnumSet<EnumFlatColorAttributes> charistics = BlockFlatColored.getFlatColorAttributes( state );
+		final EnumSet<EnumFlatColorAttributes> charistics = ( (BlockFlatColored) blk ).getFlatColorAttributes( state );
 		final HashSet<EnumDyeColor> requiredDyes = new HashSet<EnumDyeColor>();
 
 		final EnumDyeColor alternateDye = getAlternateDye( charistics );
