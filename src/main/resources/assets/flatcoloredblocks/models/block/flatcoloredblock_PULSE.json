@@ -1,0 +1,26 @@
+{
+	"textures": {
+		"all": "flatcoloredblocks:blocks/flatcoloredblock_PULSE",
+		"particle": "flatcoloredblocks:blocks/flatcoloredblock_PULSE"
+	},
+    "elements": [
+        {   "from": [ 0, 0, 0 ],
+            "to": [ 16, 16, 16 ],
+            "faces": {
+                "down":  { "tintindex": 1, "texture": "#all", "cullface": "down" },
+                "up":    { "tintindex": 1, "texture": "#all", "cullface": "up" },
+                "north": { "tintindex": 1, "texture": "#all", "cullface": "north" },
+                "south": { "tintindex": 1, "texture": "#all", "cullface": "south" },
+                "west":  { "tintindex": 1, "texture": "#all", "cullface": "west" },
+                "east":  { "tintindex": 1, "texture": "#all", "cullface": "east" }
+            }
+        }
+    ],
+    "display": {
+        "thirdperson": {
+            "rotation": [ 10, -45, 170 ],
+            "translation": [ 0, 1.5, -2.75 ],
+            "scale": [ 0.375, 0.375, 0.375 ]
+        }
+    }
+}
