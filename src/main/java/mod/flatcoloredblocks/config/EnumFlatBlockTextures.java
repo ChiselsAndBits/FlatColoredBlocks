@@ -5,5 +5,5 @@ package mod.flatcoloredblocks.config;
  */
 public enum EnumFlatBlockTextures
 {
-	FLAWLESS, DRYWALL, STONE, WOOL, HARDENED_CLAY, NOISE, PULSE
+	FLAWLESS, DRYWALL, STONE, WOOL, HARDENED_CLAY, NOISE, PULSE, SHIMMERING
 }

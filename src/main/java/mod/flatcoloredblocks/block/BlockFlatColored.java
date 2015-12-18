@@ -26,9 +26,9 @@ public class BlockFlatColored extends Block
 	// block specific values.
 	private int shadeOffset; // first shade in block
 	private int maxShade; // this is the last shade in this block.
-	private final int alpha;
 	private BlockHSVConfiguration configuration; // HSV for this block.
 	private PropertyInteger shade; // block state configuration for block.
+	final private int varient;
 
 	@Override
 	public int getRenderColor(
@@ -66,7 +66,7 @@ public class BlockFlatColored extends Block
 	int colorFromState(
 			final IBlockState state )
 	{
-		return ConversionHSV2RGB.toRGB( hsvFromState( state ) ) | alpha;
+		return ConversionHSV2RGB.toRGB( hsvFromState( state ) );
 	}
 
 	public int getShadeNumber(
@@ -111,7 +111,8 @@ public class BlockFlatColored extends Block
 
 	protected BlockFlatColored(
 			final float lightValue,
-			final float opacity )
+			final float opacity,
+			final int varientNum )
 	{
 		super( opacity > 0.001 ? Material.glass : Material.rock );
 		setUnlocalizedName( "flatcoloredblocks.flatcoloredblock." + offset );
@@ -121,12 +122,12 @@ public class BlockFlatColored extends Block
 		setResistance( 10.0F );
 		setStepSound( soundTypePiston );
 		setHarvestLevel( "pickaxe", 0 );
-		setLightLevel( Math.max( 0, Math.min( 15, lightValue / 255.0f ) ) );
+		setLightLevel( FlatColoredBlocks.instance.config.GLOWING_EMITS_LIGHT ? Math.max( 0, Math.min( 15, lightValue / 255.0f ) ) : 0 );
 		setLightOpacity( opacity > 0.001 ? 0 : 255 );
 		setStepSound( opacity > 0.001 ? soundTypeGlass : soundTypeStone );
 
-		alpha = Math.max( 0, Math.min( 255, (int) ( 255 * ( 1.0f - opacity ) ) ) ) << 24;
 		translucent = opacity > 0.001;
+		varient = varientNum;
 
 		coloredBlocks.add( this );
 	}
@@ -147,11 +148,11 @@ public class BlockFlatColored extends Block
 		switch ( type.type )
 		{
 			case GLOWING:
-				return new BlockFlatColored( type.shadeConvertVariant[varientNum], 0 );
+				return new BlockFlatColored( type.shadeConvertVariant[varientNum], 0, varientNum );
 			case NORMAL:
-				return new BlockFlatColored( 0, 0 );
+				return new BlockFlatColored( 0, 0, varientNum );
 			case TRANSPARENT:
-				return new BlockFlatColoredTranslucent( 0, type.shadeConvertVariant[varientNum] );
+				return new BlockFlatColoredTranslucent( 0, type.shadeConvertVariant[varientNum], varientNum );
 		}
 
 		throw new RuntimeException( "Invalid construction." );
@@ -323,6 +324,11 @@ public class BlockFlatColored extends Block
 	public EnumFlatBlockType getType()
 	{
 		return configuration.type;
+	}
+
+	public int getVarient()
+	{
+		return configuration.shadeConvertVariant[varient];
 	}
 
 }

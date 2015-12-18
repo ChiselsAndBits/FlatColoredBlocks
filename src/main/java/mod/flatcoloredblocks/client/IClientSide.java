@@ -11,4 +11,6 @@ public interface IClientSide
 
 	public void configureCraftingRender(
 			ItemColoredBlockCrafter crafterItem );
+
+	void preinit();
 }

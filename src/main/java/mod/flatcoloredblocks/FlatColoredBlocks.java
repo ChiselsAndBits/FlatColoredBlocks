@@ -58,9 +58,9 @@ public class FlatColoredBlocks
 	private final IntegerationJEI jei = new IntegerationJEI();
 	private IClientSide clientSide;
 
-	private BlockHSVConfiguration normal;
-	private BlockHSVConfiguration transparent;
-	private BlockHSVConfiguration glowing;
+	public BlockHSVConfiguration normal;
+	public BlockHSVConfiguration transparent;
+	public BlockHSVConfiguration glowing;
 
 	public void initHSVFromConfiguration(
 			final ModConfig config )
@@ -98,7 +98,7 @@ public class FlatColoredBlocks
 
 		if ( FMLCommonHandler.instance().getSide().isClient() )
 		{
-			clientSide = new ClientSide();
+			clientSide = ClientSide.instance;
 		}
 		else
 		{
@@ -149,6 +149,8 @@ public class FlatColoredBlocks
 				}
 			}
 		}
+
+		clientSide.preinit();
 	}
 
 	private void initVersionChecker()

@@ -13,9 +13,10 @@ public class BlockFlatColoredTranslucent extends BlockFlatColored
 {
 	public BlockFlatColoredTranslucent(
 			final int i,
-			final int j )
+			final int j,
+			final int varientNum )
 	{
-		super( i, j );
+		super( i, j, varientNum );
 
 		// Its still a full block.. even if its not a opaque cube
 		// C&B requires this.

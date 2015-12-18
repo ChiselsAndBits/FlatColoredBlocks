@@ -2,6 +2,7 @@ package mod.flatcoloredblocks.config;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 import mod.flatcoloredblocks.FlatColoredBlocks;
 import net.minecraftforge.common.MinecraftForge;
@@ -132,6 +133,9 @@ public class ModConfig extends Configuration
 	public double VALUE_MAX_TRANSPARENT;
 
 	@Configured( category = "Glowing" )
+	public boolean GLOWING_EMITS_LIGHT;
+
+	@Configured( category = "Glowing" )
 	public int GLOWING_SHADES;
 
 	@Configured( category = "Glowing" )
@@ -173,11 +177,12 @@ public class ModConfig extends Configuration
 		GLOWING_RANGE_EXPONENT = 1.0;
 		GLOWING_MIN = 1.0;
 		GLOWING_MAX = 1.0;
+		GLOWING_EMITS_LIGHT = true;
 
 		TRANSPARENCY_SHADES = 1;
 		TRANSPARENCY_RANGE_EXPONENT = 1.0;
-		TRANSPARENCY_MIN = 0.7;
-		TRANSPARENCY_MAX = 0.7;
+		TRANSPARENCY_MIN = 0.5;
+		TRANSPARENCY_MAX = 0.5;
 
 		// normal
 		HUE_SHADES = 32;
@@ -232,7 +237,7 @@ public class ModConfig extends Configuration
 
 		// textures
 		DISPLAY_TEXTURE = EnumFlatBlockTextures.DRYWALL;
-		DISPLAY_TEXTURE_GLOWING = EnumFlatBlockTextures.DRYWALL;
+		DISPLAY_TEXTURE_GLOWING = EnumFlatBlockTextures.PULSE;
 		DISPLAY_TEXTURE_TRANSPARENT = EnumFlatTransparentBlockTextures.SEMI_GLASS;
 
 		// Integration
@@ -291,11 +296,14 @@ public class ModConfig extends Configuration
 								values[x] = valuesList[x].name();
 							}
 
-							final Enum<?> value = (Enum<?>) f.getType().getMethod( "valueOf", Class.class, String.class ).invoke( null, f.getType(), get( c.category(), f.getName(), defaultValue.name(), "", values ).getString() );
+							final String strValue = get( c.category(), f.getName(), defaultValue.name(), "", values ).getString();
+							final Method method = f.getType().getMethod( "valueOf", Class.class, String.class );
+							final Enum<?> value = (Enum<?>) method.invoke( null, f.getType(), strValue );
 							f.set( this, value );
 						}
 						catch ( final Exception e )
 						{
+							e.printStackTrace();
 						}
 					}
 					else if ( f.getType() == String.class )
