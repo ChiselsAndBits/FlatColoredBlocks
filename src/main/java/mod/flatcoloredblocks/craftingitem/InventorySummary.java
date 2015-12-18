@@ -4,6 +4,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import mod.flatcoloredblocks.block.EnumFlatBlockType;
 import net.minecraft.item.EnumDyeColor;
 
 /**
@@ -12,17 +13,39 @@ import net.minecraft.item.EnumDyeColor;
 class InventorySummary
 {
 	public final boolean hasCobblestone;
-	public final HashMap<EnumDyeColor, HashSet<ItemCraftingSource>> stacks;
+	public final boolean hasGlowstone;
+	public final boolean hasGlass;
+	public final HashMap<Object, HashSet<ItemCraftingSource>> stacks;
 	public final EnumSet<EnumDyeColor> dyes;
 
 	public InventorySummary(
-			final boolean hasCobble,
-			final HashMap<EnumDyeColor, HashSet<ItemCraftingSource>> stackList,
+			final boolean hasCobblestone,
+			final boolean hasGlowstone,
+			final boolean hasGlass,
+			final HashMap<Object, HashSet<ItemCraftingSource>> stackList,
 			final EnumSet<EnumDyeColor> dyeSet )
 	{
-		hasCobblestone = hasCobble;
+		this.hasCobblestone = hasCobblestone;
+		this.hasGlowstone = hasGlowstone;
+		this.hasGlass = hasGlass;
 		stacks = stackList;
 		dyes = dyeSet;
+	}
+
+	public boolean has(
+			final EnumFlatBlockType craftable )
+	{
+		switch ( craftable )
+		{
+			case GLOWING:
+				return hasGlowstone;
+			case NORMAL:
+				return hasCobblestone;
+			case TRANSPARENT:
+				return hasGlass;
+		}
+
+		return false;
 	}
 
 }

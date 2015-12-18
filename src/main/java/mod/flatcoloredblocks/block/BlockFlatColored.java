@@ -331,4 +331,9 @@ public class BlockFlatColored extends Block
 		return configuration.shadeConvertVariant[varient];
 	}
 
+	public EnumFlatBlockType getCraftable()
+	{
+		return configuration.type;
+	}
+
 }

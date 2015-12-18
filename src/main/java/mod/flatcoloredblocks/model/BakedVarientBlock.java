@@ -148,7 +148,7 @@ public class BakedVarientBlock implements IFlexibleBakedModel, IPerspectiveAware
 							{
 								int LV = 0;
 
-								if ( !FlatColoredBlocks.instance.config.GLOWING_EMITS_LIGHT )
+								if ( !FlatColoredBlocks.instance.config.GLOWING_EMITS_LIGHT && type == EnumFlatBlockType.GLOWING )
 								{
 									LV = varient * 15 / 255;
 								}
