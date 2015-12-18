@@ -9,6 +9,7 @@ Want to play with the mod?
 
 Downloads: http://minecraft.curseforge.com/projects/flat-colored-blocks/files
 
+Discussion Thread: http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/2576750
 
 Contributing
 ------------
