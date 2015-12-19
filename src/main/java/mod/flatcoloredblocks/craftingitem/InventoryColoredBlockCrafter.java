@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import mod.flatcoloredblocks.block.BlockFlatColored;
 import mod.flatcoloredblocks.block.EnumFlatBlockType;
@@ -143,7 +144,7 @@ public class InventoryColoredBlockCrafter implements IInventory
 			final Block blk = Block.getBlockFromItem( is.getItem() );
 			final IBlockState state = blk.getStateFromMeta( is.getItemDamage() );
 
-			final EnumSet<EnumFlatColorAttributes> charistics = ( (BlockFlatColored) blk ).getFlatColorAttributes( state );
+			final Set<EnumFlatColorAttributes> charistics = ( (BlockFlatColored) blk ).getFlatColorAttributes( state );
 			boolean isGood = true;
 
 			for ( final EnumFlatColorAttributes cc : charistics )
@@ -174,7 +175,7 @@ public class InventoryColoredBlockCrafter implements IInventory
 	 * cases...
 	 */
 	private EnumDyeColor getAlternateDye(
-			final EnumSet<EnumFlatColorAttributes> characteristics )
+			final Set<EnumFlatColorAttributes> characteristics )
 	{
 		if ( characteristics.contains( EnumFlatColorAttributes.orange ) && characteristics.contains( EnumFlatColorAttributes.dark ) )
 		{
@@ -266,7 +267,7 @@ public class InventoryColoredBlockCrafter implements IInventory
 		final Block blk = Block.getBlockFromItem( out.getItem() );
 		final IBlockState state = blk.getStateFromMeta( out.getItemDamage() );
 
-		final EnumSet<EnumFlatColorAttributes> charistics = ( (BlockFlatColored) blk ).getFlatColorAttributes( state );
+		final Set<EnumFlatColorAttributes> charistics = ( (BlockFlatColored) blk ).getFlatColorAttributes( state );
 		final Object Craftable = ( (BlockFlatColored) blk ).getCraftable();
 		final HashSet<EnumDyeColor> requiredDyes = new HashSet<EnumDyeColor>();
 

@@ -1,6 +1,6 @@
 package mod.flatcoloredblocks.block;
 
-import java.util.EnumSet;
+import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -23,7 +23,7 @@ public class ItemBlockFlatColored extends ItemBlock
 	}
 
 	private String getColorPrefix(
-			final EnumSet<EnumFlatColorAttributes> which )
+			final Set<EnumFlatColorAttributes> which )
 	{
 		if ( which.contains( EnumFlatColorAttributes.dark ) )
 		{
@@ -39,7 +39,7 @@ public class ItemBlockFlatColored extends ItemBlock
 	}
 
 	private String getColorHueName(
-			final EnumSet<EnumFlatColorAttributes> characteristics )
+			final Set<EnumFlatColorAttributes> characteristics )
 	{
 		for ( final EnumFlatColorAttributes c : characteristics )
 		{
@@ -73,7 +73,7 @@ public class ItemBlockFlatColored extends ItemBlock
 		final IBlockState state = getStateFromStack( stack );
 		final int shadeNum = getColoredBlock().getShadeNumber( state );
 
-		final EnumSet<EnumFlatColorAttributes> colorChars = getColoredBlock().getFlatColorAttributes( state );
+		final Set<EnumFlatColorAttributes> colorChars = getColoredBlock().getFlatColorAttributes( state );
 
 		final String type = getTypeLocalization();
 		final String prefix = getColorPrefix( colorChars );

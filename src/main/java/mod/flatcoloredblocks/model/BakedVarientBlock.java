@@ -2,6 +2,7 @@
 package mod.flatcoloredblocks.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.vecmath.Matrix4f;
@@ -37,9 +38,11 @@ import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad.Builder;
 public class BakedVarientBlock implements IFlexibleBakedModel, IPerspectiveAwareModel
 {
 
+	private static final Matrix4f identity;
+	private static final Matrix4f thirdPerson;
+
 	@SuppressWarnings( "unchecked" )
 	final List<BakedQuad>[] face = new List[6];
-	List<BakedQuad> generic;
 
 	final TextureAtlasSprite texture;
 
@@ -55,10 +58,10 @@ public class BakedVarientBlock implements IFlexibleBakedModel, IPerspectiveAware
 		face[3] = new ArrayList<BakedQuad>();
 		face[4] = new ArrayList<BakedQuad>();
 		face[5] = new ArrayList<BakedQuad>();
-		generic = new ArrayList<BakedQuad>();
 
+		final float[] afloat = new float[] { 0, 0, 16, 16 };
+		final BlockFaceUV uv = new BlockFaceUV( afloat, 0 );
 		final FaceBakery faceBakery = new FaceBakery();
-		generic = new ArrayList<BakedQuad>();
 
 		if ( type == EnumFlatBlockType.TRANSPARENT )
 		{
@@ -75,15 +78,23 @@ public class BakedVarientBlock implements IFlexibleBakedModel, IPerspectiveAware
 		final BlockPartRotation bpr = null;
 		final ModelRotation mr = ModelRotation.X0_Y0;
 
-		for ( final EnumFacing myFace : EnumFacing.VALUES )
+		final float maxLightmap = 32.0f / 0xffff;
+		int lightValue = 0;
+
+		if ( !FlatColoredBlocks.instance.config.GLOWING_EMITS_LIGHT && type == EnumFlatBlockType.GLOWING )
 		{
-			final float[] afloat = new float[] { 0, 0, 16, 16 };
-			final BlockFaceUV uv = new BlockFaceUV( afloat, 0 );
-			final BlockPartFace bpf = new BlockPartFace( myFace, 1, "", uv );
+			lightValue = varient * 15 / 255;
+		}
+
+		final float lightMap = maxLightmap * Math.max( 0, Math.min( 15, lightValue ) );
+
+		for ( final EnumFacing side : EnumFacing.VALUES )
+		{
+			final BlockPartFace bpf = new BlockPartFace( side, 1, "", uv );
 
 			Vector3f toB, fromB;
 
-			switch ( myFace )
+			switch ( side )
 			{
 				case UP:
 					toB = new Vector3f( to.x, from.y, to.z );
@@ -113,77 +124,80 @@ public class BakedVarientBlock implements IFlexibleBakedModel, IPerspectiveAware
 					throw new NullPointerException();
 			}
 
-			final BakedQuad g = faceBakery.makeBakedQuad( toB, fromB, bpf, texture, myFace, mr, bpr, false, true );
-			final float maxLightmap = 32.0f / 0xffff;
-			final int[] vertData = g.getVertexData();
-			final int wrapAt = vertData.length / 4;
+			final BakedQuad g = faceBakery.makeBakedQuad( toB, fromB, bpf, texture, side, mr, bpr, false, true );
+			face[side.ordinal()].add( finishFace( g, side, format, lightMap ) );
+		}
+	}
 
-			final UnpackedBakedQuad.Builder b = new Builder( format );
-			b.setQuadOrientation( myFace );
-			b.setQuadTint( 1 );
+	private BakedQuad finishFace(
+			final BakedQuad g,
+			final EnumFacing myFace,
+			final VertexFormat format,
+			final float lightMap )
+	{
+		final int[] vertData = g.getVertexData();
+		final int wrapAt = vertData.length / 4;
 
-			// build un
-			for ( int vertNum = 0; vertNum < 4; vertNum++ )
+		final UnpackedBakedQuad.Builder b = new Builder( format );
+		b.setQuadOrientation( myFace );
+		b.setQuadTint( 1 );
+
+		for ( int vertNum = 0; vertNum < 4; vertNum++ )
+		{
+			for ( int elementIndex = 0; elementIndex < format.getElementCount(); elementIndex++ )
 			{
-				for ( int elementIndex = 0; elementIndex < format.getElementCount(); elementIndex++ )
+				final VertexFormatElement element = format.getElement( elementIndex );
+				switch ( element.getUsage() )
 				{
-					final VertexFormatElement element = format.getElement( elementIndex );
-					switch ( element.getUsage() )
-					{
-						case POSITION:
-							b.put( elementIndex, Float.intBitsToFloat( vertData[0 + wrapAt * vertNum] ), Float.intBitsToFloat( vertData[1 + wrapAt * vertNum] ), Float.intBitsToFloat( vertData[2 + wrapAt * vertNum] ) );
-							break;
+					case POSITION:
+						b.put( elementIndex, Float.intBitsToFloat( vertData[0 + wrapAt * vertNum] ), Float.intBitsToFloat( vertData[1 + wrapAt * vertNum] ), Float.intBitsToFloat( vertData[2 + wrapAt * vertNum] ) );
+						break;
 
-						case COLOR:
-							final float light = LightUtil.diffuseLight( myFace );
-							b.put( elementIndex, light, light, light, 0f );
-							break;
+					case COLOR:
+						final float light = LightUtil.diffuseLight( myFace );
+						b.put( elementIndex, light, light, light, 0f );
+						break;
 
-						case NORMAL:
-							b.put( elementIndex, myFace.getFrontOffsetX(), myFace.getFrontOffsetY(), myFace.getFrontOffsetZ() );
-							break;
+					case NORMAL:
+						b.put( elementIndex, myFace.getFrontOffsetX(), myFace.getFrontOffsetY(), myFace.getFrontOffsetZ() );
+						break;
 
-						case UV:
-							if ( element.getIndex() == 1 )
-							{
-								int LV = 0;
+					case UV:
 
-								if ( !FlatColoredBlocks.instance.config.GLOWING_EMITS_LIGHT && type == EnumFlatBlockType.GLOWING )
-								{
-									LV = varient * 15 / 255;
-								}
+						if ( element.getIndex() == 1 )
+						{
+							b.put( elementIndex, lightMap, lightMap );
+						}
+						else
+						{
+							final float u = Float.intBitsToFloat( vertData[4 + wrapAt * vertNum] );
+							final float v = Float.intBitsToFloat( vertData[5 + wrapAt * vertNum] );
+							b.put( elementIndex, u, v );
+						}
 
-								final float v = maxLightmap * Math.max( 0, Math.min( 15, LV ) );
-								b.put( elementIndex, v, v );
-							}
-							else
-							{
-								b.put( elementIndex, Float.intBitsToFloat( vertData[4 + wrapAt * vertNum] ), Float.intBitsToFloat( vertData[5 + wrapAt * vertNum] ) );
-							}
-							break;
+						break;
 
-						default:
-							b.put( elementIndex );
-							break;
-					}
+					default:
+						b.put( elementIndex );
+						break;
 				}
 			}
-
-			face[myFace.ordinal()].add( b.build() );
 		}
+
+		return b.build();
 	}
 
 	@Override
 	public List<BakedQuad> getFaceQuads(
-			final EnumFacing p_177551_1_ )
+			final EnumFacing side )
 	{
-		return face[p_177551_1_.ordinal()];
+		return face[side.ordinal()];
 	}
 
 	@Override
 	public List<BakedQuad> getGeneralQuads()
 	{
-		return generic;
+		return Collections.emptyList();
 	}
 
 	@Override
@@ -222,9 +236,6 @@ public class BakedVarientBlock implements IFlexibleBakedModel, IPerspectiveAware
 		return texture;
 	}
 
-	private final static Matrix4f identity;
-	private final static Matrix4f thirdPerson;
-
 	static
 	{/*
 		 * "rotation": [ 10, -45, 170 ],
@@ -249,13 +260,11 @@ public class BakedVarientBlock implements IFlexibleBakedModel, IPerspectiveAware
 	public Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(
 			final TransformType cameraTransformType )
 	{
-		switch ( cameraTransformType )
+		if ( cameraTransformType == TransformType.THIRD_PERSON )
 		{
-			case THIRD_PERSON:
-				return new ImmutablePair<IFlexibleBakedModel, Matrix4f>( this, thirdPerson );
-			default:
-				return new ImmutablePair<IFlexibleBakedModel, Matrix4f>( this, identity );
+			return new ImmutablePair<IFlexibleBakedModel, Matrix4f>( this, thirdPerson );
 		}
 
+		return new ImmutablePair<IFlexibleBakedModel, Matrix4f>( this, identity );
 	}
 }

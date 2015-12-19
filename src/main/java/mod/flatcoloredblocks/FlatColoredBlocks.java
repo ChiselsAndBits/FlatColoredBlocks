@@ -40,15 +40,14 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 		guiFactory = "mod.flatcoloredblocks.gui.ConfigGuiFactory" )
 public class FlatColoredBlocks
 {
+	// create creative tab...
+	public static FlatColoredBlocks instance;
 
 	public static final String MODNAME = "FlatColoredBlocks";
 	public static final String MODID = "flatcoloredblocks";
 	public static final String VERSION = "mc1.8.x-v1.2";
 
 	public static final String DEPENDENCIES = "required-after:Forge@[11.14.4.1563,)";
-
-	// create creative tab...
-	public static FlatColoredBlocks instance;
 
 	public CreativeTab creativeTab;
 	public ModConfig config;
@@ -61,6 +60,11 @@ public class FlatColoredBlocks
 	public BlockHSVConfiguration normal;
 	public BlockHSVConfiguration transparent;
 	public BlockHSVConfiguration glowing;
+
+	public FlatColoredBlocks()
+	{
+		instance = this;
+	}
 
 	public void initHSVFromConfiguration(
 			final ModConfig config )
@@ -82,11 +86,6 @@ public class FlatColoredBlocks
 		return normal.getNumberOfBlocks()
 				+ transparent.getNumberOfBlocks() * FlatColoredBlocks.instance.config.TRANSPARENCY_SHADES
 				+ glowing.getNumberOfBlocks() * FlatColoredBlocks.instance.config.GLOWING_SHADES;
-	}
-
-	public FlatColoredBlocks()
-	{
-		instance = this;
 	}
 
 	@EventHandler
@@ -184,12 +183,11 @@ public class FlatColoredBlocks
 			final GuiOpenEvent event )
 	{
 		// if the max shades has changed in form the user of the new usage.
-		if ( config.LAST_MAX_SHADES != FlatColoredBlocks.instance.getFullNumberOfShades() )
+		if ( config.LAST_MAX_SHADES != FlatColoredBlocks.instance.getFullNumberOfShades()
+				&& event.gui != null
+				&& event.gui.getClass() == GuiMainMenu.class )
 		{
-			if ( event.gui != null && event.gui.getClass() == GuiMainMenu.class )
-			{
-				event.gui = new GuiScreenStartup();
-			}
+			event.gui = new GuiScreenStartup();
 		}
 	}
 }

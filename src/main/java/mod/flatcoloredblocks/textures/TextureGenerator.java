@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import mod.flatcoloredblocks.FlatColoredBlocks;
+import mod.flatcoloredblocks.Log;
 import mod.flatcoloredblocks.block.EnumFlatBlockType;
 import mod.flatcoloredblocks.client.ClientSide;
 import net.minecraft.client.Minecraft;
@@ -23,7 +24,7 @@ public class TextureGenerator
 	private TextureAtlasSprite glowingTexture;
 
 	@SubscribeEvent
-	void registerLeafTextures(
+	void registerTransparentTextures(
 			final TextureStitchEvent.Pre ev )
 	{
 		try
@@ -44,6 +45,7 @@ public class TextureGenerator
 		catch ( final IOException e )
 		{
 			// just load the texture if for some reason the above fails.
+			Log.logError( "Unable to load Base Texture", e );
 
 			final TextureAtlasSprite out = ev.map.registerSprite( new ResourceLocation( ClientSide.instance.getBaseTextureNameWithBlocks( EnumFlatBlockType.TRANSPARENT ) ) );
 

@@ -21,6 +21,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class ModelGenerator implements ICustomModelLoader
 {
 
+	private static final String NORMAL_VARIENT = "normal";
+	private static final String INVENTORY_VARIENT = "inventory";
+
 	HashMap<ResourceLocation, BakedVarientModel> models = new HashMap<ResourceLocation, BakedVarientModel>();
 	ArrayList<ModelResourceLocation> res = new ArrayList<ModelResourceLocation>();
 
@@ -52,11 +55,11 @@ public class ModelGenerator implements ICustomModelLoader
 			final ResourceLocation modelLocation,
 			final BakedVarientModel clz )
 	{
-		res.add( new ModelResourceLocation( modelLocation, "inventory" ) );
-		models.put( new ModelResourceLocation( modelLocation, "inventory" ), clz );
+		res.add( new ModelResourceLocation( modelLocation, INVENTORY_VARIENT ) );
+		models.put( new ModelResourceLocation( modelLocation, INVENTORY_VARIENT ), clz );
 
-		res.add( new ModelResourceLocation( modelLocation, "normal" ) );
-		models.put( new ModelResourceLocation( modelLocation, "normal" ), clz );
+		res.add( new ModelResourceLocation( modelLocation, NORMAL_VARIENT ) );
+		models.put( new ModelResourceLocation( modelLocation, NORMAL_VARIENT ), clz );
 	}
 
 	@SubscribeEvent
@@ -65,7 +68,7 @@ public class ModelGenerator implements ICustomModelLoader
 	{
 		for ( final ModelResourceLocation rl : res )
 		{
-			final VertexFormat format = rl.getVariant().equals( "normal" ) ? DefaultVertexFormats.BLOCK : DefaultVertexFormats.ITEM;
+			final VertexFormat format = rl.getVariant().equals( NORMAL_VARIENT ) ? DefaultVertexFormats.BLOCK : DefaultVertexFormats.ITEM;
 			event.modelRegistry.putObject( rl, getModel( rl ).bake( null, format, null ) );
 		}
 	}
@@ -99,7 +102,7 @@ public class ModelGenerator implements ICustomModelLoader
 		}
 		catch ( final Exception e )
 		{
-			throw new RuntimeException( "The Model: " + e.toString() + " was not available was requested." );
+			throw new RuntimeException( "The Model: " + e.toString() + " was not available was requested.", e );
 		}
 	}
 

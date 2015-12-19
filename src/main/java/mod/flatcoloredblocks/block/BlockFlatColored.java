@@ -3,6 +3,7 @@ package mod.flatcoloredblocks.block;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import mod.flatcoloredblocks.FlatColoredBlocks;
 import net.minecraft.block.Block;
@@ -23,12 +24,16 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class BlockFlatColored extends Block
 {
 
+	private static ArrayList<BlockFlatColored> coloredBlocks = new ArrayList<BlockFlatColored>();
+	private static int offset;
+	private static BlockHSVConfiguration newConfig;
+
 	// block specific values.
 	private int shadeOffset; // first shade in block
 	private int maxShade; // this is the last shade in this block.
 	private BlockHSVConfiguration configuration; // HSV for this block.
 	private PropertyInteger shade; // block state configuration for block.
-	final private int varient;
+	private final int varient;
 
 	@Override
 	public int getRenderColor(
@@ -66,7 +71,8 @@ public class BlockFlatColored extends Block
 	int colorFromState(
 			final IBlockState state )
 	{
-		return ConversionHSV2RGB.toRGB( hsvFromState( state ) );
+		final int fullAlpha = 0xff << 24;
+		return ConversionHSV2RGB.toRGB( hsvFromState( state ) ) | fullAlpha;
 	}
 
 	public int getShadeNumber(
@@ -107,8 +113,6 @@ public class BlockFlatColored extends Block
 		return shade;
 	}
 
-	private static ArrayList<BlockFlatColored> coloredBlocks = new ArrayList<BlockFlatColored>();
-
 	protected BlockFlatColored(
 			final float lightValue,
 			final float opacity,
@@ -132,9 +136,6 @@ public class BlockFlatColored extends Block
 		coloredBlocks.add( this );
 	}
 
-	private static int offset;
-	private static BlockHSVConfiguration newConfig;
-
 	public static BlockFlatColored construct(
 			final BlockHSVConfiguration type,
 			final int offsetIn,
@@ -153,9 +154,9 @@ public class BlockFlatColored extends Block
 				return new BlockFlatColored( 0, 0, varientNum );
 			case TRANSPARENT:
 				return new BlockFlatColoredTranslucent( 0, type.shadeConvertVariant[varientNum], varientNum );
+			default:
+				throw new RuntimeException( "Invalid construction." );
 		}
-
-		throw new RuntimeException( "Invalid construction." );
 	}
 
 	/**
@@ -229,7 +230,7 @@ public class BlockFlatColored extends Block
 	}
 
 	// get details about a shade.
-	public EnumSet<EnumFlatColorAttributes> getFlatColorAttributes(
+	public Set<EnumFlatColorAttributes> getFlatColorAttributes(
 			final IBlockState state )
 	{
 		final int out = hsvFromState( state );

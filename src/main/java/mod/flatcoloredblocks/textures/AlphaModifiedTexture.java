@@ -3,6 +3,7 @@ package mod.flatcoloredblocks.textures;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+import mod.flatcoloredblocks.Log;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -11,14 +12,23 @@ import net.minecraft.util.ResourceLocation;
 
 public class AlphaModifiedTexture extends TextureAtlasSprite
 {
+	final BufferedImage image;
+
+	protected AlphaModifiedTexture(
+			final String spriteName,
+			final BufferedImage image )
+	{
+		super( spriteName );
+		this.image = image;
+	}
 
 	public static TextureAtlasSprite generate(
-			final String Name,
+			final String name,
 			final BufferedImage bi,
 			final float alphaMultiplier,
 			final TextureMap map )
 	{
-		final BufferedImage image = new BufferedImage( bi.getWidth(), bi.getHeight(), BufferedImage.TYPE_INT_ARGB );
+		final BufferedImage image = new BufferedImage( bi.getWidth(), bi.getHeight(), BufferedImage.TYPE_4BYTE_ABGR );
 		final int xx = bi.getWidth();
 		final int yy = bi.getHeight();
 
@@ -32,19 +42,9 @@ public class AlphaModifiedTexture extends TextureAtlasSprite
 			}
 		}
 
-		final AlphaModifiedTexture out = new AlphaModifiedTexture( Name, image );
+		final AlphaModifiedTexture out = new AlphaModifiedTexture( name, image );
 		out.register( map );
 		return out;
-	}
-
-	final BufferedImage image;
-
-	protected AlphaModifiedTexture(
-			final String spriteName,
-			final BufferedImage image )
-	{
-		super( spriteName );
-		this.image = image;
 	}
 
 	@Override
@@ -68,7 +68,7 @@ public class AlphaModifiedTexture extends TextureAtlasSprite
 		}
 		catch ( final IOException e )
 		{
-			e.printStackTrace();
+			Log.logError( "Unable to load " + location.toString(), e );
 		}
 
 		return false;
