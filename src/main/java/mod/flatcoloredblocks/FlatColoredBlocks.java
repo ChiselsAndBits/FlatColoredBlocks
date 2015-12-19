@@ -34,7 +34,7 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 @Mod(
 		name = FlatColoredBlocks.MODNAME,
 		modid = FlatColoredBlocks.MODID,
-		acceptedMinecraftVersions = "[1.8,)",
+		acceptedMinecraftVersions = "[1.8.8]",
 		version = FlatColoredBlocks.VERSION,
 		dependencies = FlatColoredBlocks.DEPENDENCIES,
 		guiFactory = "mod.flatcoloredblocks.gui.ConfigGuiFactory" )
@@ -47,7 +47,11 @@ public class FlatColoredBlocks
 	public static final String MODID = "flatcoloredblocks";
 	public static final String VERSION = "mc1.8.8-v1.2";
 
-	public static final String DEPENDENCIES = "required-after:Forge@[11.14.4.1563,)";
+	public static final String DEPENDENCIES = "required-after:Forge@[" // forge.
+			+ net.minecraftforge.common.ForgeVersion.majorVersion + '.' // majorVersion
+			+ net.minecraftforge.common.ForgeVersion.minorVersion + '.' // minorVersion
+			+ net.minecraftforge.common.ForgeVersion.revisionVersion + '.' // revisionVersion
+			+ net.minecraftforge.common.ForgeVersion.buildVersion + ",)"; // buildVersion";
 
 	public CreativeTab creativeTab;
 	public ModConfig config;
