@@ -235,7 +235,7 @@ public class BlockFlatColored extends Block
 	{
 		final int out = hsvFromState( state );
 
-		final EnumSet<EnumFlatColorAttributes> result = EnumSet.noneOf( EnumFlatColorAttributes.class );
+		final Set<EnumFlatColorAttributes> result = EnumSet.noneOf( EnumFlatColorAttributes.class );
 
 		final int h = ( out >> 16 & 0xff ) * 360 / 0xff;
 		final int s = out >> 8 & 0xff;

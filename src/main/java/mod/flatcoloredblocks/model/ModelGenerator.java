@@ -23,6 +23,16 @@ public class ModelGenerator implements ICustomModelLoader
 
 	private static final String NORMAL_VARIENT = "normal";
 	private static final String INVENTORY_VARIENT = "inventory";
+	private static VertexFormat FCB = new VertexFormat();
+
+	static
+	{
+		FCB.addElement( DefaultVertexFormats.POSITION_3F );
+		FCB.addElement( DefaultVertexFormats.COLOR_4UB );
+		FCB.addElement( DefaultVertexFormats.TEX_2F );
+		FCB.addElement( DefaultVertexFormats.TEX_2S );
+		FCB.addElement( DefaultVertexFormats.NORMAL_3B );
+	}
 
 	HashMap<ResourceLocation, BakedVarientModel> models = new HashMap<ResourceLocation, BakedVarientModel>();
 	ArrayList<ModelResourceLocation> res = new ArrayList<ModelResourceLocation>();
@@ -68,7 +78,7 @@ public class ModelGenerator implements ICustomModelLoader
 	{
 		for ( final ModelResourceLocation rl : res )
 		{
-			final VertexFormat format = rl.getVariant().equals( NORMAL_VARIENT ) ? DefaultVertexFormats.BLOCK : DefaultVertexFormats.ITEM;
+			final VertexFormat format = rl.getVariant().equals( NORMAL_VARIENT ) ? FCB : DefaultVertexFormats.ITEM;
 			event.modelRegistry.putObject( rl, getModel( rl ).bake( null, format, null ) );
 		}
 	}

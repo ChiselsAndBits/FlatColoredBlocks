@@ -12,7 +12,7 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "mc1.8.x-v1.2"
+version = "mc1.8.8-v1.2"
 group= "mod.flatcoloredblocks"
 archivesBaseName = "flatcoloredblocks"
 
