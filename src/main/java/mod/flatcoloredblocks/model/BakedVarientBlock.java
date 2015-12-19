@@ -155,7 +155,7 @@ public class BakedVarientBlock implements IFlexibleBakedModel, IPerspectiveAware
 
 					case COLOR:
 						final float light = LightUtil.diffuseLight( myFace );
-						b.put( elementIndex, light, light, light, 0f );
+						b.put( elementIndex, light, light, light, 1f );
 						break;
 
 					case NORMAL:
