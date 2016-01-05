@@ -24,24 +24,4 @@ public class IntegerationJEI
 		items.add( new ItemStack( b, 1, OreDictionary.WILDCARD_VALUE ) );
 	}
 
-	public void init()
-	{
-		if ( Loader.isModLoaded( "JEI" ) )
-		{
-			sendtoJEI();
-		}
-
-		items = null;
-	}
-
-	private void sendtoJEI()
-	{
-		final IItemBlacklist blacklist = mezz.jei.api.JEIManager.itemBlacklist;
-
-		for ( final ItemStack is : items )
-		{
-			blacklist.addItemToBlacklist( is );
-		}
-	}
-
 }
