@@ -20,7 +20,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -114,9 +113,7 @@ public class FlatColoredBlocks
 		// configure creative tab.
 		creativeTab = new CreativeTab();
 
-		// connect to forge event bus ( using both for 1.8 compat. )
 		MinecraftForge.EVENT_BUS.register( this );
-		FMLCommonHandler.instance().bus().register( this );
 
 		// create and configure crafting item.
 		itemColoredBlockCrafting = new ItemColoredBlockCrafter();

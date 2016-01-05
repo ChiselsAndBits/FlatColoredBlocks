@@ -18,7 +18,7 @@ import net.minecraftforge.client.model.TRSRTransformation;
 public class BakedVarientModel implements IModel
 {
 	private final int varient;
-	private final EnumFlatBlockType type;
+	public final EnumFlatBlockType type;
 
 	public BakedVarientModel(
 			final EnumFlatBlockType type,

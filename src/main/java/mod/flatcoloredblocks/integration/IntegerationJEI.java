@@ -3,10 +3,8 @@ package mod.flatcoloredblocks.integration;
 import java.util.ArrayList;
 import java.util.List;
 
-import mezz.jei.api.IItemBlacklist;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.oredict.OreDictionary;
 
 /**

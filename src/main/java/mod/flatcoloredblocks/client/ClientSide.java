@@ -13,12 +13,11 @@ import mod.flatcoloredblocks.textures.TextureGenerator;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
-import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.common.MinecraftForge;
 
 public class ClientSide implements IClientSide
 {
@@ -37,8 +36,8 @@ public class ClientSide implements IClientSide
 	{
 		modelGenerator.preinit();
 
-		FMLCommonHandler.instance().bus().register( textureGenerator );
-		FMLCommonHandler.instance().bus().register( modelGenerator );
+		MinecraftForge.EVENT_BUS.register( textureGenerator );
+		MinecraftForge.EVENT_BUS.register( modelGenerator );
 	}
 
 	@Override
@@ -77,7 +76,7 @@ public class ClientSide implements IClientSide
 
 		// map all shades to a single model...
 		final Item cbi = Item.getItemFromBlock( cb );
-		ModelBakery.addVariantName( cbi, flatcoloredblocks_name );
+		ModelLoader.registerItemVariants( cbi, flatcoloredblocks_block );
 		for ( int z = 0; z < BlockHSVConfiguration.META_SCALE; ++z )
 		{
 			ModelLoader.setCustomModelResourceLocation( cbi, z, flatcoloredblocks_item );

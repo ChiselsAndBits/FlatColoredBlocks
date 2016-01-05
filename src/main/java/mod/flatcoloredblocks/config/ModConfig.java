@@ -9,7 +9,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class ModConfig extends Configuration
@@ -250,9 +249,7 @@ public class ModConfig extends Configuration
 		super( path );
 		myPath = path;
 
-		// connect to forge event bus ( using both for 1.8 compat. )
 		MinecraftForge.EVENT_BUS.register( this );
-		FMLCommonHandler.instance().bus().register( this );
 
 		setDefaults();
 		populateSettings();

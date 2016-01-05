@@ -9,6 +9,7 @@ import mod.flatcoloredblocks.block.EnumFlatBlockType;
 import mod.flatcoloredblocks.client.ClientSide;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.util.ResourceLocation;
@@ -27,11 +28,10 @@ public class ModelGenerator implements ICustomModelLoader
 
 	static
 	{
-		FCB.addElement( DefaultVertexFormats.POSITION_3F );
-		FCB.addElement( DefaultVertexFormats.COLOR_4UB );
-		FCB.addElement( DefaultVertexFormats.TEX_2F );
+		for ( VertexFormatElement e : DefaultVertexFormats.ITEM.getElements() )
+			FCB.addElement( e );
+		
 		FCB.addElement( DefaultVertexFormats.TEX_2S );
-		FCB.addElement( DefaultVertexFormats.NORMAL_3B );
 	}
 
 	HashMap<ResourceLocation, BakedVarientModel> models = new HashMap<ResourceLocation, BakedVarientModel>();
@@ -78,8 +78,9 @@ public class ModelGenerator implements ICustomModelLoader
 	{
 		for ( final ModelResourceLocation rl : res )
 		{
-			final VertexFormat format = rl.getVariant().equals( NORMAL_VARIENT ) ? FCB : DefaultVertexFormats.ITEM;
-			event.modelRegistry.putObject( rl, getModel( rl ).bake( null, format, null ) );
+			BakedVarientModel bvm = getModel( rl );
+			final VertexFormat format = bvm.type == EnumFlatBlockType.GLOWING && rl.getVariant().equals( NORMAL_VARIENT ) ? FCB : DefaultVertexFormats.ITEM;
+			event.modelRegistry.putObject( rl, bvm.bake( null, format, null ) );
 		}
 	}
 

@@ -9,7 +9,7 @@ import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.PacketThreadUtil;
 import net.minecraft.network.ThreadQuickExitException;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLEventChannel;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientCustomPacketEvent;
@@ -84,7 +84,7 @@ public class NetworkRouter
 		ec = NetworkRegistry.INSTANCE.newEventDrivenChannel( channelName );
 		ec.register( this );
 
-		FMLCommonHandler.instance().bus().register( this );
+		MinecraftForge.EVENT_BUS.register( this );
 
 		clientPacketHandler = new ClientPacketHandler();
 		serverPacketHandler = new ServerPacketHandler();
