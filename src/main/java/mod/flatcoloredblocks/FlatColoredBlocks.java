@@ -58,7 +58,7 @@ public class FlatColoredBlocks
 
 	public ItemColoredBlockCrafter itemColoredBlockCrafting;
 
-	private final IntegerationJEI jei = new IntegerationJEI();
+	public final IntegerationJEI jei = new IntegerationJEI();
 	private IClientSide clientSide;
 
 	public BlockHSVConfiguration normal;
@@ -162,14 +162,6 @@ public class FlatColoredBlocks
 		compound.setString( "curseProjectName", "flat-colored-blocks" );
 		compound.setString( "curseFilenameParser", "flatcoloredblocks-[].jar" );
 		FMLInterModComms.sendRuntimeMessage( MODID, "VersionChecker", "addCurseCheck", compound );
-	}
-
-	@EventHandler
-	public void init(
-			final FMLInitializationEvent event )
-	{
-		// send blacklist to jei.
-		jei.init();
 	}
 
 	@EventHandler

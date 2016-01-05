@@ -23,3 +23,8 @@
 eclipse
 /*.launch
 /.project
+
+out/*
+FlatColoredBlocks.iml
+FlatColoredBlocks.ipr
+FlatColoredBlocks.iws
