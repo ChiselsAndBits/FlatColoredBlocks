@@ -211,7 +211,7 @@ public class BlockHSVConfiguration
 
 		if ( shadeNum >= finalShades )
 		{
-			v = shadeNum - finalShades;
+			v = ( shadeNum - finalShades ) % MAX_SHADE_VALUE;
 			s = 0;
 			h = 0;
 		}

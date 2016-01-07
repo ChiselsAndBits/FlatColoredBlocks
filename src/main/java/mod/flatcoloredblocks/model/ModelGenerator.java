@@ -28,9 +28,11 @@ public class ModelGenerator implements ICustomModelLoader
 
 	static
 	{
-		for ( VertexFormatElement e : DefaultVertexFormats.ITEM.getElements() )
+		for ( final VertexFormatElement e : DefaultVertexFormats.ITEM.getElements() )
+		{
 			FCB.addElement( e );
-		
+		}
+
 		FCB.addElement( DefaultVertexFormats.TEX_2S );
 	}
 
@@ -78,7 +80,7 @@ public class ModelGenerator implements ICustomModelLoader
 	{
 		for ( final ModelResourceLocation rl : res )
 		{
-			BakedVarientModel bvm = getModel( rl );
+			final BakedVarientModel bvm = getModel( rl );
 			final VertexFormat format = bvm.type == EnumFlatBlockType.GLOWING && rl.getVariant().equals( NORMAL_VARIENT ) ? FCB : DefaultVertexFormats.ITEM;
 			event.modelRegistry.putObject( rl, bvm.bake( null, format, null ) );
 		}
