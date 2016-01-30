@@ -167,7 +167,14 @@ public class BlockFlatColored extends Block
 	{
 		shadeOffset = offset;
 		configuration = newConfig;
-		maxShade = Math.min( configuration.MAX_SHADES_MINUS_ONE, shadeOffset + configuration.META_SCALE_MINUS_ONE );
+		maxShade = shadeOffset + configuration.META_SCALE_MINUS_ONE;
+
+		if ( configuration.MAX_SHADES_MINUS_ONE < maxShade )
+		{
+			maxShade = configuration.MAX_SHADES_MINUS_ONE;
+			return new BlockState( this, new IProperty[] { shade = PropertyInteger.create( "shade", 0, maxShade - shadeOffset ) } );
+		}
+
 		return new BlockState( this, new IProperty[] { shade = PropertyInteger.create( "shade", 0, configuration.META_SCALE_MINUS_ONE ) } );
 	}
 
