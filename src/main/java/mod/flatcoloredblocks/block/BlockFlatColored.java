@@ -200,13 +200,14 @@ public class BlockFlatColored extends Block
 
 	// convert block into all possible ItemStacks.
 	private void outputShades(
-			final List<ItemStack> list )
+			final List<ItemStack> list,
+			final int qty )
 	{
 		final Item item = Item.getItemFromBlock( this );
 
 		for ( int x = shadeOffset; x <= maxShade; ++x )
 		{
-			list.add( new ItemStack( item, 1, x - shadeOffset ) );
+			list.add( new ItemStack( item, qty, x - shadeOffset ) );
 		}
 	}
 
@@ -216,7 +217,7 @@ public class BlockFlatColored extends Block
 			final CreativeTabs tab,
 			final List<ItemStack> list )
 	{
-		outputShades( list );
+		outputShades( list, 1 );
 	}
 
 	// generates a list of all shades without caring about which block it is.
@@ -225,8 +226,28 @@ public class BlockFlatColored extends Block
 	{
 		for ( final BlockFlatColored cb : coloredBlocks )
 		{
-			cb.outputShades( list );
+			cb.outputShades( list, cb.getCraftCount() );
 		}
+	}
+
+	private int getCraftCount()
+	{
+		if ( getCraftable() == EnumFlatBlockType.NORMAL )
+		{
+			return FlatColoredBlocks.instance.config.solidCraftingOutput;
+		}
+
+		if ( getCraftable() == EnumFlatBlockType.TRANSPARENT )
+		{
+			return FlatColoredBlocks.instance.config.transparentCraftingOutput;
+		}
+
+		if ( getCraftable() == EnumFlatBlockType.GLOWING )
+		{
+			return FlatColoredBlocks.instance.config.glowingCraftingOutput;
+		}
+
+		return 1;
 	}
 
 	// get details about a shade.

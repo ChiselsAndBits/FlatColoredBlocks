@@ -20,6 +20,24 @@ public class ModConfig extends Configuration
 	// not configured..
 	public int LAST_MAX_SHADES;
 
+	@Configured( category = "Crafing" )
+	public String solidCraftingBlock;
+
+	@Configured( category = "Crafing" )
+	public String transparentCraftingBlock;
+
+	@Configured( category = "Crafing" )
+	public String glowingCraftingBlock;
+
+	@Configured( category = "Crafing" )
+	public int solidCraftingOutput;
+
+	@Configured( category = "Crafing" )
+	public int transparentCraftingOutput;
+
+	@Configured( category = "Crafing" )
+	public int glowingCraftingOutput;
+
 	@Configured( category = "Integration" )
 	public boolean ShowBlocksInJEI;
 
@@ -169,6 +187,13 @@ public class ModConfig extends Configuration
 
 	void setDefaults()
 	{
+		solidCraftingBlock = "cobblestone";
+		transparentCraftingBlock = "blockGlass";
+		glowingCraftingBlock = "glowstone";
+		solidCraftingOutput = 1;
+		transparentCraftingOutput = 1;
+		glowingCraftingOutput = 1;
+
 		LAST_MAX_SHADES = 0;
 
 		// shades of 4th dimension

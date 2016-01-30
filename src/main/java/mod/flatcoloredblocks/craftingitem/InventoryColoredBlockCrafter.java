@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import mod.flatcoloredblocks.FlatColoredBlocks;
 import mod.flatcoloredblocks.block.BlockFlatColored;
 import mod.flatcoloredblocks.block.EnumFlatBlockType;
 import mod.flatcoloredblocks.block.EnumFlatColorAttributes;
@@ -66,9 +67,9 @@ public class InventoryColoredBlockCrafter implements IInventory
 		dyeList.put( EnumDyeColor.MAGENTA, OreDictionary.getOres( "dyeMagenta" ) );
 		dyeList.put( EnumDyeColor.ORANGE, OreDictionary.getOres( "dyeOrange" ) );
 		dyeList.put( EnumDyeColor.WHITE, OreDictionary.getOres( "dyeWhite" ) );
-		dyeList.put( EnumFlatBlockType.NORMAL, OreDictionary.getOres( "cobblestone" ) );
-		dyeList.put( EnumFlatBlockType.GLOWING, OreDictionary.getOres( "glowstone" ) );
-		dyeList.put( EnumFlatBlockType.TRANSPARENT, OreDictionary.getOres( "blockGlass" ) );
+		dyeList.put( EnumFlatBlockType.NORMAL, OreDictionary.getOres( FlatColoredBlocks.instance.config.solidCraftingBlock ) );
+		dyeList.put( EnumFlatBlockType.GLOWING, OreDictionary.getOres( FlatColoredBlocks.instance.config.glowingCraftingBlock ) );
+		dyeList.put( EnumFlatBlockType.TRANSPARENT, OreDictionary.getOres( FlatColoredBlocks.instance.config.transparentCraftingBlock ) );
 
 		boolean hasCobblestone = false;
 		boolean hasGlowstone = false;
@@ -271,6 +272,23 @@ public class InventoryColoredBlockCrafter implements IInventory
 		final Object Craftable = ( (BlockFlatColored) blk ).getCraftable();
 		final HashSet<EnumDyeColor> requiredDyes = new HashSet<EnumDyeColor>();
 
+		int craftAmount = 1;
+
+		if ( Craftable == EnumFlatBlockType.NORMAL )
+		{
+			craftAmount = FlatColoredBlocks.instance.config.solidCraftingOutput;
+		}
+
+		if ( Craftable == EnumFlatBlockType.TRANSPARENT )
+		{
+			craftAmount = FlatColoredBlocks.instance.config.transparentCraftingOutput;
+		}
+
+		if ( Craftable == EnumFlatBlockType.GLOWING )
+		{
+			craftAmount = FlatColoredBlocks.instance.config.glowingCraftingOutput;
+		}
+
 		final EnumDyeColor alternateDye = getAlternateDye( charistics );
 		final HashSet<EnumDyeColor> alternateSet = new HashSet<EnumDyeColor>();
 
@@ -285,7 +303,7 @@ public class InventoryColoredBlockCrafter implements IInventory
 			requiredDyes.add( cc.secondaryDye );
 		}
 
-		for ( int x = 0; x < count; ++x )
+		for ( int x = 0; x < count && out.stackSize + craftAmount <= 64; ++x )
 		{
 			boolean isGood = true;
 
@@ -332,7 +350,7 @@ public class InventoryColoredBlockCrafter implements IInventory
 					is.consume( 1 );
 				}
 
-				++out.stackSize;
+				out.stackSize += craftAmount;
 			}
 			else
 			{
