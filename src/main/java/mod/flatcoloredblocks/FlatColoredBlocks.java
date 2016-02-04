@@ -44,7 +44,7 @@ public class FlatColoredBlocks
 
 	public static final String MODNAME = "FlatColoredBlocks";
 	public static final String MODID = "flatcoloredblocks";
-	public static final String VERSION = "mc1.8.9-v1.3";
+	public static final String VERSION = "@VERSION@";
 
 	public static final String DEPENDENCIES = "required-after:Forge@[" // forge.
 			+ net.minecraftforge.common.ForgeVersion.majorVersion + '.' // majorVersion
