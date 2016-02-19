@@ -2,7 +2,7 @@
 itemGroup.FlatColoredBlocks=Flat Colored Blocks
 
 item.flatcoloredblocks.coloredcraftingitem.name=Colored Block Crafter
-item.flatcoloredblocks.coloredcraftingitem.tip1=Craft Blocks with Cobblestone and Dyes.
+item.flatcoloredblocks.coloredcraftingitem.tip1=Craft blocks with %% and Dyes.
 item.flatcoloredblocks.coloredcraftingitem.tip2=Put materials in your inventory and use this.
 
 flatcoloredblocks.startup_a=Flat Colored Blocks adds a variable number of shades of various blocks, the number can be configured in the settings screen.
