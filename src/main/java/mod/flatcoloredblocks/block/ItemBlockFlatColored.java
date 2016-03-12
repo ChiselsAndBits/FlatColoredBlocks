@@ -6,7 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.translation.I18n;
 
 public class ItemBlockFlatColored extends ItemBlock
 {
@@ -79,7 +79,7 @@ public class ItemBlockFlatColored extends ItemBlock
 		final String prefix = getColorPrefix( colorChars );
 		final String hue = getColorHueName( colorChars );
 
-		return type + StatCollector.translateToLocal( prefix + hue + ".name" ) + " #" + shadeNum;
+		return type + I18n.translateToLocal( prefix + hue + ".name" ) + " #" + shadeNum;
 	}
 
 	private String getTypeLocalization()
@@ -87,15 +87,14 @@ public class ItemBlockFlatColored extends ItemBlock
 		switch ( getColoredBlock().getType() )
 		{
 			case GLOWING:
-				return StatCollector.translateToLocal( "flatcoloredblocks.Glowing.name" ) + " ";
+				return I18n.translateToLocal( "flatcoloredblocks.Glowing.name" ) + " ";
 			case TRANSPARENT:
-				return StatCollector.translateToLocal( "flatcoloredblocks.Transparent.name" ) + " ";
+				return I18n.translateToLocal( "flatcoloredblocks.Transparent.name" ) + " ";
 			default:
 				return "";
 		}
 	}
 
-	@Override
 	public int getColorFromItemStack(
 			final ItemStack stack,
 			final int renderPass )

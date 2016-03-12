@@ -33,7 +33,7 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 @Mod(
 		name = FlatColoredBlocks.MODNAME,
 		modid = FlatColoredBlocks.MODID,
-		acceptedMinecraftVersions = "[1.8.9]",
+		acceptedMinecraftVersions = "[1.9]",
 		version = FlatColoredBlocks.VERSION,
 		dependencies = FlatColoredBlocks.DEPENDENCIES,
 		guiFactory = "mod.flatcoloredblocks.gui.ConfigGuiFactory" )
@@ -165,6 +165,8 @@ public class FlatColoredBlocks
 	public void postinit(
 			final FMLPostInitializationEvent event )
 	{
+		clientSide.init();
+
 		// configure networking and gui.
 		NetworkRouter.instance = new NetworkRouter();
 		NetworkRegistry.INSTANCE.registerGuiHandler( this, new ModGuiRouter() );

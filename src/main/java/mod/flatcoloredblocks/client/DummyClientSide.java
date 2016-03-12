@@ -24,4 +24,10 @@ public class DummyClientSide implements IClientSide
 
 	}
 
+	@Override
+	public void init()
+	{
+
+	}
+
 }

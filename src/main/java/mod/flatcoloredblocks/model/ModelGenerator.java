@@ -7,11 +7,11 @@ import java.util.HashMap;
 import mod.flatcoloredblocks.FlatColoredBlocks;
 import mod.flatcoloredblocks.block.EnumFlatBlockType;
 import mod.flatcoloredblocks.client.ClientSide;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.ICustomModelLoader;
@@ -82,7 +82,7 @@ public class ModelGenerator implements ICustomModelLoader
 		{
 			final BakedVarientModel bvm = getModel( rl );
 			final VertexFormat format = bvm.type == EnumFlatBlockType.GLOWING && rl.getVariant().equals( NORMAL_VARIENT ) ? FCB : DefaultVertexFormats.ITEM;
-			event.modelRegistry.putObject( rl, bvm.bake( null, format, null ) );
+			event.getModelRegistry().putObject( rl, bvm.bake( null, format, null ) );
 		}
 	}
 

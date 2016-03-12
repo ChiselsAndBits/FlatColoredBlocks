@@ -12,11 +12,15 @@ import mod.flatcoloredblocks.model.ModelGenerator;
 import mod.flatcoloredblocks.textures.TextureGenerator;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ModelBakery;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -39,6 +43,22 @@ public class ClientSide implements IClientSide
 
 		MinecraftForge.EVENT_BUS.register( textureGenerator );
 		MinecraftForge.EVENT_BUS.register( modelGenerator );
+	}
+
+	@Override
+	public void init()
+	{
+		Minecraft.getMinecraft().func_184125_al().func_186722_a( new IBlockColor() {
+			@Override
+			public int func_186720_a(
+					final IBlockState state,
+					final IBlockAccess world,
+					final BlockPos pos,
+					final int something )
+			{
+				return ( (BlockFlatColored) state.getBlock() ).colorFromState( state );
+			}
+		}, BlockFlatColored.getAllBlocks().toArray( new Block[BlockFlatColored.getAllBlocks().size()] ) );
 	}
 
 	@Override

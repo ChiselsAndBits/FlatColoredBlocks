@@ -13,4 +13,6 @@ public interface IClientSide
 			ItemColoredBlockCrafter crafterItem );
 
 	void preinit();
+
+	void init();
 }

@@ -7,19 +7,16 @@ import java.util.Set;
 
 import mod.flatcoloredblocks.FlatColoredBlocks;
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
-import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockFlatColored extends Block
 {
@@ -34,23 +31,6 @@ public class BlockFlatColored extends Block
 	private BlockHSVConfiguration configuration; // HSV for this block.
 	private PropertyInteger shade; // block state configuration for block.
 	private final int varient;
-
-	@Override
-	public int getRenderColor(
-			final IBlockState state )
-	{
-		return colorFromState( state );
-	}
-
-	@Override
-	@SideOnly( Side.CLIENT )
-	public int colorMultiplier(
-			final IBlockAccess worldIn,
-			final BlockPos pos,
-			final int renderPass )
-	{
-		return colorFromState( worldIn.getBlockState( pos ) );
-	}
 
 	@Override
 	public MapColor getMapColor(
@@ -68,7 +48,7 @@ public class BlockFlatColored extends Block
 	}
 
 	// also used in item for item stack color.
-	int colorFromState(
+	public int colorFromState(
 			final IBlockState state )
 	{
 		final int fullAlpha = 0xff << 24;
@@ -124,11 +104,11 @@ public class BlockFlatColored extends Block
 		// mimic stone..
 		setHardness( 1.5F );
 		setResistance( 10.0F );
-		setStepSound( soundTypePiston );
+		setStepSound( SoundType.field_185851_d );
 		setHarvestLevel( "pickaxe", 0 );
 		setLightLevel( FlatColoredBlocks.instance.config.GLOWING_EMITS_LIGHT ? Math.max( 0, Math.min( 15, lightValue / 255.0f ) ) : 0 );
 		setLightOpacity( opacity > 0.001 ? 0 : 255 );
-		setStepSound( opacity > 0.001 ? soundTypeGlass : soundTypeStone );
+		setStepSound( opacity > 0.001 ? SoundType.field_185853_f : SoundType.field_185851_d );
 
 		translucent = opacity > 0.001;
 		varient = varientNum;
@@ -163,7 +143,7 @@ public class BlockFlatColored extends Block
 	 * Called by Block's Constructor.
 	 */
 	@Override
-	protected BlockState createBlockState()
+	protected BlockStateContainer createBlockState()
 	{
 		shadeOffset = offset;
 		configuration = newConfig;
@@ -172,10 +152,10 @@ public class BlockFlatColored extends Block
 		if ( configuration.MAX_SHADES_MINUS_ONE < maxShade )
 		{
 			maxShade = configuration.MAX_SHADES_MINUS_ONE;
-			return new BlockState( this, new IProperty[] { shade = PropertyInteger.create( "shade", 0, maxShade - shadeOffset ) } );
+			return new BlockStateContainer( this, new IProperty[] { shade = PropertyInteger.create( "shade", 0, maxShade - shadeOffset ) } );
 		}
 
-		return new BlockState( this, new IProperty[] { shade = PropertyInteger.create( "shade", 0, configuration.META_SCALE_MINUS_ONE ) } );
+		return new BlockStateContainer( this, new IProperty[] { shade = PropertyInteger.create( "shade", 0, configuration.META_SCALE_MINUS_ONE ) } );
 	}
 
 	@Override
@@ -235,6 +215,11 @@ public class BlockFlatColored extends Block
 		{
 			cb.outputShades( list, cb.getCraftCount() );
 		}
+	}
+
+	static public List<BlockFlatColored> getAllBlocks()
+	{
+		return coloredBlocks;
 	}
 
 	private int getCraftCount()

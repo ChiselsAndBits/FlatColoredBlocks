@@ -15,27 +15,28 @@ import org.lwjgl.util.vector.Vector3f;
 import mod.flatcoloredblocks.FlatColoredBlocks;
 import mod.flatcoloredblocks.block.EnumFlatBlockType;
 import mod.flatcoloredblocks.client.ClientSide;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockFaceUV;
 import net.minecraft.client.renderer.block.model.BlockPartFace;
 import net.minecraft.client.renderer.block.model.BlockPartRotation;
 import net.minecraft.client.renderer.block.model.FaceBakery;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
+import net.minecraft.client.renderer.block.model.ItemOverrideList;
+import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
-import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.client.model.IFlexibleBakedModel;
-import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.client.model.TRSRTransformation;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad.Builder;
 
 @SuppressWarnings( "deprecation" )
-public class BakedVarientBlock implements IFlexibleBakedModel, IPerspectiveAwareModel
+public class BakedVarientBlock implements IBakedModel
 {
 
 	private static final Matrix4f identity;
@@ -187,17 +188,23 @@ public class BakedVarientBlock implements IFlexibleBakedModel, IPerspectiveAware
 		return b.build();
 	}
 
-	@Override
-	public List<BakedQuad> getFaceQuads(
-			final EnumFacing side )
+	public List<BakedQuad>[] getFace()
 	{
-		return face[side.ordinal()];
+		return face;
 	}
 
 	@Override
-	public List<BakedQuad> getGeneralQuads()
+	public List<BakedQuad> func_188616_a(
+			final IBlockState state,
+			final EnumFacing side,
+			final long weight )
 	{
-		return Collections.emptyList();
+		if ( side == null )
+		{
+			return Collections.emptyList();
+		}
+
+		return face[side.ordinal()];
 	}
 
 	@Override
@@ -213,21 +220,9 @@ public class BakedVarientBlock implements IFlexibleBakedModel, IPerspectiveAware
 	}
 
 	@Override
-	public boolean isBuiltInRenderer()
-	{
-		return false;
-	}
-
-	@Override
 	public ItemCameraTransforms getItemCameraTransforms()
 	{
 		return ItemCameraTransforms.DEFAULT;
-	}
-
-	@Override
-	public VertexFormat getFormat()
-	{
-		return null;
 	}
 
 	@Override
@@ -256,15 +251,26 @@ public class BakedVarientBlock implements IFlexibleBakedModel, IPerspectiveAware
 		identity.setIdentity();
 	}
 
-	@Override
-	public Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(
+	public Pair<? extends IBakedModel, Matrix4f> handlePerspective(
 			final TransformType cameraTransformType )
 	{
-		if ( cameraTransformType == TransformType.THIRD_PERSON )
+		if ( cameraTransformType == TransformType.THIRD_PERSON_LEFT_HAND || cameraTransformType == TransformType.THIRD_PERSON_RIGHT_HAND )
 		{
-			return new ImmutablePair<IFlexibleBakedModel, Matrix4f>( this, thirdPerson );
+			return new ImmutablePair<IBakedModel, Matrix4f>( this, thirdPerson );
 		}
 
-		return new ImmutablePair<IFlexibleBakedModel, Matrix4f>( this, identity );
+		return new ImmutablePair<IBakedModel, Matrix4f>( this, identity );
+	}
+
+	@Override
+	public boolean func_188618_c()
+	{
+		return false;
+	}
+
+	@Override
+	public ItemOverrideList func_188617_f()
+	{
+		return ItemOverrideList.field_188022_a;
 	}
 }

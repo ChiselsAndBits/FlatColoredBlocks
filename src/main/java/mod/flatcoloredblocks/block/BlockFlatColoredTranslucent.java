@@ -2,12 +2,10 @@ package mod.flatcoloredblocks.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockFlatColoredTranslucent extends BlockFlatColored
 {
@@ -24,37 +22,38 @@ public class BlockFlatColoredTranslucent extends BlockFlatColored
 	}
 
 	@Override
-	public EnumWorldBlockLayer getBlockLayer()
+	public BlockRenderLayer getBlockLayer()
 	{
-		return EnumWorldBlockLayer.TRANSLUCENT;
+		return BlockRenderLayer.TRANSLUCENT;
 	}
 
 	@Override
-	@SideOnly( Side.CLIENT )
-	public boolean shouldSideBeRendered(
-			final IBlockAccess worldIn,
+	public boolean doesSideBlockRendering(
+			final IBlockState state,
+			final IBlockAccess world,
 			final BlockPos pos,
-			final EnumFacing side )
+			final EnumFacing face )
 	{
-		final IBlockState iblockstate = worldIn.getBlockState( pos );
-		final Block blk = iblockstate.getBlock();
+		final Block blk = state.getBlock();
 
 		if ( blk instanceof BlockFlatColoredTranslucent )
 		{
-			return false;
+			return true;
 		}
 
-		return super.shouldSideBeRendered( worldIn, pos, side );
+		return super.doesSideBlockRendering( state, world, pos, face );
 	}
 
 	@Override
-	public boolean isFullCube()
+	public boolean isFullCube(
+			final IBlockState state )
 	{
 		return false;
 	}
 
 	@Override
-	public boolean isOpaqueCube()
+	public boolean isOpaqueCube(
+			final IBlockState state )
 	{
 		return false;
 	}

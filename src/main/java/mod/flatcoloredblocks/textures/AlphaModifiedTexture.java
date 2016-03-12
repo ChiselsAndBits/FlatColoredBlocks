@@ -1,9 +1,7 @@
 package mod.flatcoloredblocks.textures;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 
-import mod.flatcoloredblocks.Log;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -20,6 +18,8 @@ public class AlphaModifiedTexture extends TextureAtlasSprite
 	{
 		super( spriteName );
 		this.image = image;
+		width = image.getWidth();
+		height = image.getHeight();
 	}
 
 	public static TextureAtlasSprite generate(
@@ -60,16 +60,12 @@ public class AlphaModifiedTexture extends TextureAtlasSprite
 			final IResourceManager manager,
 			final ResourceLocation location )
 	{
-		try
-		{
-			final BufferedImage[] images = new BufferedImage[Minecraft.getMinecraft().gameSettings.mipmapLevels + 1];
-			images[0] = image;
-			loadSprite( images, null );
-		}
-		catch ( final IOException e )
-		{
-			Log.logError( "Unable to load " + location.toString(), e );
-		}
+		final BufferedImage[] images = new BufferedImage[Minecraft.getMinecraft().gameSettings.mipmapLevels + 1];
+		images[0] = image;
+		final int[][] pixels = new int[Minecraft.getMinecraft().gameSettings.mipmapLevels + 1][];
+		pixels[0] = new int[image.getWidth() * image.getHeight()];
+		image.getRGB( 0, 0, image.getWidth(), image.getHeight(), pixels[0], 0, image.getWidth() );
+		framesTextureData.add( pixels );
 
 		return false;
 	}

@@ -20,7 +20,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.oredict.OreDictionary;
 
 /**
@@ -204,7 +204,7 @@ public class InventoryColoredBlockCrafter implements IInventory
 	}
 
 	@Override
-	public IChatComponent getDisplayName()
+	public ITextComponent getDisplayName()
 	{
 		return null;
 	}
