@@ -30,17 +30,23 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.client.model.TRSRTransformation;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad.Builder;
 
 @SuppressWarnings( "deprecation" )
-public class BakedVarientBlock implements IBakedModel
+public class BakedVarientBlock implements IBakedModel, IPerspectiveAwareModel
 {
 
-	private static final Matrix4f identity;
-	private static final Matrix4f thirdPerson;
+	private static final Matrix4f ground;
+	private static final Matrix4f gui;
+	private static final Matrix4f fixed;
+	private static final Matrix4f firstPerson_righthand;
+	private static final Matrix4f firstPerson_lefthand;
+	private static final Matrix4f thirdPerson_righthand;
+	private static final Matrix4f thirdPerson_lefthand;
 
 	@SuppressWarnings( "unchecked" )
 	final List<BakedQuad>[] face = new List[6];
@@ -194,10 +200,10 @@ public class BakedVarientBlock implements IBakedModel
 	}
 
 	@Override
-	public List<BakedQuad> func_188616_a(
+	public List<BakedQuad> getQuads(
 			final IBlockState state,
 			final EnumFacing side,
-			final long weight )
+			final long rand )
 	{
 		if ( side == null )
 		{
@@ -232,45 +238,99 @@ public class BakedVarientBlock implements IBakedModel
 	}
 
 	static
-	{/*
-		 * "rotation": [ 10, -45, 170 ],
-		 *
-		 * "translation": [ 0, 1.5, -2.75 ]
-		 *
-		 * "scale": [ 0.375, 0.375, 0.375 ] } }
-		 */
-		final javax.vecmath.Vector3f translation = new javax.vecmath.Vector3f( 0, 1.5f / 16.0f, -2.75f / 16.0f );
-		final javax.vecmath.Vector3f scale = new javax.vecmath.Vector3f( 0.375f, 0.375f, 0.375f );
-		final Quat4f rotation = TRSRTransformation.quatFromYXZDegrees( new javax.vecmath.Vector3f( 10.0f, -45.0f, 170.0f ) );
-
-		final TRSRTransformation transform = new TRSRTransformation( translation, rotation, scale, null );
-		thirdPerson = transform.getMatrix();
-
-		// yerp.
-		identity = new Matrix4f();
-		identity.setIdentity();
-	}
-
-	public Pair<? extends IBakedModel, Matrix4f> handlePerspective(
-			final TransformType cameraTransformType )
 	{
-		if ( cameraTransformType == TransformType.THIRD_PERSON_LEFT_HAND || cameraTransformType == TransformType.THIRD_PERSON_RIGHT_HAND )
+		// for some reason these are not identical to vanilla's Block.json, I
+		// don't know why.. but its close.
+
 		{
-			return new ImmutablePair<IBakedModel, Matrix4f>( this, thirdPerson );
+			final javax.vecmath.Vector3f translation = new javax.vecmath.Vector3f( 0, 0, 0 );
+			final javax.vecmath.Vector3f scale = new javax.vecmath.Vector3f( 0.625f, 0.625f, 0.625f );
+			final Quat4f rotation = TRSRTransformation.quatFromXYZDegrees( new javax.vecmath.Vector3f( 30, 225, 0 ) );
+
+			final TRSRTransformation transform = new TRSRTransformation( translation, rotation, scale, null );
+			gui = transform.getMatrix();
 		}
 
-		return new ImmutablePair<IBakedModel, Matrix4f>( this, identity );
+		{
+			final javax.vecmath.Vector3f translation = new javax.vecmath.Vector3f( 0, 0, 0 );
+			final javax.vecmath.Vector3f scale = new javax.vecmath.Vector3f( 0.25f, 0.25f, 0.25f );
+			final Quat4f rotation = TRSRTransformation.quatFromXYZDegrees( new javax.vecmath.Vector3f( 0, 0, 0 ) );
+
+			final TRSRTransformation transform = new TRSRTransformation( translation, rotation, scale, null );
+			ground = transform.getMatrix();
+		}
+
+		{
+			final javax.vecmath.Vector3f translation = new javax.vecmath.Vector3f( 0, 0, 0 );
+			final javax.vecmath.Vector3f scale = new javax.vecmath.Vector3f( 0.5f, 0.5f, 0.5f );
+			final Quat4f rotation = TRSRTransformation.quatFromXYZDegrees( new javax.vecmath.Vector3f( 0, 0, 0 ) );
+
+			final TRSRTransformation transform = new TRSRTransformation( translation, rotation, scale, null );
+			fixed = transform.getMatrix();
+		}
+
+		{
+			final javax.vecmath.Vector3f translation = new javax.vecmath.Vector3f( 0, 0, 0 );
+			final javax.vecmath.Vector3f scale = new javax.vecmath.Vector3f( 0.375f, 0.375f, 0.375f );
+			final Quat4f rotation = TRSRTransformation.quatFromXYZDegrees( new javax.vecmath.Vector3f( 75, 45, 0 ) );
+
+			final TRSRTransformation transform = new TRSRTransformation( translation, rotation, scale, null );
+			thirdPerson_lefthand = thirdPerson_righthand = transform.getMatrix();
+		}
+
+		{
+			final javax.vecmath.Vector3f translation = new javax.vecmath.Vector3f( 0, 0, 0 );
+			final javax.vecmath.Vector3f scale = new javax.vecmath.Vector3f( 0.40f, 0.40f, 0.40f );
+			final Quat4f rotation = TRSRTransformation.quatFromXYZDegrees( new javax.vecmath.Vector3f( 0, 45, 0 ) );
+
+			final TRSRTransformation transform = new TRSRTransformation( translation, rotation, scale, null );
+			firstPerson_righthand = transform.getMatrix();
+		}
+
+		{
+			final javax.vecmath.Vector3f translation = new javax.vecmath.Vector3f( 0, 0, 0 );
+			final javax.vecmath.Vector3f scale = new javax.vecmath.Vector3f( 0.40f, 0.40f, 0.40f );
+			final Quat4f rotation = TRSRTransformation.quatFromXYZDegrees( new javax.vecmath.Vector3f( 0, 225, 0 ) );
+
+			final TRSRTransformation transform = new TRSRTransformation( translation, rotation, scale, null );
+			firstPerson_lefthand = transform.getMatrix();
+		}
 	}
 
 	@Override
-	public boolean func_188618_c()
+	public Pair<? extends IBakedModel, Matrix4f> handlePerspective(
+			final TransformType cameraTransformType )
+	{
+		switch ( cameraTransformType )
+		{
+			case FIRST_PERSON_LEFT_HAND:
+				return new ImmutablePair<IBakedModel, Matrix4f>( this, firstPerson_lefthand );
+			case FIRST_PERSON_RIGHT_HAND:
+				return new ImmutablePair<IBakedModel, Matrix4f>( this, firstPerson_righthand );
+			case THIRD_PERSON_LEFT_HAND:
+				return new ImmutablePair<IBakedModel, Matrix4f>( this, thirdPerson_lefthand );
+			case THIRD_PERSON_RIGHT_HAND:
+				return new ImmutablePair<IBakedModel, Matrix4f>( this, thirdPerson_righthand );
+			case FIXED:
+				return new ImmutablePair<IBakedModel, Matrix4f>( this, fixed );
+			case GROUND:
+				return new ImmutablePair<IBakedModel, Matrix4f>( this, ground );
+			case GUI:
+				return new ImmutablePair<IBakedModel, Matrix4f>( this, gui );
+		}
+
+		return new ImmutablePair<IBakedModel, Matrix4f>( this, fixed );
+	}
+
+	@Override
+	public boolean isBuiltInRenderer()
 	{
 		return false;
 	}
 
 	@Override
-	public ItemOverrideList func_188617_f()
+	public ItemOverrideList getOverrides()
 	{
-		return ItemOverrideList.field_188022_a;
+		return ItemOverrideList.NONE;
 	}
 }

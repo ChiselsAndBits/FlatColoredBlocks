@@ -1,4 +1,5 @@
 {
+    "parent": "block/block",
 	"textures": {
 		"all": "flatcoloredblocks:blocks/flatcoloredblock_DRYWALL",
 		"particle": "flatcoloredblocks:blocks/flatcoloredblock_DRYWALL"

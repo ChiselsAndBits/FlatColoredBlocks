@@ -104,11 +104,11 @@ public class BlockFlatColored extends Block
 		// mimic stone..
 		setHardness( 1.5F );
 		setResistance( 10.0F );
-		setStepSound( SoundType.field_185851_d );
+		setStepSound( SoundType.ANVIL );
 		setHarvestLevel( "pickaxe", 0 );
 		setLightLevel( FlatColoredBlocks.instance.config.GLOWING_EMITS_LIGHT ? Math.max( 0, Math.min( 15, lightValue / 255.0f ) ) : 0 );
 		setLightOpacity( opacity > 0.001 ? 0 : 255 );
-		setStepSound( opacity > 0.001 ? SoundType.field_185853_f : SoundType.field_185851_d );
+		setStepSound( opacity > 0.001 ? SoundType.GLASS : SoundType.STONE );
 
 		translucent = opacity > 0.001;
 		varient = varientNum;

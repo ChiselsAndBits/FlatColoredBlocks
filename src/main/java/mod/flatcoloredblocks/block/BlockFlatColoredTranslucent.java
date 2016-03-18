@@ -6,6 +6,8 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockFlatColoredTranslucent extends BlockFlatColored
 {
@@ -28,20 +30,22 @@ public class BlockFlatColoredTranslucent extends BlockFlatColored
 	}
 
 	@Override
-	public boolean doesSideBlockRendering(
-			final IBlockState state,
-			final IBlockAccess world,
+	@SideOnly( Side.CLIENT )
+	public boolean shouldSideBeRendered(
+			final IBlockState blockState,
+			final IBlockAccess blockAccess,
 			final BlockPos pos,
-			final EnumFacing face )
+			final EnumFacing side )
 	{
-		final Block blk = state.getBlock();
+		final IBlockState iblockstate = blockAccess.getBlockState( pos.offset( side ) );
+		final Block block = iblockstate.getBlock();
 
-		if ( blk instanceof BlockFlatColoredTranslucent )
+		if ( block instanceof BlockFlatColoredTranslucent )
 		{
-			return true;
+			return false;
 		}
 
-		return super.doesSideBlockRendering( state, world, pos, face );
+		return super.shouldSideBeRendered( blockState, blockAccess, pos, side );
 	}
 
 	@Override

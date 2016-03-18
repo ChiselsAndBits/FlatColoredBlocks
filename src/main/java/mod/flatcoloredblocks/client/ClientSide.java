@@ -17,7 +17,9 @@ import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.client.renderer.color.IBlockColor;
+import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -48,16 +50,30 @@ public class ClientSide implements IClientSide
 	@Override
 	public void init()
 	{
-		Minecraft.getMinecraft().func_184125_al().func_186722_a( new IBlockColor() {
+		Minecraft.getMinecraft().getItemColors().registerItemColorHandler( new IItemColor() {
+
 			@Override
-			public int func_186720_a(
+			public int getColorFromItemstack(
+					final ItemStack stack,
+					final int tintIndex )
+			{
+				final Block blk = Block.getBlockFromItem( stack.getItem() );
+				return ( (BlockFlatColored) blk ).colorFromState( blk.getStateFromMeta( stack.getMetadata() ) );
+			}
+		}, BlockFlatColored.getAllBlocks().toArray( new Block[BlockFlatColored.getAllBlocks().size()] ) );
+
+		Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler( new IBlockColor() {
+
+			@Override
+			public int colorMultiplier(
 					final IBlockState state,
-					final IBlockAccess world,
+					final IBlockAccess p_186720_2_,
 					final BlockPos pos,
-					final int something )
+					final int tintIndex )
 			{
 				return ( (BlockFlatColored) state.getBlock() ).colorFromState( state );
 			}
+
 		}, BlockFlatColored.getAllBlocks().toArray( new Block[BlockFlatColored.getAllBlocks().size()] ) );
 	}
 

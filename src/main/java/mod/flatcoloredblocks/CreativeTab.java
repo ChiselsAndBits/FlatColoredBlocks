@@ -57,7 +57,7 @@ public class CreativeTab extends CreativeTabs
 	{
 		offsetTimer = Stopwatch.createStarted();
 		list = new ArrayList<ItemStack>();
-		displayAllReleventItems( list );
+		displayAllRelevantItems( list );
 
 		for ( int x = 0; x < list.size(); ++x )
 		{
@@ -87,7 +87,7 @@ public class CreativeTab extends CreativeTabs
 
 		if ( list.isEmpty() )
 		{
-			displayAllReleventItems( list );
+			displayAllRelevantItems( list );
 		}
 	}
 }
