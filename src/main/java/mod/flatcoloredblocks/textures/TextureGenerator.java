@@ -36,7 +36,7 @@ public class TextureGenerator
 			for ( final int varient : FlatColoredBlocks.instance.transparent.shadeConvertVariant )
 			{
 				final String name = ClientSide.instance.getTextureName( EnumFlatBlockType.TRANSPARENT, varient );
-				final TextureAtlasSprite out = AlphaModifiedTexture.generate( name, bi, varient / 255.0f, ev.map );
+				final TextureAtlasSprite out = AlphaModifiedTexture.generate( name, bi, varient / 255.0f, ev.getMap() );
 
 				// register.
 				generatedTransparentTexture.put( varient, out );
@@ -47,7 +47,7 @@ public class TextureGenerator
 			// just load the texture if for some reason the above fails.
 			Log.logError( "Unable to load Base Texture", e );
 
-			final TextureAtlasSprite out = ev.map.registerSprite( new ResourceLocation( ClientSide.instance.getBaseTextureNameWithBlocks( EnumFlatBlockType.TRANSPARENT ) ) );
+			final TextureAtlasSprite out = ev.getMap().registerSprite( new ResourceLocation( ClientSide.instance.getBaseTextureNameWithBlocks( EnumFlatBlockType.TRANSPARENT ) ) );
 
 			for ( final int varient : FlatColoredBlocks.instance.transparent.shadeConvertVariant )
 			{
@@ -57,7 +57,7 @@ public class TextureGenerator
 
 		if ( !FlatColoredBlocks.instance.config.GLOWING_EMITS_LIGHT )
 		{
-			glowingTexture = ev.map.registerSprite( new ResourceLocation( ClientSide.instance.getBaseTextureNameWithBlocks( EnumFlatBlockType.GLOWING ) ) );
+			glowingTexture = ev.getMap().registerSprite( new ResourceLocation( ClientSide.instance.getBaseTextureNameWithBlocks( EnumFlatBlockType.GLOWING ) ) );
 		}
 	}
 

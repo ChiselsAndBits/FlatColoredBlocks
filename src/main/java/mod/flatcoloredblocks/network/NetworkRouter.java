@@ -95,13 +95,13 @@ public class NetworkRouter
 			final ServerCustomPacketEvent ev )
 	{
 		// find player
-		final NetHandlerPlayServer srv = (NetHandlerPlayServer) ev.packet.handler();
+		final NetHandlerPlayServer srv = (NetHandlerPlayServer) ev.getPacket().handler();
 
 		try
 		{
 			if ( serverPacketHandler != null )
 			{
-				serverPacketHandler.onPacketData( ev.packet, ev.handler, srv.playerEntity );
+				serverPacketHandler.onPacketData( ev.getPacket(), ev.getHandler(), srv.playerEntity );
 			}
 		}
 		catch ( final ThreadQuickExitException ext )
@@ -118,7 +118,7 @@ public class NetworkRouter
 		{
 			if ( clientPacketHandler != null )
 			{
-				clientPacketHandler.onPacketData( ev.packet, ev.handler );
+				clientPacketHandler.onPacketData( ev.getPacket(), ev.getHandler() );
 			}
 		}
 		catch ( final ThreadQuickExitException ext )

@@ -179,10 +179,10 @@ public class FlatColoredBlocks
 	{
 		// if the max shades has changed in form the user of the new usage.
 		if ( config.LAST_MAX_SHADES != FlatColoredBlocks.instance.getFullNumberOfShades()
-				&& event.gui != null
-				&& event.gui.getClass() == GuiMainMenu.class )
+				&& event.getGui() != null
+				&& event.getGui().getClass() == GuiMainMenu.class )
 		{
-			event.gui = new GuiScreenStartup();
+			event.setGui( new GuiScreenStartup() );
 		}
 	}
 }
