@@ -17,10 +17,12 @@ group= "mod.flatcoloredblocks"
 archivesBaseName = "flatcoloredblocks"
 
 repositories { maven { url "http://dvs1.progwml6.com/files/maven" } }
-dependencies { deobfCompile "mezz.jei:jei_1.9:3.0.+" }
+dependencies {
+	deobfCompile "mezz.jei:jei_1.9:3.1.0.170"
+}
 
 minecraft {
-    version = "1.9-12.16.0.1805-1.9"
+    version = "1.9-12.16.0.1811-1.9"
     runDir = "eclipse"
     mappings = "snapshot_nodoc_20160312"
     replace "@VERSION@", project.version
