@@ -117,9 +117,11 @@ public class FlatColoredBlocks
 
 		// create and configure crafting item.
 		itemColoredBlockCrafting = new ItemColoredBlockCrafter();
-		GameRegistry.registerItem( itemColoredBlockCrafting, "coloredcraftingitem" );
+		itemColoredBlockCrafting.setRegistryName( FlatColoredBlocks.MODID, "coloredcraftingitem" );
+		GameRegistry.register( itemColoredBlockCrafting );
+		
 		clientSide.configureCraftingRender( itemColoredBlockCrafting );
-
+		
 		// crafting pattern.
 		final ShapedOreRecipe craftingItemRecipe = new ShapedOreRecipe( itemColoredBlockCrafting, " R ", "VrG", " C ", 'R', "dyeRed", 'V', "dyePurple", 'r', "ingotIron", 'G', "dyeGreen",
 				'C', "dyeCyan" );
@@ -136,15 +138,24 @@ public class FlatColoredBlocks
 				{
 					final int offset = x * BlockHSVConfiguration.META_SCALE;
 					final BlockFlatColored cb = BlockFlatColored.construct( hsvconfig, offset, v );
-
-					GameRegistry.registerBlock( cb, ItemBlockFlatColored.class, hsvconfig.getBlockName( v ) + x );
-
+					final ItemBlockFlatColored cbi = new ItemBlockFlatColored( cb);
+					
+					String regName = hsvconfig.getBlockName( v ) + x;
+					
+					// use the same name for item/block combo.
+					cb.setRegistryName( MODID, regName );
+					cbi.setRegistryName( MODID,regName );
+					
+					// register both.
+					GameRegistry.register(cb);
+					GameRegistry.register(cbi);
+					
 					// blacklist with JEI
 					if ( !config.ShowBlocksInJEI )
 					{
 						jei.blackListBlock( cb );
 					}
-
+					
 					clientSide.configureBlockRender( cb );
 				}
 			}

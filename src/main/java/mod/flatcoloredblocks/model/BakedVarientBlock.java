@@ -36,7 +36,6 @@ import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad.Builder;
 import net.minecraftforge.common.model.TRSRTransformation;
 
-@SuppressWarnings( "deprecation" )
 public class BakedVarientBlock implements IBakedModel, IPerspectiveAwareModel
 {
 
@@ -317,6 +316,8 @@ public class BakedVarientBlock implements IBakedModel, IPerspectiveAwareModel
 				return new ImmutablePair<IBakedModel, Matrix4f>( this, ground );
 			case GUI:
 				return new ImmutablePair<IBakedModel, Matrix4f>( this, gui );
+			default:
+				break;
 		}
 
 		return new ImmutablePair<IBakedModel, Matrix4f>( this, fixed );
