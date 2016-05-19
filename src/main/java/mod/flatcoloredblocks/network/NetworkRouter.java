@@ -64,7 +64,7 @@ public class NetworkRouter
 			final ModPacket innerPacket = parsePacket( buffer );
 			innerPacket.serverEntity = playerEntity;
 
-			PacketThreadUtil.checkThreadAndEnqueue( innerPacket, handler, playerEntity.getServerForPlayer() );
+			PacketThreadUtil.checkThreadAndEnqueue( innerPacket, handler, playerEntity.getServer() );
 			innerPacket.server( playerEntity );
 		}
 	};

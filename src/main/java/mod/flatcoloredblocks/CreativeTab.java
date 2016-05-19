@@ -26,7 +26,7 @@ public class CreativeTab extends CreativeTabs
 	public Item getTabIconItem()
 	{
 		// never used, see below.
-		return Item.getItemFromBlock( Blocks.cobblestone );
+		return Item.getItemFromBlock( Blocks.COBBLESTONE );
 	}
 
 	private int listOffset = 0;

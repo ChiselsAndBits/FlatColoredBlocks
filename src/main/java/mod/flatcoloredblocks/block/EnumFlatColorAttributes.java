@@ -6,28 +6,28 @@ import net.minecraft.item.EnumDyeColor;
 public enum EnumFlatColorAttributes
 {
 	// non-colors
-	black( true, true, EnumDyeColor.BLACK, MapColor.blackColor ),
-	grey( true, true, EnumDyeColor.GRAY, MapColor.grayColor ),
-	silver( true, true, EnumDyeColor.SILVER, MapColor.silverColor ),
-	white( true, true, EnumDyeColor.WHITE, MapColor.snowColor ),
+	black( true, true, EnumDyeColor.BLACK, MapColor.BLACK ),
+	grey( true, true, EnumDyeColor.GRAY, MapColor.GRAY ),
+	silver( true, true, EnumDyeColor.SILVER, MapColor.SILVER ),
+	white( true, true, EnumDyeColor.WHITE, MapColor.SNOW ),
 
 	// colors...
-	red( true, false, EnumDyeColor.RED, MapColor.redColor ),
-	orange( true, false, EnumDyeColor.ORANGE, MapColor.adobeColor ),
-	yellow( true, false, EnumDyeColor.YELLOW, MapColor.yellowColor ),
-	lime( true, false, EnumDyeColor.LIME, MapColor.limeColor ),
-	green( true, false, EnumDyeColor.GREEN, MapColor.greenColor ),
-	emerald( true, false, EnumDyeColor.GREEN, EnumDyeColor.CYAN, MapColor.greenColor ),
-	cyan( true, false, EnumDyeColor.CYAN, MapColor.cyanColor ),
-	azure( true, false, EnumDyeColor.BLUE, EnumDyeColor.CYAN, MapColor.blueColor ),
-	blue( true, false, EnumDyeColor.BLUE, MapColor.blueColor ),
-	violet( true, false, EnumDyeColor.PURPLE, MapColor.purpleColor ),
-	magenta( true, false, EnumDyeColor.MAGENTA, MapColor.magentaColor ),
-	pink( true, false, EnumDyeColor.PINK, MapColor.pinkColor ),
+	red( true, false, EnumDyeColor.RED, MapColor.RED ),
+	orange( true, false, EnumDyeColor.ORANGE, MapColor.ADOBE ),
+	yellow( true, false, EnumDyeColor.YELLOW, MapColor.YELLOW ),
+	lime( true, false, EnumDyeColor.LIME, MapColor.LIME ),
+	green( true, false, EnumDyeColor.GREEN, MapColor.GREEN ),
+	emerald( true, false, EnumDyeColor.GREEN, EnumDyeColor.CYAN, MapColor.GREEN ),
+	cyan( true, false, EnumDyeColor.CYAN, MapColor.CYAN ),
+	azure( true, false, EnumDyeColor.BLUE, EnumDyeColor.CYAN, MapColor.LIGHT_BLUE ),
+	blue( true, false, EnumDyeColor.BLUE, MapColor.BLUE ),
+	violet( true, false, EnumDyeColor.PURPLE, MapColor.PURPLE ),
+	magenta( true, false, EnumDyeColor.MAGENTA, MapColor.MAGENTA ),
+	pink( true, false, EnumDyeColor.PINK, MapColor.PINK ),
 
 	// color modifiers
-	dark( false, false, EnumDyeColor.BLACK, MapColor.blackColor ),
-	light( false, false, EnumDyeColor.WHITE, MapColor.snowColor );
+	dark( false, false, EnumDyeColor.BLACK, MapColor.BLACK ),
+	light( false, false, EnumDyeColor.WHITE, MapColor.SNOW );
 
 	// description of characteristic
 	public final boolean isModifier;

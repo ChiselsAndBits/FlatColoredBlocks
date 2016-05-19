@@ -31,6 +31,7 @@ public class BlockFlatColoredTranslucent extends BlockFlatColored
 
 	@Override
 	@SideOnly( Side.CLIENT )
+	@Deprecated
 	public boolean shouldSideBeRendered(
 			final IBlockState blockState,
 			final IBlockAccess blockAccess,
