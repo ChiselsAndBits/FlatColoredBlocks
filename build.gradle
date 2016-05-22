@@ -12,13 +12,13 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "mc1.9-v2.2"
+version = "mc1.9.4-v3.0"
 group= "mod.flatcoloredblocks"
 archivesBaseName = "flatcoloredblocks"
 
 repositories { maven { url "http://dvs1.progwml6.com/files/maven" } }
 dependencies {
-	deobfCompile "mezz.jei:jei_1.9:3.2.5.179"
+	deobfCompile "mezz.jei:jei_1.9.4:3.4.0.204"
 }
 
 minecraft {
