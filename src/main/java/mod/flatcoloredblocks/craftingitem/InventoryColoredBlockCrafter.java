@@ -19,7 +19,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -67,9 +69,9 @@ public class InventoryColoredBlockCrafter implements IInventory
 		dyeList.put( EnumDyeColor.MAGENTA, OreDictionary.getOres( "dyeMagenta" ) );
 		dyeList.put( EnumDyeColor.ORANGE, OreDictionary.getOres( "dyeOrange" ) );
 		dyeList.put( EnumDyeColor.WHITE, OreDictionary.getOres( "dyeWhite" ) );
-		dyeList.put( EnumFlatBlockType.NORMAL, OreDictionary.getOres( FlatColoredBlocks.instance.config.solidCraftingBlock ) );
-		dyeList.put( EnumFlatBlockType.GLOWING, OreDictionary.getOres( FlatColoredBlocks.instance.config.glowingCraftingBlock ) );
-		dyeList.put( EnumFlatBlockType.TRANSPARENT, OreDictionary.getOres( FlatColoredBlocks.instance.config.transparentCraftingBlock ) );
+		dyeList.put( EnumFlatBlockType.NORMAL, getItems( FlatColoredBlocks.instance.config.solidCraftingBlock ) );
+		dyeList.put( EnumFlatBlockType.GLOWING, getItems( FlatColoredBlocks.instance.config.glowingCraftingBlock ) );
+		dyeList.put( EnumFlatBlockType.TRANSPARENT, getItems( FlatColoredBlocks.instance.config.transparentCraftingBlock ) );
 
 		boolean hasCobblestone = false;
 		boolean hasGlowstone = false;
@@ -125,6 +127,24 @@ public class InventoryColoredBlockCrafter implements IInventory
 		}
 
 		return new InventorySummary( hasCobblestone, hasGlowstone, hasGlass, stacks, dyes );
+	}
+
+	private List<ItemStack> getItems(
+			final String name )
+	{
+		List<ItemStack> items = OreDictionary.getOres( name, false );
+
+		if ( items.isEmpty() )
+		{
+			items = new ArrayList<ItemStack>();
+			final Item it = Item.REGISTRY.getObject( new ResourceLocation( name ) );
+			if ( it != null )
+			{
+				items.add( new ItemStack( it, 1, OreDictionary.WILDCARD_VALUE ) );
+			}
+		}
+
+		return items;
 	}
 
 	/**
