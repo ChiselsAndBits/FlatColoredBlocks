@@ -33,7 +33,7 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 @Mod(
 		name = FlatColoredBlocks.MODNAME,
 		modid = FlatColoredBlocks.MODID,
-		acceptedMinecraftVersions = "[1.9.4]",
+		acceptedMinecraftVersions = "[1.10]",
 		version = FlatColoredBlocks.VERSION,
 		dependencies = FlatColoredBlocks.DEPENDENCIES,
 		guiFactory = "mod.flatcoloredblocks.gui.ConfigGuiFactory" )
