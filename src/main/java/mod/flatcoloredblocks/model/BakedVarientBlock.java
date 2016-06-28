@@ -147,6 +147,7 @@ public class BakedVarientBlock implements IBakedModel, IPerspectiveAwareModel
 		final UnpackedBakedQuad.Builder b = new Builder( format );
 		b.setQuadOrientation( myFace );
 		b.setQuadTint( 1 );
+		b.setTexture( g.getSprite() );
 
 		for ( int vertNum = 0; vertNum < 4; vertNum++ )
 		{
