@@ -366,10 +366,10 @@ public class InventoryColoredBlockCrafter implements IInventory
 				{
 					final ItemCraftingSource is = findItem( da.stacks.get( dye ), simulate );
 
-					isx.consume( 1 );
 					is.consume( 1 );
 				}
 
+				isx.consume( 1 );
 				out.stackSize += craftAmount;
 			}
 			else
