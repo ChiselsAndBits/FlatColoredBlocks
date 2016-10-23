@@ -4,11 +4,10 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
-import com.mojang.realmsclient.gui.ChatFormatting;
-
 import mod.flatcoloredblocks.FlatColoredBlocks;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
 
 /**
@@ -50,7 +49,7 @@ public class GuiScreenStartup extends GuiScreen
 		drawDefaultBackground();
 
 		int heightLoc = 90;
-		drawCenteredString( fontRendererObj, ChatFormatting.YELLOW + "Flat Colored Blocks", width / 2, height / 2 - 110, 0xFFFFFF );
+		drawCenteredString( fontRendererObj, TextFormatting.YELLOW + "Flat Colored Blocks", width / 2, height / 2 - 110, 0xFFFFFF );
 
 		for ( final String s : lines )
 		{
