@@ -45,13 +45,9 @@ public class InventoryColoredBlockCrafter implements IInventory
 		craftingContainer = coloredCrafterContainer;
 	}
 
-	private InventorySummary scanPlayerInventory()
+	public static HashMap<Object, List<ItemStack>> getDyeList()
 	{
-		final EnumSet<EnumDyeColor> dyes = EnumSet.noneOf( EnumDyeColor.class );
-		final InventoryPlayer ip = thePlayer.inventory;
-
 		final HashMap<Object, List<ItemStack>> dyeList = new HashMap<Object, List<ItemStack>>();
-		final HashMap<Object, HashSet<ItemCraftingSource>> stacks = new HashMap<Object, HashSet<ItemCraftingSource>>();
 
 		dyeList.put( EnumDyeColor.BLACK, OreDictionary.getOres( "dyeBlack" ) );
 		dyeList.put( EnumDyeColor.RED, OreDictionary.getOres( "dyeRed" ) );
@@ -72,6 +68,17 @@ public class InventoryColoredBlockCrafter implements IInventory
 		dyeList.put( EnumFlatBlockType.NORMAL, getItems( FlatColoredBlocks.instance.config.solidCraftingBlock ) );
 		dyeList.put( EnumFlatBlockType.GLOWING, getItems( FlatColoredBlocks.instance.config.glowingCraftingBlock ) );
 		dyeList.put( EnumFlatBlockType.TRANSPARENT, getItems( FlatColoredBlocks.instance.config.transparentCraftingBlock ) );
+
+		return dyeList;
+	}
+
+	private InventorySummary scanPlayerInventory()
+	{
+		final EnumSet<EnumDyeColor> dyes = EnumSet.noneOf( EnumDyeColor.class );
+		final InventoryPlayer ip = thePlayer.inventory;
+
+		final HashMap<Object, List<ItemStack>> dyeList = getDyeList();
+		final HashMap<Object, HashSet<ItemCraftingSource>> stacks = new HashMap<Object, HashSet<ItemCraftingSource>>();
 
 		boolean hasCobblestone = false;
 		boolean hasGlowstone = false;
@@ -129,7 +136,7 @@ public class InventoryColoredBlockCrafter implements IInventory
 		return new InventorySummary( hasCobblestone, hasGlowstone, hasGlass, stacks, dyes );
 	}
 
-	private List<ItemStack> getItems(
+	private static List<ItemStack> getItems(
 			final String name )
 	{
 		List<ItemStack> items = OreDictionary.getOres( name, false );
@@ -176,7 +183,7 @@ public class InventoryColoredBlockCrafter implements IInventory
 				}
 			}
 
-			final EnumDyeColor alternateDye = getAlternateDye( charistics );
+			final EnumDyeColor alternateDye = EnumFlatColorAttributes.getAlternateDye( charistics );
 			if ( alternateDye != null && dyes.contains( alternateDye ) )
 			{
 				isGood = true;
@@ -189,26 +196,6 @@ public class InventoryColoredBlockCrafter implements IInventory
 		}
 
 		craftingContainer.setScroll( craftingContainer.scrollPercent );
-	}
-
-	/**
-	 * Probably not the best way to do this.. but these are pretty odd ball
-	 * cases...
-	 */
-	private EnumDyeColor getAlternateDye(
-			final Set<EnumFlatColorAttributes> characteristics )
-	{
-		if ( characteristics.contains( EnumFlatColorAttributes.orange ) && characteristics.contains( EnumFlatColorAttributes.dark ) )
-		{
-			return EnumDyeColor.BROWN;
-		}
-
-		if ( characteristics.contains( EnumFlatColorAttributes.blue ) && characteristics.contains( EnumFlatColorAttributes.light ) )
-		{
-			return EnumDyeColor.LIGHT_BLUE;
-		}
-
-		return null;
 	}
 
 	@Override
@@ -292,24 +279,9 @@ public class InventoryColoredBlockCrafter implements IInventory
 		final Object Craftable = ( (BlockFlatColored) blk ).getCraftable();
 		final HashSet<EnumDyeColor> requiredDyes = new HashSet<EnumDyeColor>();
 
-		int craftAmount = 1;
+		final int craftAmount = Craftable instanceof EnumFlatBlockType ? ( (EnumFlatBlockType) Craftable ).getOutputCount() : 1;
 
-		if ( Craftable == EnumFlatBlockType.NORMAL )
-		{
-			craftAmount = FlatColoredBlocks.instance.config.solidCraftingOutput;
-		}
-
-		if ( Craftable == EnumFlatBlockType.TRANSPARENT )
-		{
-			craftAmount = FlatColoredBlocks.instance.config.transparentCraftingOutput;
-		}
-
-		if ( Craftable == EnumFlatBlockType.GLOWING )
-		{
-			craftAmount = FlatColoredBlocks.instance.config.glowingCraftingOutput;
-		}
-
-		final EnumDyeColor alternateDye = getAlternateDye( charistics );
+		final EnumDyeColor alternateDye = EnumFlatColorAttributes.getAlternateDye( charistics );
 		final HashSet<EnumDyeColor> alternateSet = new HashSet<EnumDyeColor>();
 
 		if ( alternateDye != null )

@@ -1,5 +1,7 @@
 package mod.flatcoloredblocks.block;
 
+import java.util.Set;
+
 import net.minecraft.block.material.MapColor;
 import net.minecraft.item.EnumDyeColor;
 
@@ -65,6 +67,22 @@ public enum EnumFlatColorAttributes
 		primaryDye = dye;
 		secondaryDye = dye;
 		this.mapColor = mapColor;
+	}
+
+	public static EnumDyeColor getAlternateDye(
+			final Set<EnumFlatColorAttributes> characteristics )
+	{
+		if ( characteristics.contains( EnumFlatColorAttributes.orange ) && characteristics.contains( EnumFlatColorAttributes.dark ) )
+		{
+			return EnumDyeColor.BROWN;
+		}
+
+		if ( characteristics.contains( EnumFlatColorAttributes.blue ) && characteristics.contains( EnumFlatColorAttributes.light ) )
+		{
+			return EnumDyeColor.LIGHT_BLUE;
+		}
+
+		return null;
 	}
 
 }

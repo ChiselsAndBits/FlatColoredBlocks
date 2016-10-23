@@ -38,6 +38,9 @@ public class ModConfig extends Configuration
 	@Configured( category = "Crafing" )
 	public int glowingCraftingOutput;
 
+	@Configured( category = "Crafing" )
+	public boolean allowCraftingTable;
+
 	@Configured( category = "Integration" )
 	public boolean ShowBlocksInJEI;
 
@@ -193,6 +196,7 @@ public class ModConfig extends Configuration
 		solidCraftingOutput = 1;
 		transparentCraftingOutput = 1;
 		glowingCraftingOutput = 1;
+		allowCraftingTable = true;
 
 		LAST_MAX_SHADES = 0;
 
