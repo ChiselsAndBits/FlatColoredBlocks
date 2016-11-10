@@ -1,11 +1,15 @@
 package mod.flatcoloredblocks.block;
 
+import java.util.List;
 import java.util.Set;
 
+import mod.flatcoloredblocks.FlatColoredBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
 
 public class ItemBlockFlatColored extends ItemBlock
@@ -93,6 +97,77 @@ public class ItemBlockFlatColored extends ItemBlock
 			default:
 				return "";
 		}
+	}
+
+	@Override
+	public void addInformation(
+			final ItemStack stack,
+			final EntityPlayer playerIn,
+			final List<String> tooltip,
+			final boolean advanced )
+	{
+		final IBlockState state = getStateFromStack( stack );
+		final BlockFlatColored blk = getColoredBlock();
+
+		final int hsv = blk.hsvFromState( state );
+		final int rgb = ConversionHSV2RGB.toRGB( hsv );
+
+		if ( FlatColoredBlocks.instance.config.showRGB )
+		{
+			addColor( true, rgb, tooltip );
+		}
+
+		if ( FlatColoredBlocks.instance.config.showHSV )
+		{
+			addColor( false, hsv, tooltip );
+		}
+
+		if ( FlatColoredBlocks.instance.config.showLight && blk.lightValue > 0 )
+		{
+			final StringBuilder sb = new StringBuilder();
+			sb.append( I18n.translateToLocal( "flatcoloredblocks.tooltips.lightvalue" ) ).append( ' ' );
+			sb.append( blk.lightValue ).append( "/15" );
+			tooltip.add( sb.toString() );
+		}
+
+		if ( FlatColoredBlocks.instance.config.showOpacity && blk.opacity < 100 )
+		{
+			final StringBuilder sb = new StringBuilder();
+			sb.append( I18n.translateToLocal( "flatcoloredblocks.tooltips.opacity" ) ).append( ' ' );
+			sb.append( blk.opacity ).append( '%' );
+			tooltip.add( sb.toString() );
+		}
+
+		super.addInformation( stack, playerIn, tooltip, advanced );
+	}
+
+	private void addColor(
+			final boolean isRgb,
+			final int value,
+			final List<String> tooltip )
+	{
+		final int r_h = value >> 16 & 0xff;
+		final int g_s = value >> 8 & 0xff;
+		final int b_v = value & 0xff;
+
+		final StringBuilder sb = new StringBuilder();
+
+		if ( isRgb )
+		{
+			sb.append( I18n.translateToLocal( "flatcoloredblocks.tooltips.rgb" ) ).append( ' ' );
+			sb.append( TextFormatting.RED ).append( r_h ).append( ' ' );
+			sb.append( TextFormatting.GREEN ).append( g_s ).append( ' ' );
+			sb.append( TextFormatting.BLUE ).append( b_v );
+		}
+		else
+		{
+			sb.append( I18n.translateToLocal( "flatcoloredblocks.tooltips.hsv" ) ).append( ' ' );
+			sb.append( 360 * r_h / 255 ).append( "° " );
+			sb.append( 100 * g_s / 255 ).append( "% " );
+			sb.append( 100 * b_v / 255 ).append( '%' );
+		}
+
+		tooltip.add( sb.toString() );
 	}
 
 	public int getColorFromItemStack(

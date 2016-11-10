@@ -32,6 +32,10 @@ public class BlockFlatColored extends Block
 	private PropertyInteger shade; // block state configuration for block.
 	private final int varient;
 
+	// only used for description.
+	public final int opacity;
+	public final int lightValue;
+
 	@Override
 	public MapColor getMapColor(
 			final IBlockState state )
@@ -113,6 +117,8 @@ public class BlockFlatColored extends Block
 		varient = varientNum;
 
 		coloredBlocks.add( this );
+		this.opacity = 100 - Math.round( opacity * 100 / 255 );
+		this.lightValue = (int) ( lightValue * 15 / 255 );
 	}
 
 	public static BlockFlatColored construct(

@@ -1,6 +1,11 @@
 
 itemGroup.FlatColoredBlocks=Flat Colored Blocks
 
+flatcoloredblocks.tooltips.opacity=Opacity:
+flatcoloredblocks.tooltips.lightvalue=Light Value:
+flatcoloredblocks.tooltips.rgb=RGB:
+flatcoloredblocks.tooltips.hsv=HSV:
+
 item.flatcoloredblocks.coloredcraftingitem.name=Colored Block Crafter
 item.flatcoloredblocks.coloredcraftingitem.tip1=Craft blocks with %% and Dyes.
 item.flatcoloredblocks.coloredcraftingitem.tip2=Put materials in your inventory and use this.

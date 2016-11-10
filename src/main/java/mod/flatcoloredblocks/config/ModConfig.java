@@ -188,6 +188,18 @@ public class ModConfig extends Configuration
 	@Configured( category = "Texture" )
 	public EnumFlatTransparentBlockTextures DISPLAY_TEXTURE_TRANSPARENT;
 
+	@Configured( category = "Client Settings" )
+	public boolean showHSV;
+
+	@Configured( category = "Client Settings" )
+	public boolean showRGB;
+
+	@Configured( category = "Client Settings" )
+	public boolean showLight;
+
+	@Configured( category = "Client Settings" )
+	public boolean showOpacity;
+
 	void setDefaults()
 	{
 		solidCraftingBlock = "cobblestone";
@@ -197,6 +209,7 @@ public class ModConfig extends Configuration
 		transparentCraftingOutput = 1;
 		glowingCraftingOutput = 1;
 		allowCraftingTable = true;
+		showHSV = showRGB = showLight = showOpacity = true;
 
 		LAST_MAX_SHADES = 0;
 
@@ -374,7 +387,13 @@ public class ModConfig extends Configuration
 			final Property.Type type )
 	{
 		final Property prop = super.get( category, key, defaultValue, comment, type );
-		return prop == null ? null : prop.setRequiresMcRestart( true );
+
+		if ( prop != null && !category.equals( "Client Settings" ) )
+		{
+			prop.setRequiresMcRestart( true );
+		}
+
+		return prop == null ? null : prop;
 	}
 
 	@SubscribeEvent
