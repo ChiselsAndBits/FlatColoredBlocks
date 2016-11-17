@@ -36,11 +36,12 @@ public class SlotColoredBlockCrafter extends Slot
 	}
 
 	@Override
-	public void onPickupFromSlot(
+	public ItemStack func_190901_a(
 			final EntityPlayer playerIn,
 			final ItemStack stack )
 	{
 		secondInv.craftItem( stack, 1, false );
+		return stack;
 	}
 
 }

@@ -3,7 +3,10 @@ package mod.flatcoloredblocks.client;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.sun.istack.internal.NotNull;
+
 import mod.flatcoloredblocks.FlatColoredBlocks;
+import mod.flatcoloredblocks.ModUtil;
 import mod.flatcoloredblocks.block.BlockFlatColored;
 import mod.flatcoloredblocks.block.BlockHSVConfiguration;
 import mod.flatcoloredblocks.block.EnumFlatBlockType;
@@ -54,11 +57,11 @@ public class ClientSide implements IClientSide
 
 			@Override
 			public int getColorFromItemstack(
-					final ItemStack stack,
+					@NotNull final ItemStack stack,
 					final int tintIndex )
 			{
 				final Block blk = Block.getBlockFromItem( stack.getItem() );
-				return ( (BlockFlatColored) blk ).colorFromState( blk.getStateFromMeta( stack.getMetadata() ) );
+				return ( (BlockFlatColored) blk ).colorFromState( ModUtil.getStateFromMeta( blk, stack.getMetadata() ) );
 			}
 		}, BlockFlatColored.getAllBlocks().toArray( new Block[BlockFlatColored.getAllBlocks().size()] ) );
 
@@ -140,32 +143,32 @@ public class ClientSide implements IClientSide
 	public String getBaseTextureName(
 			final EnumFlatBlockType type )
 	{
-		return FlatColoredBlocks.MODID + ":flatcoloredblock_" + getTextureFor( type ).name();
+		return FlatColoredBlocks.MODID + ":flatcoloredblock_" + getTextureFor( type );
 	}
 
 	public String getBaseTextureNameWithBlocks(
 			final EnumFlatBlockType type )
 	{
-		return FlatColoredBlocks.MODID + ":blocks/flatcoloredblock_" + getTextureFor( type ).name();
+		return FlatColoredBlocks.MODID + ":blocks/flatcoloredblock_" + getTextureFor( type );
 	}
 
 	public ResourceLocation getTextureResourceLocation(
 			final EnumFlatBlockType type )
 	{
-		return new ResourceLocation( FlatColoredBlocks.MODID, "textures/blocks/flatcoloredblock_" + getTextureFor( type ).name() + ".png" );
+		return new ResourceLocation( FlatColoredBlocks.MODID, "textures/blocks/flatcoloredblock_" + getTextureFor( type ) + ".png" );
 	}
 
-	private Enum<?> getTextureFor(
+	private String getTextureFor(
 			final EnumFlatBlockType type )
 	{
 		switch ( type )
 		{
 			case GLOWING:
-				return FlatColoredBlocks.instance.config.DISPLAY_TEXTURE_GLOWING;
+				return FlatColoredBlocks.instance.config.DISPLAY_TEXTURE_GLOWING.resourceName();
 			case TRANSPARENT:
-				return FlatColoredBlocks.instance.config.DISPLAY_TEXTURE_TRANSPARENT;
+				return FlatColoredBlocks.instance.config.DISPLAY_TEXTURE_TRANSPARENT.resourceName();
 			default:
-				return FlatColoredBlocks.instance.config.DISPLAY_TEXTURE;
+				return FlatColoredBlocks.instance.config.DISPLAY_TEXTURE.resourceName();
 		}
 	}
 

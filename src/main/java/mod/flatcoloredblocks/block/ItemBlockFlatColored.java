@@ -3,14 +3,16 @@ package mod.flatcoloredblocks.block;
 import java.util.List;
 import java.util.Set;
 
+import com.sun.istack.internal.NotNull;
+
 import mod.flatcoloredblocks.FlatColoredBlocks;
+import mod.flatcoloredblocks.ModUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.translation.I18n;
 
 public class ItemBlockFlatColored extends ItemBlock
 {
@@ -21,9 +23,9 @@ public class ItemBlockFlatColored extends ItemBlock
 	}
 
 	private IBlockState getStateFromStack(
-			final ItemStack stack )
+			@NotNull final ItemStack stack )
 	{
-		return getBlock().getStateFromMeta( stack.getItemDamage() );
+		return ModUtil.getStateFromMeta( getBlock(), stack.getItemDamage() );
 	}
 
 	private String getColorPrefix(
@@ -72,7 +74,7 @@ public class ItemBlockFlatColored extends ItemBlock
 
 	@Override
 	public String getItemStackDisplayName(
-			final ItemStack stack )
+			@NotNull final ItemStack stack )
 	{
 		final IBlockState state = getStateFromStack( stack );
 		final int shadeNum = getColoredBlock().getShadeNumber( state );
@@ -83,7 +85,7 @@ public class ItemBlockFlatColored extends ItemBlock
 		final String prefix = getColorPrefix( colorChars );
 		final String hue = getColorHueName( colorChars );
 
-		return type + I18n.translateToLocal( prefix + hue + ".name" ) + " #" + shadeNum;
+		return type + ModUtil.translateToLocal( prefix + hue + ".name" ) + " #" + shadeNum;
 	}
 
 	private String getTypeLocalization()
@@ -91,9 +93,9 @@ public class ItemBlockFlatColored extends ItemBlock
 		switch ( getColoredBlock().getType() )
 		{
 			case GLOWING:
-				return I18n.translateToLocal( "flatcoloredblocks.Glowing.name" ) + " ";
+				return ModUtil.translateToLocal( "flatcoloredblocks.Glowing.name" ) + " ";
 			case TRANSPARENT:
-				return I18n.translateToLocal( "flatcoloredblocks.Transparent.name" ) + " ";
+				return ModUtil.translateToLocal( "flatcoloredblocks.Transparent.name" ) + " ";
 			default:
 				return "";
 		}
@@ -101,7 +103,7 @@ public class ItemBlockFlatColored extends ItemBlock
 
 	@Override
 	public void addInformation(
-			final ItemStack stack,
+			@NotNull final ItemStack stack,
 			final EntityPlayer playerIn,
 			final List<String> tooltip,
 			final boolean advanced )
@@ -125,7 +127,7 @@ public class ItemBlockFlatColored extends ItemBlock
 		if ( FlatColoredBlocks.instance.config.showLight && blk.lightValue > 0 )
 		{
 			final StringBuilder sb = new StringBuilder();
-			sb.append( I18n.translateToLocal( "flatcoloredblocks.tooltips.lightvalue" ) ).append( ' ' );
+			sb.append( ModUtil.translateToLocal( "flatcoloredblocks.tooltips.lightvalue" ) ).append( ' ' );
 			sb.append( blk.lightValue ).append( "/15" );
 			tooltip.add( sb.toString() );
 		}
@@ -133,7 +135,7 @@ public class ItemBlockFlatColored extends ItemBlock
 		if ( FlatColoredBlocks.instance.config.showOpacity && blk.opacity < 100 )
 		{
 			final StringBuilder sb = new StringBuilder();
-			sb.append( I18n.translateToLocal( "flatcoloredblocks.tooltips.opacity" ) ).append( ' ' );
+			sb.append( ModUtil.translateToLocal( "flatcoloredblocks.tooltips.opacity" ) ).append( ' ' );
 			sb.append( blk.opacity ).append( '%' );
 			tooltip.add( sb.toString() );
 		}
@@ -154,14 +156,14 @@ public class ItemBlockFlatColored extends ItemBlock
 
 		if ( isRgb )
 		{
-			sb.append( I18n.translateToLocal( "flatcoloredblocks.tooltips.rgb" ) ).append( ' ' );
+			sb.append( ModUtil.translateToLocal( "flatcoloredblocks.tooltips.rgb" ) ).append( ' ' );
 			sb.append( TextFormatting.RED ).append( r_h ).append( ' ' );
 			sb.append( TextFormatting.GREEN ).append( g_s ).append( ' ' );
 			sb.append( TextFormatting.BLUE ).append( b_v );
 		}
 		else
 		{
-			sb.append( I18n.translateToLocal( "flatcoloredblocks.tooltips.hsv" ) ).append( ' ' );
+			sb.append( ModUtil.translateToLocal( "flatcoloredblocks.tooltips.hsv" ) ).append( ' ' );
 			sb.append( 360 * r_h / 255 ).append( "° " );
 			sb.append( 100 * g_s / 255 ).append( "% " );
 			sb.append( 100 * b_v / 255 ).append( '%' );
@@ -171,7 +173,7 @@ public class ItemBlockFlatColored extends ItemBlock
 	}
 
 	public int getColorFromItemStack(
-			final ItemStack stack,
+			@NotNull final ItemStack stack,
 			final int renderPass )
 	{
 		final IBlockState state = getStateFromStack( stack );

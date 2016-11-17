@@ -1,5 +1,6 @@
 package mod.flatcoloredblocks.craftingitem;
 
+import mod.flatcoloredblocks.ModUtil;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -55,7 +56,7 @@ class ItemCraftingSource
 			if ( is != null )
 			{
 				is = is.copy();
-				is.stackSize -= used;
+				ModUtil.alterStack( is, -used );
 			}
 			return is;
 		}

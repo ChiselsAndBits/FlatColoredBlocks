@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import mod.flatcoloredblocks.ModUtil;
 import mod.flatcoloredblocks.block.BlockFlatColored;
 import mod.flatcoloredblocks.block.EnumFlatBlockType;
 import mod.flatcoloredblocks.block.EnumFlatColorAttributes;
@@ -16,6 +17,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.oredict.OreDictionary;
@@ -28,7 +30,7 @@ public class FlatColoredBlockRecipe implements IRecipe
 	{
 		if ( is == null )
 		{
-			return null;
+			return ModUtil.getEmptyStack();
 		}
 
 		ItemStack target = null;
@@ -50,18 +52,18 @@ public class FlatColoredBlockRecipe implements IRecipe
 			{
 				if ( state != null )
 				{
-					return null;
+					return ModUtil.getEmptyStack();
 				}
 
 				flatBlock = (BlockFlatColored) blk;
 				target = i.copy();
-				state = blk.getStateFromMeta( i.getItemDamage() );
+				state = ModUtil.getStateFromMeta( blk, i.getItemDamage() );
 			}
 			else if ( i.getItem() instanceof ItemColoredBlockCrafter )
 			{
 				if ( hasCrafter )
 				{
-					return null;
+					return ModUtil.getEmptyStack();
 				}
 
 				hasCrafter = true;
@@ -72,14 +74,14 @@ public class FlatColoredBlockRecipe implements IRecipe
 			}
 		}
 
-		if ( hasCrafter && target != null )
+		if ( hasCrafter && target != null && flatBlock != null )
 		{
 			final Set<EnumFlatColorAttributes> charistics = flatBlock.getFlatColorAttributes( state );
 			final Object Craftable = flatBlock.getCraftable();
 			final HashSet<EnumDyeColor> requiredDyes = new HashSet<EnumDyeColor>();
 
 			final int craftAmount = Craftable instanceof EnumFlatBlockType ? ( (EnumFlatBlockType) Craftable ).getOutputCount() : 1;
-			target.stackSize = craftAmount;
+			ModUtil.setStackSize( target, craftAmount );
 
 			final EnumDyeColor alternateDye = EnumFlatColorAttributes.getAlternateDye( charistics );
 			final HashSet<EnumDyeColor> alternateSet = new HashSet<EnumDyeColor>();
@@ -107,7 +109,7 @@ public class FlatColoredBlockRecipe implements IRecipe
 			}
 		}
 
-		return null;
+		return ModUtil.getEmptyStack();
 	}
 
 	private boolean testRequirements(
@@ -186,26 +188,27 @@ public class FlatColoredBlockRecipe implements IRecipe
 	@Override
 	public ItemStack getRecipeOutput()
 	{
-		return null;
+		return ModUtil.getEmptyStack();
 	}
 
 	@Override
-	public ItemStack[] getRemainingItems(
+	public NonNullList<ItemStack> getRemainingItems(
 			final InventoryCrafting inv )
 	{
-		final ItemStack[] ret = new ItemStack[inv.getSizeInventory()];
-		for ( int i = 0; i < ret.length; i++ )
+		final NonNullList<ItemStack> ret = NonNullList.<ItemStack> func_191197_a( inv.getSizeInventory(), ItemStack.field_190927_a );
+
+		for ( int i = 0; i < ret.size(); i++ )
 		{
 			final ItemStack is = inv.getStackInSlot( i );
 			if ( is != null )
 			{
 				if ( is.getItem() instanceof ItemColoredBlockCrafter || is.getItem() instanceof ItemBlockFlatColored )
 				{
-					is.stackSize++;
+					ModUtil.alterStack( is, 1 );
 				}
 				else
 				{
-					ret[i] = ForgeHooks.getContainerItem( is );
+					ret.set( i, ForgeHooks.getContainerItem( is ) );
 				}
 			}
 		}

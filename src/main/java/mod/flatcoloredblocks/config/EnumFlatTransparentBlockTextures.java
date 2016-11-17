@@ -5,5 +5,10 @@ package mod.flatcoloredblocks.config;
  */
 public enum EnumFlatTransparentBlockTextures
 {
-	FLAWLESS_GLASS, SEMI_GLASS, GLASS, NOISE_GLASS,
+	FLAWLESS_GLASS, SEMI_GLASS, GLASS, NOISE_GLASS,;
+
+	public String resourceName()
+	{
+		return name().toLowerCase();
+	}
 }

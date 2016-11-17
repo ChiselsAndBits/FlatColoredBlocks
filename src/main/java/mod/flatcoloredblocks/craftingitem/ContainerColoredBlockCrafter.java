@@ -1,5 +1,6 @@
 package mod.flatcoloredblocks.craftingitem;
 
+import mod.flatcoloredblocks.ModUtil;
 import mod.flatcoloredblocks.network.NetworkRouter;
 import mod.flatcoloredblocks.network.packets.ScrolingGuiPacket;
 import net.minecraft.entity.player.EntityPlayer;
@@ -94,7 +95,7 @@ public class ContainerColoredBlockCrafter extends Container
 			}
 		}
 
-		return null;
+		return ModUtil.getEmptyStack();
 	}
 
 	float scrollPercent = 0;

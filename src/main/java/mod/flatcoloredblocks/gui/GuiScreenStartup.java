@@ -7,8 +7,8 @@ import org.lwjgl.opengl.GL11;
 import mod.flatcoloredblocks.FlatColoredBlocks;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.translation.I18n;
 
 /**
  * Screen displayed to inform the user about block usage, only is displayed when
@@ -21,12 +21,12 @@ public class GuiScreenStartup extends GuiScreen
 	@Override
 	public void initGui()
 	{
-		final String msga = I18n.translateToLocal( "flatcoloredblocks.startup_a" );
-		final String msgb = I18n.translateToLocal( "flatcoloredblocks.startup_b" );
-		final String msgc = I18n.translateToLocal( "flatcoloredblocks.startup_c" );
-		final String msgd = I18n.translateToLocal( "flatcoloredblocks.startup_d" );
-		final String msge = I18n.translateToLocal( "flatcoloredblocks.startup_e" );
-		final String msgf = I18n.translateToLocal( "flatcoloredblocks.startup_f" );
+		final String msga = I18n.format( "flatcoloredblocks.startup_a" );
+		final String msgb = I18n.format( "flatcoloredblocks.startup_b" );
+		final String msgc = I18n.format( "flatcoloredblocks.startup_c" );
+		final String msgd = I18n.format( "flatcoloredblocks.startup_d" );
+		final String msge = I18n.format( "flatcoloredblocks.startup_e" );
+		final String msgf = I18n.format( "flatcoloredblocks.startup_f" );
 
 		String msg = msga + "\n\n" + msgb + "\n\n";
 		msg += FlatColoredBlocks.instance.getFullNumberOfShades() + " ";

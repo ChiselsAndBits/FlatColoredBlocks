@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import mod.flatcoloredblocks.FlatColoredBlocks;
+import mod.flatcoloredblocks.ModUtil;
 import mod.flatcoloredblocks.block.BlockFlatColored;
 import mod.flatcoloredblocks.block.EnumFlatBlockType;
 import mod.flatcoloredblocks.block.EnumFlatColorAttributes;
@@ -170,7 +171,7 @@ public class InventoryColoredBlockCrafter implements IInventory
 		{
 			final ItemStack is = i.next();
 			final Block blk = Block.getBlockFromItem( is.getItem() );
-			final IBlockState state = blk.getStateFromMeta( is.getItemDamage() );
+			final IBlockState state = ModUtil.getStateFromMeta( blk, is.getItemDamage() );
 
 			final Set<EnumFlatColorAttributes> charistics = ( (BlockFlatColored) blk ).getFlatColorAttributes( state );
 			boolean isGood = true;
@@ -233,7 +234,7 @@ public class InventoryColoredBlockCrafter implements IInventory
 			return options.get( index ).copy();
 		}
 
-		return null;
+		return ModUtil.getEmptyStack();
 	}
 
 	@Override
@@ -247,7 +248,7 @@ public class InventoryColoredBlockCrafter implements IInventory
 		{
 			ItemStack out = options.get( index );
 
-			if ( out.stackSize <= 0 )
+			if ( ModUtil.getStackSize( out ) <= 0 )
 			{
 				out = null;
 			}
@@ -255,25 +256,24 @@ public class InventoryColoredBlockCrafter implements IInventory
 			return out;
 		}
 
-		return null;
+		return ModUtil.getEmptyStack();
 	}
 
 	public ItemStack craftItem(
-			ItemStack out,
+			final ItemStack reqItem,
 			final int count,
 			final boolean simulate )
 	{
-		if ( out == null )
+		if ( reqItem == null )
 		{
-			return null;
+			return ModUtil.getEmptyStack();
 		}
 
-		out = out.copy();
-		out.stackSize = 0;
+		int outAmount = 0;
 
 		final InventorySummary da = scanPlayerInventory();
-		final Block blk = Block.getBlockFromItem( out.getItem() );
-		final IBlockState state = blk.getStateFromMeta( out.getItemDamage() );
+		final Block blk = Block.getBlockFromItem( reqItem.getItem() );
+		final IBlockState state = ModUtil.getStateFromMeta( blk, reqItem.getItemDamage() );
 
 		final Set<EnumFlatColorAttributes> charistics = ( (BlockFlatColored) blk ).getFlatColorAttributes( state );
 		final Object Craftable = ( (BlockFlatColored) blk ).getCraftable();
@@ -295,7 +295,7 @@ public class InventoryColoredBlockCrafter implements IInventory
 			requiredDyes.add( cc.secondaryDye );
 		}
 
-		for ( int x = 0; x < count && out.stackSize + craftAmount <= 64; ++x )
+		for ( int x = 0; x < count && outAmount + craftAmount <= 64; ++x )
 		{
 			boolean isGood = true;
 
@@ -332,7 +332,7 @@ public class InventoryColoredBlockCrafter implements IInventory
 				}
 			}
 
-			if ( isGood )
+			if ( isGood && isx != null )
 			{
 				for ( final EnumDyeColor dye : usedSet )
 				{
@@ -342,7 +342,7 @@ public class InventoryColoredBlockCrafter implements IInventory
 				}
 
 				isx.consume( 1 );
-				out.stackSize += craftAmount;
+				outAmount += craftAmount;
 			}
 			else
 			{
@@ -352,10 +352,13 @@ public class InventoryColoredBlockCrafter implements IInventory
 
 		updateContents();
 
-		if ( out.stackSize <= 0 )
+		if ( outAmount <= 0 )
 		{
-			out = null;
+			return ModUtil.getEmptyStack();
 		}
+
+		final ItemStack out = reqItem.copy();
+		ModUtil.setStackSize( out, outAmount );
 
 		return out;
 	}
@@ -368,7 +371,7 @@ public class InventoryColoredBlockCrafter implements IInventory
 		{
 			src.simulate = simulate;
 			final ItemStack is = src.getStack();
-			if ( is != null && is.stackSize > 0 )
+			if ( is != null && ModUtil.getStackSize( is ) > 0 )
 			{
 				return src;
 			}
@@ -381,7 +384,7 @@ public class InventoryColoredBlockCrafter implements IInventory
 	public ItemStack removeStackFromSlot(
 			final int index )
 	{
-		return null;
+		return ModUtil.getEmptyStack();
 	}
 
 	@Override
@@ -458,6 +461,20 @@ public class InventoryColoredBlockCrafter implements IInventory
 	public void clear()
 	{
 		options.clear();
+	}
+
+	@Override
+	public boolean func_191420_l() // whatever this is...
+	{
+		for ( final ItemStack itemstack : options )
+		{
+			if ( !itemstack.func_190926_b() )
+			{
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 }

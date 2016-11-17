@@ -5,5 +5,10 @@ package mod.flatcoloredblocks.config;
  */
 public enum EnumFlatBlockTextures
 {
-	FLAWLESS, DRYWALL, STONE, WOOL, HARDENED_CLAY, NOISE, PULSE, SHIMMERING
+	FLAWLESS, DRYWALL, STONE, WOOL, HARDENED_CLAY, NOISE, PULSE, SHIMMERING;
+
+	public String resourceName()
+	{
+		return name().toLowerCase();
+	}
 }

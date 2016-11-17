@@ -73,7 +73,7 @@ public class AlphaModifiedTexture extends TextureAtlasSprite
 	public void register(
 			final TextureMap map )
 	{
-		map.setTextureEntry( getIconName(), this );
+		map.setTextureEntry( this );
 	}
 
 }

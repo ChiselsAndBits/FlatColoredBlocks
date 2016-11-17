@@ -17,6 +17,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 
 public class BlockFlatColored extends Block
 {
@@ -207,7 +208,7 @@ public class BlockFlatColored extends Block
 	public void getSubBlocks(
 			final Item itemIn,
 			final CreativeTabs tab,
-			final List<ItemStack> list )
+			final NonNullList<ItemStack> list )
 	{
 		outputShades( list, 1 );
 	}

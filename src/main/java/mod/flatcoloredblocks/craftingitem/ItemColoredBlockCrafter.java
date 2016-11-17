@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import com.google.common.base.Stopwatch;
 
 import mod.flatcoloredblocks.FlatColoredBlocks;
+import mod.flatcoloredblocks.ModUtil;
 import mod.flatcoloredblocks.gui.ModGuiTypes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -15,7 +16,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -34,11 +34,12 @@ public class ItemColoredBlockCrafter extends Item
 
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(
-			final ItemStack itemStackIn,
 			final World worldIn,
 			final EntityPlayer playerIn,
-			final EnumHand p_77659_4_ )
+			final EnumHand hand )
 	{
+		final ItemStack itemStackIn = playerIn.getHeldItem( hand );
+
 		if ( worldIn.isRemote )
 		{
 			return ActionResult.newResult( EnumActionResult.SUCCESS, itemStackIn );
@@ -85,12 +86,12 @@ public class ItemColoredBlockCrafter extends Item
 				stopWatch = Stopwatch.createStarted();
 			}
 
-			String tip = I18n.translateToLocal( "item.flatcoloredblocks.coloredcraftingitem.tip1" );
+			String tip = ModUtil.translateToLocal( "item.flatcoloredblocks.coloredcraftingitem.tip1" );
 			tip = tip.replace( "%%", options.get( scrollIndex ).getDisplayName() );
 			tooltip.add( tip );
 		}
 
-		tooltip.add( I18n.translateToLocal( "item.flatcoloredblocks.coloredcraftingitem.tip2" ) );
+		tooltip.add( ModUtil.translateToLocal( "item.flatcoloredblocks.coloredcraftingitem.tip2" ) );
 
 		super.addInformation( stack, playerIn, tooltip, advanced );
 	}
