@@ -42,7 +42,7 @@ public class FlatColoredBlockRecipe implements IRecipe
 		for ( int x = 0; x < is.getSizeInventory(); ++x )
 		{
 			final ItemStack i = is.getStackInSlot( x );
-			if ( i == null || i.getItem() == null )
+			if ( i == null || i.getItem() == null || ModUtil.isEmpty( i ) )
 			{
 				continue;
 			}
@@ -208,7 +208,12 @@ public class FlatColoredBlockRecipe implements IRecipe
 				}
 				else
 				{
-					ret.set( i, ForgeHooks.getContainerItem( is ) );
+					final ItemStack containerItem = ForgeHooks.getContainerItem( is );
+
+					if ( containerItem != null && !ModUtil.isEmpty( containerItem ) )
+					{
+						ret.set( i, containerItem );
+					}
 				}
 			}
 		}

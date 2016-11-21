@@ -49,4 +49,10 @@ public class ModUtil
 		return blk.getStateFromMeta( metadata );
 	}
 
+	public static boolean isEmpty(
+			final ItemStack i )
+	{
+		return i.func_190926_b();
+	}
+
 }
