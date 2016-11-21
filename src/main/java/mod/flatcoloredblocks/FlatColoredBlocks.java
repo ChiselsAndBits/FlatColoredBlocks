@@ -49,7 +49,7 @@ public class FlatColoredBlocks
 	public static final String MODID = "flatcoloredblocks";
 	public static final String VERSION = "@VERSION@";
 
-	public static final String DEPENDENCIES = "required-after:Forge@[" // forge.
+	public static final String DEPENDENCIES = "required-after:forge@[" // forge.
 			+ net.minecraftforge.common.ForgeVersion.majorVersion + '.' // majorVersion
 			+ net.minecraftforge.common.ForgeVersion.minorVersion + '.' // minorVersion
 			+ net.minecraftforge.common.ForgeVersion.revisionVersion + '.' // revisionVersion
