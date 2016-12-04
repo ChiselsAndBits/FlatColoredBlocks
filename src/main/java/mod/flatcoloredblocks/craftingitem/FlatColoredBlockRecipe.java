@@ -169,7 +169,7 @@ public class FlatColoredBlockRecipe implements IRecipe
 			final InventoryCrafting inv,
 			final World worldIn )
 	{
-		return getRequirements( inv ) != null;
+		return !ModUtil.isEmpty( getRequirements( inv ) );
 	}
 
 	@Override
