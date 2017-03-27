@@ -6,6 +6,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -63,4 +64,20 @@ public class BlockFlatColoredTranslucent extends BlockFlatColored
 		return false;
 	}
 
+	@Override
+	public float[] getBeaconColorMultiplier(
+			IBlockState state,
+			World world,
+			BlockPos pos,
+			BlockPos beaconPos )
+	{
+		int o = ConversionHSV2RGB.toRGB( hsvFromState( state ) );
+		return new float[] { byteToFloat( ( o >> 16 ) & 0xff ), byteToFloat( ( o >> 8 ) & 0xff ), byteToFloat( ( o ) & 0xff ) };
+	}
+
+	private float byteToFloat(
+			int i )
+	{
+		return Math.max( 0.0f, Math.min( 1.0f, (float) i / 255.0f ) );
+	}
 }
