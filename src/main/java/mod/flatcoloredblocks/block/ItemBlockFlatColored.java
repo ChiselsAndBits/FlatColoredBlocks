@@ -128,7 +128,7 @@ public class ItemBlockFlatColored extends ItemBlock
 		{
 			final StringBuilder sb = new StringBuilder();
 			sb.append( ModUtil.translateToLocal( "flatcoloredblocks.tooltips.lightvalue" ) ).append( ' ' );
-			sb.append( blk.lightValue ).append( "/15" );
+			sb.append( blk.lightValue ).append( ModUtil.translateToLocal( "flatcoloredblocks.tooltips.lightValueUnit" ) );
 			tooltip.add( sb.toString() );
 		}
 
@@ -136,7 +136,7 @@ public class ItemBlockFlatColored extends ItemBlock
 		{
 			final StringBuilder sb = new StringBuilder();
 			sb.append( ModUtil.translateToLocal( "flatcoloredblocks.tooltips.opacity" ) ).append( ' ' );
-			sb.append( blk.opacity ).append( '%' );
+			sb.append( blk.opacity ).append( ModUtil.translateToLocal( "flatcoloredblocks.tooltips.percent" ) );
 			tooltip.add( sb.toString() );
 		}
 
@@ -164,9 +164,9 @@ public class ItemBlockFlatColored extends ItemBlock
 		else
 		{
 			sb.append( ModUtil.translateToLocal( "flatcoloredblocks.tooltips.hsv" ) ).append( ' ' );
-			sb.append( 360 * r_h / 255 ).append( "° " );
-			sb.append( 100 * g_s / 255 ).append( "% " );
-			sb.append( 100 * b_v / 255 ).append( '%' );
+			sb.append( 360 * r_h / 255 ).append( ModUtil.translateToLocal( "flatcoloredblocks.tooltips.deg" ) + ' ' );
+			sb.append( 100 * g_s / 255 ).append( ModUtil.translateToLocal( "flatcoloredblocks.tooltips.percent" ) + ' ' );
+			sb.append( 100 * b_v / 255 ).append( ModUtil.translateToLocal( "flatcoloredblocks.tooltips.percent" ) );
 		}
 
 		tooltip.add( sb.toString() );

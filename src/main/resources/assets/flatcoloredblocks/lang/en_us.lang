@@ -66,3 +66,7 @@ flatcoloredblocks.darkgreen.name=Dark Green Block
 flatcoloredblocks.darkcyan.name=Dark Cyan Block
 flatcoloredblocks.darkblue.name=Dark Blue Block
 flatcoloredblocks.darkmagenta.name=Dark Magenta Block
+
+flatcoloredblocks.tooltips.deg= deg
+flatcoloredblocks.tooltips.percent=%
+flatcoloredblocks.tooltips.lightValueUnit=/15
