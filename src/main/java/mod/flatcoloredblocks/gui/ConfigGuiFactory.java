@@ -10,6 +10,11 @@ public class ConfigGuiFactory extends FMLConfigGuiFactory
 {
 
 	@Override
+	public Class<? extends GuiScreen> mainConfigGuiClass()
+	{
+		return ConfigGui.class;
+	}
+
 	public GuiScreen createConfigGui(
 			GuiScreen parentScreen )
 	{
