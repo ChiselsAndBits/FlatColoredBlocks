@@ -1,0 +1,33 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		" R ",
+		"VrG",
+		" C "
+	],
+	"key": {
+		"R": {
+			"type": "forge:ore_dict",
+			"ore": "dyeRed"
+		},
+		"V": {
+			"type": "forge:ore_dict",
+			"ore": "dyePurple"
+		},
+		"r": {
+			"type": "forge:ore_dict",
+			"ore": "ingotIron"
+		},
+		"G": {
+			"type": "forge:ore_dict",
+			"ore": "dyeGreen"
+		},
+		"C": {
+			"type": "forge:ore_dict",
+			"ore": "dyeCyan"
+		}
+	},
+	"result": {
+		"item": "flatcoloredblocks:coloredcraftingitem"
+	}
+}

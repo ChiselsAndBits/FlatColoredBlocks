@@ -29,14 +29,11 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.oredict.RecipeSorter;
-import net.minecraftforge.oredict.RecipeSorter.Category;
-import net.minecraftforge.oredict.ShapedOreRecipe;
 
 @Mod(
 		name = FlatColoredBlocks.MODNAME,
 		modid = FlatColoredBlocks.MODID,
-		acceptedMinecraftVersions = "[1.11]",
+		acceptedMinecraftVersions = "[1.12]",
 		version = FlatColoredBlocks.VERSION,
 		dependencies = FlatColoredBlocks.DEPENDENCIES,
 		guiFactory = "mod.flatcoloredblocks.gui.ConfigGuiFactory" )
@@ -125,17 +122,10 @@ public class FlatColoredBlocks
 
 		if ( config.allowCraftingTable )
 		{
-			final String craftingOrder = "after:minecraft:shapeless";
-			GameRegistry.addRecipe( new FlatColoredBlockRecipe() );
-			RecipeSorter.register( MODID + ":flatcoloredblockcrafting", FlatColoredBlockRecipe.class, Category.SHAPELESS, craftingOrder );
+			GameRegistry.register( new FlatColoredBlockRecipe() );
 		}
 
 		clientSide.configureCraftingRender( itemColoredBlockCrafting );
-
-		// crafting pattern.
-		final ShapedOreRecipe craftingItemRecipe = new ShapedOreRecipe( itemColoredBlockCrafting, " R ", "VrG", " C ", 'R', "dyeRed", 'V', "dyePurple", 'r', "ingotIron", 'G', "dyeGreen",
-				'C', "dyeCyan" );
-		GameRegistry.addRecipe( craftingItemRecipe );
 
 		final BlockHSVConfiguration configs[] = new BlockHSVConfiguration[] { normal, transparent, glowing };
 

@@ -10,6 +10,7 @@ import com.google.common.base.Stopwatch;
 import mod.flatcoloredblocks.FlatColoredBlocks;
 import mod.flatcoloredblocks.ModUtil;
 import mod.flatcoloredblocks.gui.ModGuiTypes;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -52,9 +53,9 @@ public class ItemColoredBlockCrafter extends Item
 	@Override
 	public void addInformation(
 			final ItemStack stack,
-			final EntityPlayer playerIn,
+			final World worldIn,
 			final List<String> tooltip,
-			final boolean advanced )
+			final ITooltipFlag advanced )
 	{
 		if ( scrollIndex == -1 )
 		{
@@ -93,7 +94,7 @@ public class ItemColoredBlockCrafter extends Item
 
 		tooltip.add( ModUtil.translateToLocal( "item.flatcoloredblocks.coloredcraftingitem.tip2" ) );
 
-		super.addInformation( stack, playerIn, tooltip, advanced );
+		super.addInformation( stack, worldIn, tooltip, advanced );
 	}
 
 }

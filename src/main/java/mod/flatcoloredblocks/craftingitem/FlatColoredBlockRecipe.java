@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import mod.flatcoloredblocks.FlatColoredBlocks;
 import mod.flatcoloredblocks.ModUtil;
 import mod.flatcoloredblocks.block.BlockFlatColored;
 import mod.flatcoloredblocks.block.EnumFlatBlockType;
@@ -18,6 +19,7 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.oredict.OreDictionary;
@@ -180,12 +182,6 @@ public class FlatColoredBlockRecipe implements IRecipe
 	}
 
 	@Override
-	public int getRecipeSize()
-	{
-		return 9;
-	}
-
-	@Override
 	public ItemStack getRecipeOutput()
 	{
 		return ModUtil.getEmptyStack();
@@ -218,6 +214,36 @@ public class FlatColoredBlockRecipe implements IRecipe
 			}
 		}
 		return ret;
+	}
+
+	private ResourceLocation recipeName = new ResourceLocation( FlatColoredBlocks.MODID, "flatcoloredblockcrafting" );
+
+	@Override
+	public IRecipe setRegistryName(
+			ResourceLocation name )
+	{
+		recipeName = name;
+		return this;
+	}
+
+	@Override
+	public ResourceLocation getRegistryName()
+	{
+		return recipeName;
+	}
+
+	@Override
+	public Class<IRecipe> getRegistryType()
+	{
+		return IRecipe.class;
+	}
+
+	@Override
+	public boolean func_194133_a(
+			int width,
+			int height )
+	{
+		return width > 1 || height > 1;
 	}
 
 }

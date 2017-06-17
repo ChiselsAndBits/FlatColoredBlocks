@@ -1,27 +1,27 @@
 package mod.flatcoloredblocks.integration;
 
-import mezz.jei.api.BlankModPlugin;
-import mezz.jei.api.IItemBlacklist;
+import javax.annotation.Nonnull;
+
 import mezz.jei.api.IJeiHelpers;
+import mezz.jei.api.IModPlugin;
 import mezz.jei.api.IModRegistry;
 import mezz.jei.api.JEIPlugin;
+import mezz.jei.api.ingredients.IIngredientBlacklist;
 import mod.flatcoloredblocks.FlatColoredBlocks;
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nonnull;
-
 @JEIPlugin
-public class PluginJEI extends BlankModPlugin
+public class PluginJEI implements IModPlugin
 {
 	@Override
 	public void register(
 			@Nonnull final IModRegistry registry )
 	{
 		final IJeiHelpers jeiHelpers = registry.getJeiHelpers();
-		final IItemBlacklist blacklist = jeiHelpers.getItemBlacklist();
+		final IIngredientBlacklist blacklist = jeiHelpers.getIngredientBlacklist();
 		for ( final ItemStack is : FlatColoredBlocks.instance.jei.items )
 		{
-			blacklist.addItemToBlacklist( is );
+			blacklist.addIngredientToBlacklist( is );
 		}
 	}
 }

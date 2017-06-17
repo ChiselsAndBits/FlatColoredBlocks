@@ -7,7 +7,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
@@ -17,17 +17,17 @@ compileJava {
     sourceCompatibility = targetCompatibility = "1.6"
 }
 
-version = "mc1.11-5.0"
+version = "mc1.12-6.0"
 group= "mod.flatcoloredblocks"
 archivesBaseName = "flatcoloredblocks"
 
 repositories { maven { url "http://dvs1.progwml6.com/files/maven" } }
 dependencies {
-	deobfCompile "mezz.jei:jei_1.11:4.0.2.194"
+	deobfCompile "mezz.jei:jei_1.12:4.6.0.61"
 }
 
 minecraft {
-    version = "1.11-13.19.0.2142"
+    version = "1.12-14.21.0.2332"
     runDir = "eclipse"
     mappings = "snapshot_20161111"
     replace "@VERSION@", project.version

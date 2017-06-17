@@ -9,10 +9,11 @@ import mod.flatcoloredblocks.FlatColoredBlocks;
 import mod.flatcoloredblocks.ModUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 
 public class ItemBlockFlatColored extends ItemBlock
 {
@@ -104,9 +105,9 @@ public class ItemBlockFlatColored extends ItemBlock
 	@Override
 	public void addInformation(
 			@NotNull final ItemStack stack,
-			final EntityPlayer playerIn,
+			final World worldIn,
 			final List<String> tooltip,
-			final boolean advanced )
+			final ITooltipFlag advanced )
 	{
 		final IBlockState state = getStateFromStack( stack );
 		final BlockFlatColored blk = getColoredBlock();
@@ -140,7 +141,7 @@ public class ItemBlockFlatColored extends ItemBlock
 			tooltip.add( sb.toString() );
 		}
 
-		super.addInformation( stack, playerIn, tooltip, advanced );
+		super.addInformation( stack, worldIn, tooltip, advanced );
 	}
 
 	private void addColor(

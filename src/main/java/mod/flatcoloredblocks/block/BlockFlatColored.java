@@ -18,6 +18,8 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 
 public class BlockFlatColored extends Block
 {
@@ -39,7 +41,9 @@ public class BlockFlatColored extends Block
 
 	@Override
 	public MapColor getMapColor(
-			final IBlockState state )
+			final IBlockState state,
+			final IBlockAccess world,
+			final BlockPos pos )
 	{
 		for ( final EnumFlatColorAttributes attr : getFlatColorAttributes( state ) )
 		{
@@ -206,7 +210,6 @@ public class BlockFlatColored extends Block
 
 	@Override
 	public void getSubBlocks(
-			final Item itemIn,
 			final CreativeTabs tab,
 			final NonNullList<ItemStack> list )
 	{
