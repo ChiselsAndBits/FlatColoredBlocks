@@ -4,8 +4,6 @@ package mod.flatcoloredblocks.model;
 import java.util.Collection;
 import java.util.Collections;
 
-import com.google.common.base.Function;
-
 import mod.flatcoloredblocks.block.EnumFlatBlockType;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -42,9 +40,9 @@ public class BakedVarientModel implements IModel
 
 	@Override
 	public IBakedModel bake(
-			final IModelState state,
-			final VertexFormat format,
-			final Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter )
+			IModelState state,
+			VertexFormat format,
+			java.util.function.Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter )
 	{
 		return new BakedVarientBlock( type, varient, format );
 	}

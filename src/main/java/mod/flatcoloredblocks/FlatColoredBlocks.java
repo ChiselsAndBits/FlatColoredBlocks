@@ -1,5 +1,7 @@
 package mod.flatcoloredblocks;
 
+import java.util.ArrayList;
+
 import mod.flatcoloredblocks.block.BlockFlatColored;
 import mod.flatcoloredblocks.block.BlockHSVConfiguration;
 import mod.flatcoloredblocks.block.EnumFlatBlockType;
@@ -14,19 +16,23 @@ import mod.flatcoloredblocks.gui.GuiScreenStartup;
 import mod.flatcoloredblocks.gui.ModGuiRouter;
 import mod.flatcoloredblocks.integration.IntegerationJEI;
 import mod.flatcoloredblocks.network.NetworkRouter;
+import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiMainMenu;
+import net.minecraft.item.Item;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -69,14 +75,6 @@ public class FlatColoredBlocks
 		instance = this;
 	}
 
-	public void initHSVFromConfiguration(
-			final ModConfig config )
-	{
-		normal = new BlockHSVConfiguration( EnumFlatBlockType.NORMAL, config );
-		transparent = new BlockHSVConfiguration( EnumFlatBlockType.TRANSPARENT, config );
-		glowing = new BlockHSVConfiguration( EnumFlatBlockType.GLOWING, config );
-	}
-
 	public int getFullNumberOfShades()
 	{
 		return normal.getNumberOfShades()
@@ -90,6 +88,9 @@ public class FlatColoredBlocks
 				+ transparent.getNumberOfBlocks() * FlatColoredBlocks.instance.config.TRANSPARENCY_SHADES
 				+ glowing.getNumberOfBlocks() * FlatColoredBlocks.instance.config.GLOWING_SHADES;
 	}
+
+	ArrayList<BlockFlatColored> blocks = new ArrayList<BlockFlatColored>();
+	ArrayList<ItemBlockFlatColored> items = new ArrayList<ItemBlockFlatColored>();
 
 	@EventHandler
 	public void preinit(
@@ -114,16 +115,27 @@ public class FlatColoredBlocks
 		creativeTab = new CreativeTab();
 
 		MinecraftForge.EVENT_BUS.register( this );
+		initRegistration();
+
+		clientSide.preinit();
+	}
+
+	public void initHSVFromConfiguration(
+			final ModConfig config )
+	{
+		normal = new BlockHSVConfiguration( EnumFlatBlockType.NORMAL, config );
+		transparent = new BlockHSVConfiguration( EnumFlatBlockType.TRANSPARENT, config );
+		glowing = new BlockHSVConfiguration( EnumFlatBlockType.GLOWING, config );
+	}
+
+	void initRegistration()
+	{
+		items.clear();
+		blocks.clear();
 
 		// create and configure crafting item.
 		itemColoredBlockCrafting = new ItemColoredBlockCrafter();
 		itemColoredBlockCrafting.setRegistryName( FlatColoredBlocks.MODID, "coloredcraftingitem" );
-		GameRegistry.register( itemColoredBlockCrafting );
-
-		if ( config.allowCraftingTable )
-		{
-			GameRegistry.register( new FlatColoredBlockRecipe() );
-		}
 
 		clientSide.configureCraftingRender( itemColoredBlockCrafting );
 
@@ -147,21 +159,51 @@ public class FlatColoredBlocks
 					cbi.setRegistryName( MODID, regName );
 
 					// register both.
-					GameRegistry.register( cb );
-					GameRegistry.register( cbi );
+					blocks.add( cb );
+					items.add( cbi );
 
 					// blacklist with JEI
 					if ( !config.ShowBlocksInJEI )
 					{
 						jei.blackListBlock( cb );
 					}
-
-					clientSide.configureBlockRender( cb );
 				}
 			}
 		}
+	}
 
-		clientSide.preinit();
+	@SubscribeEvent
+	public void registerBlocks(
+			RegistryEvent.Register<Block> registry )
+	{
+		for ( BlockFlatColored block : blocks )
+		{
+			registry.getRegistry().register( block );
+			clientSide.configureBlockRender( block, null );
+		}
+	}
+
+	@SubscribeEvent
+	public void registerItems(
+			RegistryEvent.Register<Item> registry )
+	{
+		registry.getRegistry().register( itemColoredBlockCrafting );
+
+		for ( ItemBlockFlatColored item : items )
+		{
+			registry.getRegistry().register( item );
+			clientSide.configureBlockRender( null, item );
+		}
+	}
+
+	@SubscribeEvent
+	public void registerRecipes(
+			RegistryEvent.Register<IRecipe> registry )
+	{
+		if ( config.allowCraftingTable )
+		{
+			registry.getRegistry().register( new FlatColoredBlockRecipe() );
+		}
 	}
 
 	private void initVersionChecker()
@@ -170,6 +212,12 @@ public class FlatColoredBlocks
 		compound.setString( "curseProjectName", "flat-colored-blocks" );
 		compound.setString( "curseFilenameParser", "flatcoloredblocks-[].jar" );
 		FMLInterModComms.sendRuntimeMessage( MODID, "VersionChecker", "addCurseCheck", compound );
+	}
+
+	@EventHandler
+	public void init(
+			final FMLInitializationEvent event )
+	{
 	}
 
 	@EventHandler

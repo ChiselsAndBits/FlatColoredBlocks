@@ -69,7 +69,7 @@ public class CreativeTab extends CreativeTabs
 			}
 
 			final ItemBlock ib = (ItemBlock) is.getItem();
-			final Block b = ib.block;
+			final Block b = ib.getBlock();
 
 			final int out = ( (BlockFlatColored) b ).hsvFromState( ModUtil.getStateFromMeta( b, is.getItemDamage() ) );
 

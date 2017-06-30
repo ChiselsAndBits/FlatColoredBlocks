@@ -1,6 +1,7 @@
 package mod.flatcoloredblocks.textures;
 
 import java.awt.image.BufferedImage;
+import java.util.function.Function;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -57,8 +58,9 @@ public class AlphaModifiedTexture extends TextureAtlasSprite
 
 	@Override
 	public boolean load(
-			final IResourceManager manager,
-			final ResourceLocation location )
+			IResourceManager manager,
+			ResourceLocation location,
+			Function<ResourceLocation, TextureAtlasSprite> textureGetter )
 	{
 		final BufferedImage[] images = new BufferedImage[Minecraft.getMinecraft().gameSettings.mipmapLevels + 1];
 		images[0] = image;

@@ -10,6 +10,7 @@ import mod.flatcoloredblocks.ModUtil;
 import mod.flatcoloredblocks.block.BlockFlatColored;
 import mod.flatcoloredblocks.block.BlockHSVConfiguration;
 import mod.flatcoloredblocks.block.EnumFlatBlockType;
+import mod.flatcoloredblocks.block.ItemBlockFlatColored;
 import mod.flatcoloredblocks.craftingitem.ItemColoredBlockCrafter;
 import mod.flatcoloredblocks.model.ModelGenerator;
 import mod.flatcoloredblocks.textures.TextureGenerator;
@@ -21,7 +22,6 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.color.IItemColor;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -89,37 +89,49 @@ public class ClientSide implements IClientSide
 
 	@Override
 	public void configureBlockRender(
-			final BlockFlatColored cb )
+			BlockFlatColored b,
+			final ItemBlockFlatColored cbi )
 	{
+		if ( b == null )
+		{
+			b = (BlockFlatColored) cbi.getBlock();
+		}
+
+		final BlockFlatColored cb = b;
+
 		final String flatcoloredblocks_name = getTextureName( cb.getType(), cb.getVarient() );
 		final ModelResourceLocation flatcoloredblocks_block = new ModelResourceLocation( flatcoloredblocks_name, "normal" );
 		final ModelResourceLocation flatcoloredblocks_item = new ModelResourceLocation( flatcoloredblocks_name, "inventory" );
 
-		// map all shades to a single model...
-		ModelLoader.setCustomStateMapper( cb, new IStateMapper() {
+		if ( cbi == null )
+		{
+			// map all shades to a single model...
+			ModelLoader.setCustomStateMapper( cb, new IStateMapper() {
 
-			@Override
-			public Map<IBlockState, ModelResourceLocation> putStateModelLocations(
-					final Block blockIn )
-			{
-				final Map<IBlockState, ModelResourceLocation> loc = new HashMap<IBlockState, ModelResourceLocation>();
-
-				for ( int x = cb.getShadeOffset(); x <= cb.getMaxShade(); ++x )
+				@Override
+				public Map<IBlockState, ModelResourceLocation> putStateModelLocations(
+						final Block blockIn )
 				{
-					loc.put( cb.getDefaultState().withProperty( cb.getShade(), x - cb.getShadeOffset() ), flatcoloredblocks_block );
+					final Map<IBlockState, ModelResourceLocation> loc = new HashMap<IBlockState, ModelResourceLocation>();
+
+					for ( int x = cb.getShadeOffset(); x <= cb.getMaxShade(); ++x )
+					{
+						loc.put( cb.getDefaultState().withProperty( cb.getShade(), x - cb.getShadeOffset() ), flatcoloredblocks_block );
+					}
+
+					return loc;
 				}
 
-				return loc;
-			}
-
-		} );
-
-		// map all shades to a single model...
-		final Item cbi = Item.getItemFromBlock( cb );
-		ModelBakery.registerItemVariants( cbi, flatcoloredblocks_block );
-		for ( int z = 0; z < BlockHSVConfiguration.META_SCALE; ++z )
+			} );
+		}
+		else
 		{
-			ModelLoader.setCustomModelResourceLocation( cbi, z, flatcoloredblocks_item );
+			// map all shades to a single model...
+			ModelBakery.registerItemVariants( cbi, flatcoloredblocks_block );
+			for ( int z = 0; z < BlockHSVConfiguration.META_SCALE; ++z )
+			{
+				ModelLoader.setCustomModelResourceLocation( cbi, z, flatcoloredblocks_item );
+			}
 		}
 	}
 

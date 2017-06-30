@@ -23,11 +23,11 @@ archivesBaseName = "flatcoloredblocks"
 
 repositories { maven { url "http://dvs1.progwml6.com/files/maven" } }
 dependencies {
-	deobfCompile "mezz.jei:jei_1.12:4.6.0.61"
+	deobfCompile "mezz.jei:jei_1.12:4.7.0.68"
 }
 
 minecraft {
-    version = "1.12-14.21.0.2332"
+    version = "1.12-14.21.1.2387"
     runDir = "eclipse"
     mappings = "snapshot_20161111"
     replace "@VERSION@", project.version

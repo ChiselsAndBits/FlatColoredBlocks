@@ -246,4 +246,10 @@ public class FlatColoredBlockRecipe implements IRecipe
 		return width > 1 || height > 1;
 	}
 
+	@Override
+	public boolean func_192399_d()
+	{
+		return true; // hide recipe
+	}
+
 }
