@@ -165,7 +165,7 @@ public class FlatColoredBlocks
 					// blacklist with JEI
 					if ( !config.ShowBlocksInJEI )
 					{
-						jei.blackListBlock( cb );
+						jei.blackListBlock( cbi );
 					}
 				}
 			}
