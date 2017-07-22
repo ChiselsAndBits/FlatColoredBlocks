@@ -137,8 +137,6 @@ public class FlatColoredBlocks
 		itemColoredBlockCrafting = new ItemColoredBlockCrafter();
 		itemColoredBlockCrafting.setRegistryName( FlatColoredBlocks.MODID, "coloredcraftingitem" );
 
-		clientSide.configureCraftingRender( itemColoredBlockCrafting );
-
 		final BlockHSVConfiguration configs[] = new BlockHSVConfiguration[] { normal, transparent, glowing };
 
 		// create and configure all blocks.
@@ -188,6 +186,8 @@ public class FlatColoredBlocks
 			RegistryEvent.Register<Item> registry )
 	{
 		registry.getRegistry().register( itemColoredBlockCrafting );
+
+		clientSide.configureCraftingRender( itemColoredBlockCrafting );
 
 		for ( ItemBlockFlatColored item : items )
 		{
