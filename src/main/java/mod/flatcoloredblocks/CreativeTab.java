@@ -71,6 +71,14 @@ public class CreativeTab extends CreativeTabs
 			final ItemBlock ib = (ItemBlock) is.getItem();
 			final Block b = ib.getBlock();
 
+			// Remove other peoples stuff list..
+			if ( !( b instanceof BlockFlatColored ) )
+			{
+				list.remove( x );
+				--x;
+				continue;
+			}
+
 			final int out = ( (BlockFlatColored) b ).hsvFromState( ModUtil.getStateFromMeta( b, is.getItemDamage() ) );
 
 			final int s = out >> 8 & 0xff;
