@@ -61,16 +61,22 @@ public class TextureGenerator
 		}
 	}
 
+	private TextureAtlasSprite orMissing(
+			TextureAtlasSprite texture )
+	{
+		return texture != null ? texture : Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
+	}
+
 	public TextureAtlasSprite getGlowingTexture(
 			final int varient )
 	{
-		return glowingTexture;
+		return orMissing( glowingTexture );
 	}
 
 	public TextureAtlasSprite getTransparentTexture(
 			final int varient )
 	{
-		return generatedTransparentTexture.get( varient );
+		return orMissing( generatedTransparentTexture.get( varient ) );
 	}
 
 }
