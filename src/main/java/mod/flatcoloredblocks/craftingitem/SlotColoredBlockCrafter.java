@@ -1,5 +1,6 @@
 package mod.flatcoloredblocks.craftingitem;
 
+import mod.flatcoloredblocks.ModUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
@@ -32,7 +33,7 @@ public class SlotColoredBlockCrafter extends Slot
 	public boolean canTakeStack(
 			final EntityPlayer playerIn )
 	{
-		return secondInv.craftItem( getStack(), 1, true ) != null;
+		return !ModUtil.isEmpty( secondInv.craftItem( getStack(), 1, true ) );
 	}
 
 	@Override

@@ -264,7 +264,7 @@ public class InventoryColoredBlockCrafter implements IInventory
 			final int count,
 			final boolean simulate )
 	{
-		if ( reqItem == null )
+		if ( ModUtil.isEmpty( reqItem ) )
 		{
 			return ModUtil.getEmptyStack();
 		}
