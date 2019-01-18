@@ -195,6 +195,9 @@ public class ModConfig extends Configuration
 	public boolean showRGB;
 
 	@Configured( category = "Client Settings" )
+	public boolean showHEX;
+
+	@Configured( category = "Client Settings" )
 	public boolean showLight;
 
 	@Configured( category = "Client Settings" )
@@ -209,7 +212,7 @@ public class ModConfig extends Configuration
 		transparentCraftingOutput = 1;
 		glowingCraftingOutput = 1;
 		allowCraftingTable = true;
-		showHSV = showRGB = showLight = showOpacity = true;
+		showHEX = showHSV = showRGB = showLight = showOpacity = true;
 
 		LAST_MAX_SHADES = 0;
 

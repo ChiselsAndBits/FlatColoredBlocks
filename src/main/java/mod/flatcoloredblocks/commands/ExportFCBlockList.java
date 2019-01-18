@@ -57,7 +57,7 @@ public class ExportFCBlockList extends CommandBase
 
 			FileWriter writer = new FileWriter( path );
 
-			writer.write( "Shade Number,Name,Red,Blue,Green,Hue,Saturation,Value,Opacity,Light Value\n" );
+			writer.write( "Shade Number,Name,HEX,Red,Blue,Green,Hue,Saturation,Value,Opacity,Light Value\n" );
 
 			for ( ItemStack is : list )
 			{
@@ -84,6 +84,9 @@ public class ExportFCBlockList extends CommandBase
 					line.append( ",\"" );
 					line.append( is.getDisplayName().replace( "\"", "\"\"" ) );
 					line.append( "\"," );
+
+					line.append( "#" ).append( ItemBlockFlatColored.hexPad( Integer.toString( r, 16 ) ) ).append( ItemBlockFlatColored.hexPad( Integer.toString( g, 16 ) ) ).append( ItemBlockFlatColored.hexPad( Integer.toString( b, 16 ) ) );
+					line.append( "," );
 
 					line.append( r );
 					line.append( "," );

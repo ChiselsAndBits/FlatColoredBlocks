@@ -86,7 +86,7 @@ public class ItemBlockFlatColored extends ItemBlock
 		final String prefix = getColorPrefix( colorChars );
 		final String hue = getColorHueName( colorChars );
 
-		return type + ModUtil.translateToLocal( prefix + hue + ".name" ) + " #" + shadeNum;
+		return type + ModUtil.translateToLocal( prefix + hue + ".name" ) + " " + ModUtil.translateToLocal( "flatcoloredblocks.Shade.name" ) + shadeNum;
 	}
 
 	private String getTypeLocalization()
@@ -117,12 +117,17 @@ public class ItemBlockFlatColored extends ItemBlock
 
 		if ( FlatColoredBlocks.instance.config.showRGB )
 		{
-			addColor( true, rgb, tooltip );
+			addColor( ColorFormat.RGB, rgb, tooltip );
+		}
+
+		if ( FlatColoredBlocks.instance.config.showHEX )
+		{
+			addColor( ColorFormat.HEX, rgb, tooltip );
 		}
 
 		if ( FlatColoredBlocks.instance.config.showHSV )
 		{
-			addColor( false, hsv, tooltip );
+			addColor( ColorFormat.HSV, hsv, tooltip );
 		}
 
 		if ( FlatColoredBlocks.instance.config.showLight && blk.lightValue > 0 )
@@ -144,8 +149,13 @@ public class ItemBlockFlatColored extends ItemBlock
 		super.addInformation( stack, worldIn, tooltip, advanced );
 	}
 
+	public static enum ColorFormat
+	{
+		HEX, RGB, HSV
+	};
+
 	private void addColor(
-			final boolean isRgb,
+			final ColorFormat Format,
 			final int value,
 			final List<String> tooltip )
 	{
@@ -155,7 +165,12 @@ public class ItemBlockFlatColored extends ItemBlock
 
 		final StringBuilder sb = new StringBuilder();
 
-		if ( isRgb )
+		if ( Format == ColorFormat.HEX )
+		{
+			sb.append( ModUtil.translateToLocal( "flatcoloredblocks.tooltips.hex" ) ).append( ' ' );
+			sb.append( "#" ).append( hexPad( Integer.toString( r_h, 16 ) ) ).append( hexPad( Integer.toString( g_s, 16 ) ) ).append( hexPad( Integer.toString( b_v, 16 ) ) );
+		}
+		else if ( Format == ColorFormat.RGB )
 		{
 			sb.append( ModUtil.translateToLocal( "flatcoloredblocks.tooltips.rgb" ) ).append( ' ' );
 			sb.append( TextFormatting.RED ).append( r_h ).append( ' ' );
@@ -171,6 +186,16 @@ public class ItemBlockFlatColored extends ItemBlock
 		}
 
 		tooltip.add( sb.toString() );
+	}
+
+	public static String hexPad(
+			String string )
+	{
+		if ( string.length() == 0 )
+			return "00";
+		if ( string.length() == 1 )
+			return "0" + string;
+		return string;
 	}
 
 	public int getColorFromItemStack(
