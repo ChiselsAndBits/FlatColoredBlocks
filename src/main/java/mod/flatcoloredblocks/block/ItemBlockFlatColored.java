@@ -23,7 +23,7 @@ public class ItemBlockFlatColored extends ItemBlock
 		return (BlockFlatColored) block;
 	}
 
-	private IBlockState getStateFromStack(
+	public IBlockState getStateFromStack(
 			@NotNull final ItemStack stack )
 	{
 		return ModUtil.getStateFromMeta( getBlock(), stack.getItemDamage() );

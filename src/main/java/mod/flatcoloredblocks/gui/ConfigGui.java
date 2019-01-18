@@ -20,7 +20,7 @@ public class ConfigGui extends GuiConfig
 	public ConfigGui(
 			final GuiScreen parent )
 	{
-		super( parent, getConfigElements(), FlatColoredBlocks.MODID, false, false, GuiConfig.getAbridgedConfigPath( FlatColoredBlocks.instance.config.getFilePath() ) );
+		super( parent, getConfigElements(), FlatColoredBlocks.MODID, false, false, GuiConfig.getAbridgedConfigPath( FlatColoredBlocks.instance.config.getFilePath().getAbsolutePath() ) );
 	}
 
 	@Override

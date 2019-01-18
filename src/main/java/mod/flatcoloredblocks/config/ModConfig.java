@@ -416,9 +416,9 @@ public class ModConfig extends Configuration
 		}
 	}
 
-	public String getFilePath()
+	public File getFilePath()
 	{
-		return myPath.getAbsolutePath();
+		return myPath;
 	}
 
 }

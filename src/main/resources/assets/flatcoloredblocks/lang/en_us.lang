@@ -70,3 +70,7 @@ flatcoloredblocks.darkmagenta.name=Dark Magenta Block
 flatcoloredblocks.tooltips.deg= deg
 flatcoloredblocks.tooltips.percent=%
 flatcoloredblocks.tooltips.lightValueUnit=/15
+
+flatcoloredblocks.commands.export_list.usage=no arguments, saves CSV in config folder.
+flatcoloredblocks.commands.export_list.savedfile=Exported full list to %s
+flatcoloredblocks.commands.export_list.unabletosave=Unable to write file %s

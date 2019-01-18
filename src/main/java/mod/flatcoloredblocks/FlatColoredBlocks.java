@@ -9,6 +9,7 @@ import mod.flatcoloredblocks.block.ItemBlockFlatColored;
 import mod.flatcoloredblocks.client.ClientSide;
 import mod.flatcoloredblocks.client.DummyClientSide;
 import mod.flatcoloredblocks.client.IClientSide;
+import mod.flatcoloredblocks.commands.ExportFCBlockList;
 import mod.flatcoloredblocks.config.ModConfig;
 import mod.flatcoloredblocks.craftingitem.FlatColoredBlockRecipe;
 import mod.flatcoloredblocks.craftingitem.ItemColoredBlockCrafter;
@@ -21,6 +22,7 @@ import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -102,6 +104,7 @@ public class FlatColoredBlocks
 		if ( FMLCommonHandler.instance().getSide().isClient() )
 		{
 			clientSide = ClientSide.instance;
+			ClientCommandHandler.instance.registerCommand( new ExportFCBlockList() );
 		}
 		else
 		{
