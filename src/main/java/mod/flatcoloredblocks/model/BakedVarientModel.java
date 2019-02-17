@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import mod.flatcoloredblocks.block.EnumFlatBlockType;
-import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.ResourceLocation;

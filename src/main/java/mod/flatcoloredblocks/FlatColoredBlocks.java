@@ -15,28 +15,20 @@ import mod.flatcoloredblocks.craftingitem.FlatColoredBlockRecipe;
 import mod.flatcoloredblocks.craftingitem.ItemColoredBlockCrafter;
 import mod.flatcoloredblocks.gui.GuiScreenStartup;
 import mod.flatcoloredblocks.gui.ModGuiRouter;
-import mod.flatcoloredblocks.integration.IntegerationJEI;
 import mod.flatcoloredblocks.network.NetworkRouter;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.client.ClientCommandHandler;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLInterModComms;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.network.NetworkRegistry;
 
 @Mod(
 		name = FlatColoredBlocks.MODNAME,
@@ -235,7 +227,7 @@ public class FlatColoredBlocks
 	}
 
 	@SubscribeEvent
-	@SideOnly( Side.CLIENT )
+	@OnlyIn( Dist.CLIENT )
 	public void openMainMenu(
 			final GuiOpenEvent event )
 	{

@@ -6,14 +6,12 @@ import com.google.common.base.Stopwatch;
 
 import mod.flatcoloredblocks.block.BlockFlatColored;
 import net.minecraft.block.Block;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 
-public class CreativeTab extends CreativeTabs
+public class CreativeTab extends ItemGroup
 {
 
 	public CreativeTab()
@@ -21,18 +19,11 @@ public class CreativeTab extends CreativeTabs
 		super( "FlatColoredBlocks" );
 	}
 
-	@Override
-	public ItemStack getTabIconItem()
-	{
-		return new ItemStack( Item.getItemFromBlock( Blocks.COBBLESTONE ) );
-	}
-
 	private int listOffset = 0;
 	private Stopwatch offsetTimer;
 	private NonNullList<ItemStack> list;
 
-	@Override
-	public ItemStack getIconItemStack()
+	public ItemStack createIcon()
 	{
 		if ( list == null )
 		{
@@ -54,8 +45,8 @@ public class CreativeTab extends CreativeTabs
 	private void initalizeList()
 	{
 		offsetTimer = Stopwatch.createStarted();
-		list = NonNullList.func_191196_a();
-		displayAllRelevantItems( list );
+		list = NonNullList.create();
+		fill( list );
 
 		for ( int x = 0; x < list.size(); ++x )
 		{
@@ -79,7 +70,7 @@ public class CreativeTab extends CreativeTabs
 				continue;
 			}
 
-			final int out = ( (BlockFlatColored) b ).hsvFromState( ModUtil.getStateFromMeta( b, is.getItemDamage() ) );
+			final int out = ( (BlockFlatColored) b ).hsvFromState( ModUtil.getStateFromMeta( b, is ) );
 
 			final int s = out >> 8 & 0xff;
 			final int v = out & 0xff;
@@ -93,7 +84,8 @@ public class CreativeTab extends CreativeTabs
 
 		if ( list.isEmpty() )
 		{
-			displayAllRelevantItems( list );
+			fill( list );
 		}
 	}
+
 }

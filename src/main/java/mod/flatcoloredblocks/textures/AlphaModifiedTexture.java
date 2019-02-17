@@ -6,7 +6,7 @@ import java.util.function.Function;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 
 public class AlphaModifiedTexture extends TextureAtlasSprite
@@ -14,17 +14,15 @@ public class AlphaModifiedTexture extends TextureAtlasSprite
 	final BufferedImage image;
 
 	protected AlphaModifiedTexture(
-			final String spriteName,
+			final ResourceLocation spriteName,
 			final BufferedImage image )
 	{
-		super( spriteName );
+		super( spriteName, image.getWidth(), image.getHeight() );
 		this.image = image;
-		width = image.getWidth();
-		height = image.getHeight();
 	}
 
 	public static TextureAtlasSprite generate(
-			final String name,
+			final ResourceLocation name,
 			final BufferedImage bi,
 			final float alphaMultiplier,
 			final TextureMap map )
@@ -62,9 +60,9 @@ public class AlphaModifiedTexture extends TextureAtlasSprite
 			ResourceLocation location,
 			Function<ResourceLocation, TextureAtlasSprite> textureGetter )
 	{
-		final BufferedImage[] images = new BufferedImage[Minecraft.getMinecraft().gameSettings.mipmapLevels + 1];
+		final BufferedImage[] images = new BufferedImage[Minecraft.getInstance().gameSettings.mipmapLevels + 1];
 		images[0] = image;
-		final int[][] pixels = new int[Minecraft.getMinecraft().gameSettings.mipmapLevels + 1][];
+		final int[][] pixels = new int[Minecraft.getInstance().gameSettings.mipmapLevels + 1][];
 		pixels[0] = new int[image.getWidth() * image.getHeight()];
 		image.getRGB( 0, 0, image.getWidth(), image.getHeight(), pixels[0], 0, image.getWidth() );
 		framesTextureData.add( pixels );

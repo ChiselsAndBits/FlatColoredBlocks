@@ -1,7 +1,6 @@
 package mod.flatcoloredblocks.gui;
 
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraftforge.fml.client.FMLConfigGuiFactory;
 
 /**
  * Basic Config Factory.

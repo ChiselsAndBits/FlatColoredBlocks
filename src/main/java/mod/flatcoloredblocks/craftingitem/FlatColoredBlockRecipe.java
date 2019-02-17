@@ -14,10 +14,11 @@ import mod.flatcoloredblocks.block.EnumFlatColorAttributes;
 import mod.flatcoloredblocks.block.ItemBlockFlatColored;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -28,7 +29,7 @@ public class FlatColoredBlockRecipe implements IRecipe
 {
 
 	public ItemStack getRequirements(
-			final InventoryCrafting is )
+			final IInventory is )
 	{
 		if ( is == null )
 		{
@@ -59,7 +60,7 @@ public class FlatColoredBlockRecipe implements IRecipe
 
 				flatBlock = (BlockFlatColored) blk;
 				target = i.copy();
-				state = ModUtil.getStateFromMeta( blk, i.getItemDamage() );
+				state = ModUtil.getStateFromMeta( blk, i.getDamage() );
 			}
 			else if ( i.getItem() instanceof ItemColoredBlockCrafter )
 			{
@@ -168,7 +169,7 @@ public class FlatColoredBlockRecipe implements IRecipe
 
 	@Override
 	public boolean matches(
-			final InventoryCrafting inv,
+			final IInventory inv,
 			final World worldIn )
 	{
 		return !ModUtil.isEmpty( getRequirements( inv ) );
@@ -176,7 +177,7 @@ public class FlatColoredBlockRecipe implements IRecipe
 
 	@Override
 	public ItemStack getCraftingResult(
-			final InventoryCrafting inv )
+			final IInventory inv )
 	{
 		return getRequirements( inv );
 	}
@@ -189,9 +190,9 @@ public class FlatColoredBlockRecipe implements IRecipe
 
 	@Override
 	public NonNullList<ItemStack> getRemainingItems(
-			final InventoryCrafting inv )
+			final IInventory inv )
 	{
-		final NonNullList<ItemStack> ret = NonNullList.<ItemStack> func_191197_a( inv.getSizeInventory(), ItemStack.field_190927_a );
+		final NonNullList<ItemStack> ret = NonNullList.<ItemStack> create();
 
 		for ( int i = 0; i < ret.size(); i++ )
 		{
@@ -219,27 +220,7 @@ public class FlatColoredBlockRecipe implements IRecipe
 	private ResourceLocation recipeName = new ResourceLocation( FlatColoredBlocks.MODID, "flatcoloredblockcrafting" );
 
 	@Override
-	public IRecipe setRegistryName(
-			ResourceLocation name )
-	{
-		recipeName = name;
-		return this;
-	}
-
-	@Override
-	public ResourceLocation getRegistryName()
-	{
-		return recipeName;
-	}
-
-	@Override
-	public Class<IRecipe> getRegistryType()
-	{
-		return IRecipe.class;
-	}
-
-	@Override
-	public boolean func_194133_a(
+	public boolean canFit(
 			int width,
 			int height )
 	{
@@ -247,9 +228,21 @@ public class FlatColoredBlockRecipe implements IRecipe
 	}
 
 	@Override
-	public boolean func_192399_d()
+	public boolean isDynamic()
 	{
 		return true; // hide recipe
+	}
+
+	@Override
+	public ResourceLocation getId()
+	{
+		return recipeName;
+	}
+
+	@Override
+	public IRecipeSerializer<?> getSerializer()
+	{
+		return null;
 	}
 
 }

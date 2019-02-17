@@ -3,14 +3,16 @@ package mod.flatcoloredblocks.block;
 import java.util.List;
 import java.util.Set;
 
-import com.sun.istack.internal.NotNull;
+import javax.annotation.Nonnull;
 
 import mod.flatcoloredblocks.FlatColoredBlocks;
 import mod.flatcoloredblocks.ModUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -20,13 +22,13 @@ public class ItemBlockFlatColored extends ItemBlock
 
 	public BlockFlatColored getColoredBlock()
 	{
-		return (BlockFlatColored) block;
+		return (BlockFlatColored) getBlock();
 	}
 
 	public IBlockState getStateFromStack(
-			@NotNull final ItemStack stack )
+			@Nonnull final ItemStack stack )
 	{
-		return ModUtil.getStateFromMeta( getBlock(), stack.getItemDamage() );
+		return ModUtil.getStateFromMeta( getBlock(), stack.getDamage() );
 	}
 
 	private String getColorPrefix(
@@ -62,7 +64,7 @@ public class ItemBlockFlatColored extends ItemBlock
 	public ItemBlockFlatColored(
 			final Block block )
 	{
-		super( block );
+		super( block, ( new Item.Properties() ).group( ItemGroup.DECORATIONS ) );
 		setHasSubtypes( true );
 	}
 
@@ -75,7 +77,7 @@ public class ItemBlockFlatColored extends ItemBlock
 
 	@Override
 	public String getItemStackDisplayName(
-			@NotNull final ItemStack stack )
+			@Nonnull final ItemStack stack )
 	{
 		final IBlockState state = getStateFromStack( stack );
 		final int shadeNum = getColoredBlock().getShadeNumber( state );
@@ -104,7 +106,7 @@ public class ItemBlockFlatColored extends ItemBlock
 
 	@Override
 	public void addInformation(
-			@NotNull final ItemStack stack,
+			@Nonnull final ItemStack stack,
 			final World worldIn,
 			final List<String> tooltip,
 			final ITooltipFlag advanced )
@@ -199,7 +201,7 @@ public class ItemBlockFlatColored extends ItemBlock
 	}
 
 	public int getColorFromItemStack(
-			@NotNull final ItemStack stack,
+			@Nonnull final ItemStack stack,
 			final int renderPass )
 	{
 		final IBlockState state = getStateFromStack( stack );

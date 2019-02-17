@@ -8,18 +8,18 @@ import java.util.Set;
 import mod.flatcoloredblocks.FlatColoredBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
-import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.block.material.MaterialColor;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.IProperty;
+import net.minecraft.state.IntegerProperty;
+import net.minecraft.state.StateContainer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.World;
 
 public class BlockFlatColored extends Block
 {
@@ -32,7 +32,7 @@ public class BlockFlatColored extends Block
 	private int shadeOffset; // first shade in block
 	private int maxShade; // this is the last shade in this block.
 	private BlockHSVConfiguration configuration; // HSV for this block.
-	private PropertyInteger shade; // block state configuration for block.
+	private IntegerProperty shade; // block state configuration for block.
 	private final int varient;
 
 	// only used for description.
@@ -40,10 +40,10 @@ public class BlockFlatColored extends Block
 	public final int lightValue;
 
 	@Override
-	public MapColor getMapColor(
-			final IBlockState state,
-			final IBlockAccess world,
-			final BlockPos pos )
+	public MaterialColor getMapColor(
+			IBlockState state,
+			IBlockReader world,
+			BlockPos pos )
 	{
 		for ( final EnumFlatColorAttributes attr : getFlatColorAttributes( state ) )
 		{
@@ -53,7 +53,7 @@ public class BlockFlatColored extends Block
 			}
 		}
 
-		return MapColor.SNOW;
+		return MaterialColor.SNOW;
 	}
 
 	// also used in item for item stack color.
@@ -107,16 +107,17 @@ public class BlockFlatColored extends Block
 			final float opacity,
 			final int varientNum )
 	{
-		super( opacity > 0.001 ? Material.GLASS : Material.ROCK );
+		super( Block.Properties.create( opacity > 0.001 ? Material.GLASS : Material.ROCK )
+				.hardnessAndResistance( 1.5F, 10.0F )
+				.lightValue( FlatColoredBlocks.instance.config.GLOWING_EMITS_LIGHT ? (int) Math.max( 0, Math.min( 15, lightValue / 255.0f ) ) : 0 )
+				.sound( opacity > 0.001 ? SoundType.GLASS : SoundType.STONE ) );
+
 		setUnlocalizedName( "flatcoloredblocks.flatcoloredblock." + offset );
 
 		// mimic stone..
-		setHardness( 1.5F );
-		setResistance( 10.0F );
 		setHarvestLevel( "pickaxe", 0 );
-		setLightLevel( FlatColoredBlocks.instance.config.GLOWING_EMITS_LIGHT ? Math.max( 0, Math.min( 15, lightValue / 255.0f ) ) : 0 );
+
 		setLightOpacity( opacity > 0.001 ? 0 : 255 );
-		setSoundType( opacity > 0.001 ? SoundType.GLASS : SoundType.STONE );
 
 		translucent = opacity > 0.001;
 		varient = varientNum;
@@ -149,11 +150,8 @@ public class BlockFlatColored extends Block
 		}
 	}
 
-	/**
-	 * Called by Block's Constructor.
-	 */
-	@Override
-	protected BlockStateContainer createBlockState()
+	protected void fillStateContainer(
+			StateContainer.Builder<Block, IBlockState> builder )
 	{
 		shadeOffset = offset;
 		configuration = newConfig;
@@ -162,37 +160,24 @@ public class BlockFlatColored extends Block
 		if ( configuration.MAX_SHADES_MINUS_ONE < maxShade )
 		{
 			maxShade = configuration.MAX_SHADES_MINUS_ONE;
-			return new BlockStateContainer( this, new IProperty[] { shade = PropertyInteger.create( "shade", 0, maxShade - shadeOffset ) } );
+			builder.add( shade = IntegerProperty.create( "shade", 0, maxShade - shadeOffset ) );
 		}
-
-		return new BlockStateContainer( this, new IProperty[] { shade = PropertyInteger.create( "shade", 0, configuration.META_SCALE_MINUS_ONE ) } );
+		else
+		{
+			builder.add( shade = IntegerProperty.create( "shade", 0, configuration.META_SCALE_MINUS_ONE ) );
+		}
 	}
 
 	@Override
-	public int getMetaFromState(
-			final IBlockState state )
+	public void getDrops(
+			IBlockState state,
+			NonNullList<ItemStack> drops,
+			World world,
+			BlockPos pos,
+			int fortune )
 	{
-		return state.getValue( shade );
-	}
-
-	@Override
-	public IBlockState getStateFromMeta(
-			final int meta )
-	{
-		return getDefaultState().withProperty( shade, meta );
-	}
-
-	@Override
-	public CreativeTabs getCreativeTabToDisplayOn()
-	{
-		return FlatColoredBlocks.instance.creativeTab;
-	}
-
-	@Override
-	public int damageDropped(
-			final IBlockState state )
-	{
-		return getMetaFromState( state );
+		// TODO Auto-generated method stub
+		super.getDrops( state, drops, world, pos, fortune );
 	}
 
 	// convert block into all possible ItemStacks.
@@ -206,14 +191,6 @@ public class BlockFlatColored extends Block
 		{
 			list.add( new ItemStack( item, qty, x - shadeOffset ) );
 		}
-	}
-
-	@Override
-	public void getSubBlocks(
-			final CreativeTabs tab,
-			final NonNullList<ItemStack> list )
-	{
-		outputShades( list, 1 );
 	}
 
 	// generates a list of all shades without caring about which block it is.

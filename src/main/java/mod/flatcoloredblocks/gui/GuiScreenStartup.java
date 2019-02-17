@@ -36,43 +36,13 @@ public class GuiScreenStartup extends GuiScreen
 
 		lines = msg.split( "\n" );
 
-		buttonList.add( new GuiButton( 0, width / 2 - 144 / 2, height / 2 + 96, 144, 20, "Ok" ) );
-	}
+		buttons.add( new GuiButton( 0, width / 2 - 144 / 2, height / 2 + 96, 144, 20, "Ok" ) {
 
-	@Override
-	public void drawScreen(
-			final int mouseX,
-			final int mouseY,
-			final float partialTicks )
-	{
-		GL11.glEnable( GL11.GL_TEXTURE_2D );
-		drawDefaultBackground();
-
-		int heightLoc = 90;
-		drawCenteredString( fontRendererObj, TextFormatting.YELLOW + "Flat Colored Blocks", width / 2, height / 2 - 110, 0xFFFFFF );
-
-		for ( final String s : lines )
-		{
-			final List<String> info = fontRendererObj.listFormattedStringToWidth( s, width - 40 );
-			for ( final String infoCut : info )
+			public void onClick(
+					double mouseX,
+					double mouseY )
 			{
-				drawCenteredString( fontRendererObj, infoCut, width / 2, height / 2 - heightLoc, 0xFFFFFF );
-				heightLoc = heightLoc - 12;
-			}
-		}
-
-		super.drawScreen( mouseX, mouseY, partialTicks );
-	}
-
-	@Override
-	public void actionPerformed(
-			final GuiButton button )
-	{
-		switch ( button.id )
-		{
-			case 0:
-			{
-				for ( final GuiButton b : buttonList )
+				for ( final GuiButton b : buttons )
 				{
 					b.enabled = false;
 				}
@@ -81,10 +51,34 @@ public class GuiScreenStartup extends GuiScreen
 				FlatColoredBlocks.instance.config.save();
 
 				mc.displayGuiScreen( null );
+			};
 
-				break;
+		} );
+	}
+
+	@Override
+	public void render(
+			int mouseX,
+			int mouseY,
+			float partialTicks )
+	{
+		GL11.glEnable( GL11.GL_TEXTURE_2D );
+		drawDefaultBackground();
+
+		int heightLoc = 90;
+		drawCenteredString( fontRenderer, TextFormatting.YELLOW + "Flat Colored Blocks", width / 2, height / 2 - 110, 0xFFFFFF );
+
+		for ( final String s : lines )
+		{
+			final List<String> info = fontRenderer.listFormattedStringToWidth( s, width - 40 );
+			for ( final String infoCut : info )
+			{
+				drawCenteredString( fontRenderer, infoCut, width / 2, height / 2 - heightLoc, 0xFFFFFF );
+				heightLoc = heightLoc - 12;
 			}
 		}
+
+		super.render( mouseX, mouseY, partialTicks );
 	}
 
 	@Override

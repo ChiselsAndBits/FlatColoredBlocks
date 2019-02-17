@@ -1,11 +1,9 @@
 package mod.flatcoloredblocks.craftingitem;
 
-import java.io.IOException;
-
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import mod.flatcoloredblocks.FlatColoredBlocks;
+import net.java.games.input.Mouse;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
@@ -48,8 +46,8 @@ public class GuiColoredBlockCrafter extends GuiContainer
 			final int mouseX,
 			final int mouseY )
 	{
-		fontRendererObj.drawString( FlatColoredBlocks.instance.itemColoredBlockCrafting.getItemStackDisplayName( null ), 8, 6, 0x404040 );
-		fontRendererObj.drawString( I18n.format( "container.inventory", new Object[0] ), 8, ySize - 93, 0x404040 );
+		fontRenderer.drawString( FlatColoredBlocks.instance.itemColoredBlockCrafting.getDisplayName( null ).getFormattedText(), 8, 6, 0x404040 );
+		fontRenderer.drawString( I18n.format( "container.inventory", new Object[0] ), 8, ySize - 93, 0x404040 );
 	}
 
 	@Override
@@ -58,7 +56,7 @@ public class GuiColoredBlockCrafter extends GuiContainer
 			final int mouseX,
 			final int mouseY )
 	{
-		GlStateManager.color( 1.0F, 1.0F, 1.0F, 1.0F );
+		GlStateManager.color4f( 1.0F, 1.0F, 1.0F, 1.0F );
 		mc.getTextureManager().bindTexture( CRAFTER_GUI_TEXTURE );
 		final int xOffset = ( width - xSize ) / 2;
 		final int yOffset = ( height - ySize ) / 2;
@@ -73,7 +71,7 @@ public class GuiColoredBlockCrafter extends GuiContainer
 
 		mc.getTextureManager().bindTexture( CRAFTER_GUI_TEXTURE );
 
-		GlStateManager.color( 1.0F, 1.0F, 1.0F, 1.0F );
+		GlStateManager.color4f( 1.0F, 1.0F, 1.0F, 1.0F );
 		GL11.glColor4f( 1.0F, 1.0F, 1.0F, 1.0F );
 
 		final int rowsOfScrolling = Math.max( ( myContainer.getItemCount() + 8 ) / 9 - 7, 0 );
@@ -87,11 +85,9 @@ public class GuiColoredBlockCrafter extends GuiContainer
 	}
 
 	@Override
-	public void handleMouseInput() throws IOException
+	public boolean mouseScrolled(
+			double mouseWheelChange )
 	{
-		super.handleMouseInput();
-		int mouseWheelChange = Mouse.getEventDWheel();
-
 		if ( mouseWheelChange != 0 )
 		{
 			final int rowsToScroll = myContainer.getItemCount() / 9 - 7;

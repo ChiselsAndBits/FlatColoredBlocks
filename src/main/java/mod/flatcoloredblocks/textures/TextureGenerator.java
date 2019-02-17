@@ -12,10 +12,10 @@ import mod.flatcoloredblocks.client.ClientSide;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureUtil;
-import net.minecraft.client.resources.IResource;
+import net.minecraft.resources.IResource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class TextureGenerator
 {
@@ -30,7 +30,7 @@ public class TextureGenerator
 		try
 		{
 			final ResourceLocation sourceLoc = ClientSide.instance.getTextureResourceLocation( EnumFlatBlockType.TRANSPARENT );
-			final IResource iresource = Minecraft.getMinecraft().getResourceManager().getResource( sourceLoc );
+			final IResource iresource = Minecraft.getInstance().getResourceManager().getResource( sourceLoc );
 			final BufferedImage bi = TextureUtil.readBufferedImage( iresource.getInputStream() );
 
 			for ( final int varient : FlatColoredBlocks.instance.transparent.shadeConvertVariant )
@@ -64,7 +64,8 @@ public class TextureGenerator
 	private TextureAtlasSprite orMissing(
 			TextureAtlasSprite texture )
 	{
-		return texture != null ? texture : Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
+		// getSprite(null) - missing sprite
+		return texture != null ? texture : Minecraft.getInstance().getTextureMap().getSprite( null );
 	}
 
 	public TextureAtlasSprite getGlowingTexture(

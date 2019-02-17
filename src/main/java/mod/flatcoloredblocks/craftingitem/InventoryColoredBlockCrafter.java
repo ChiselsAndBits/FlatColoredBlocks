@@ -273,7 +273,7 @@ public class InventoryColoredBlockCrafter implements IInventory
 
 		final InventorySummary da = scanPlayerInventory();
 		final Block blk = Block.getBlockFromItem( reqItem.getItem() );
-		final IBlockState state = ModUtil.getStateFromMeta( blk, reqItem.getItemDamage() );
+		final IBlockState state = ModUtil.getStateFromMeta( blk, reqItem.getDamage() );
 
 		final Set<EnumFlatColorAttributes> charistics = ( (BlockFlatColored) blk ).getFlatColorAttributes( state );
 		final Object Craftable = ( (BlockFlatColored) blk ).getCraftable();
@@ -408,7 +408,7 @@ public class InventoryColoredBlockCrafter implements IInventory
 	}
 
 	@Override
-	public boolean isUseableByPlayer(
+	public boolean isUsableByPlayer(
 			final EntityPlayer player )
 	{
 		return true;
@@ -464,11 +464,11 @@ public class InventoryColoredBlockCrafter implements IInventory
 	}
 
 	@Override
-	public boolean func_191420_l() // whatever this is...
+	public boolean isEmpty() // whatever this is...
 	{
 		for ( final ItemStack itemstack : options )
 		{
-			if ( !itemstack.func_190926_b() )
+			if ( !itemstack.isEmpty() )
 			{
 				return false;
 			}

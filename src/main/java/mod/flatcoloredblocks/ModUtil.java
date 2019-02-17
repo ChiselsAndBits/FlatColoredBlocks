@@ -1,58 +1,59 @@
 package mod.flatcoloredblocks;
 
-import com.sun.istack.internal.NotNull;
+import javax.annotation.Nonnull;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.translation.I18n;
 
 @SuppressWarnings( "deprecation" )
 public class ModUtil
 {
 
 	public static void alterStack(
-			@NotNull final ItemStack stack,
+			@Nonnull final ItemStack stack,
 			final int deltaStackSize )
 	{
 		setStackSize( stack, getStackSize( stack ) + deltaStackSize );
 	}
 
 	public static void setStackSize(
-			@NotNull final ItemStack stack,
+			@Nonnull final ItemStack stack,
 			final int stackSize )
 	{
-		stack.func_190920_e( stackSize );
+		stack.setCount( stackSize );
 	}
 
 	public static int getStackSize(
-			@NotNull final ItemStack stack )
+			@Nonnull final ItemStack stack )
 	{
-		return stack.func_190916_E();
+		return stack.getCount();
 	}
 
 	public static ItemStack getEmptyStack()
 	{
-		return ItemStack.field_190927_a;
+		return ItemStack.EMPTY;
 	}
 
 	public static String translateToLocal(
 			final String string )
 	{
-		return I18n.translateToLocal( string );
-	}
-
-	public static IBlockState getStateFromMeta(
-			final Block blk,
-			final int metadata )
-	{
-		return blk.getStateFromMeta( metadata );
+		return I18n.format( string );
 	}
 
 	public static boolean isEmpty(
 			final ItemStack i )
 	{
-		return i.func_190926_b();
+		return i.isEmpty();
+	}
+
+	public static IBlockState getStateFromMeta(
+			Block blk,
+			ItemStack stack )
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

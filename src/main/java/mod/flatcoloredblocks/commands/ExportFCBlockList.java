@@ -11,15 +11,13 @@ import mod.flatcoloredblocks.block.BlockFlatColored;
 import mod.flatcoloredblocks.block.ConversionHSV2RGB;
 import mod.flatcoloredblocks.block.ItemBlockFlatColored;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentTranslation;
 
-public class ExportFCBlockList extends CommandBase
+public class ExportFCBlockList
 {
 
 	@Override
@@ -82,7 +80,7 @@ public class ExportFCBlockList extends CommandBase
 
 					line.append( blk.getShadeNumber( state ) );
 					line.append( ",\"" );
-					line.append( is.getDisplayName().replace( "\"", "\"\"" ) );
+					line.append( is.getDisplayName().getUnformattedComponentText().replace( "\"", "\"\"" ) );
 					line.append( "\"," );
 
 					line.append( "#" ).append( ItemBlockFlatColored.hexPad( Integer.toString( r, 16 ) ) ).append( ItemBlockFlatColored.hexPad( Integer.toString( g, 16 ) ) ).append( ItemBlockFlatColored.hexPad( Integer.toString( b, 16 ) ) );
@@ -116,7 +114,7 @@ public class ExportFCBlockList extends CommandBase
 		}
 		catch ( IOException e )
 		{
-			throw new CommandException( "flatcoloredblocks.commands.export_list.unabletosave", path );
+			throw new CommandException( new TextComponentTranslation( "flatcoloredblocks.commands.export_list.unabletosave", path ) );
 		}
 	}
 

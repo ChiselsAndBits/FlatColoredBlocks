@@ -5,10 +5,9 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.world.IWorldReader;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class BlockFlatColoredTranslucent extends BlockFlatColored
 {
@@ -21,33 +20,30 @@ public class BlockFlatColoredTranslucent extends BlockFlatColored
 
 		// Its still a full block.. even if its not a opaque cube
 		// C&B requires this.
-		fullBlock = true;
+		// fullBlock = true; -- cannot set this.
 	}
 
 	@Override
-	public BlockRenderLayer getBlockLayer()
+	public BlockRenderLayer getRenderLayer()
 	{
 		return BlockRenderLayer.TRANSLUCENT;
 	}
 
 	@Override
-	@SideOnly( Side.CLIENT )
-	@Deprecated
-	public boolean shouldSideBeRendered(
-			final IBlockState blockState,
-			final IBlockAccess blockAccess,
-			final BlockPos pos,
-			final EnumFacing side )
+	@OnlyIn( Dist.CLIENT )
+	public boolean isSideInvisible(
+			IBlockState state,
+			IBlockState adjacentBlockState,
+			EnumFacing side )
 	{
-		final IBlockState iblockstate = blockAccess.getBlockState( pos.offset( side ) );
-		final Block block = iblockstate.getBlock();
+		final Block block = adjacentBlockState.getBlock();
 
 		if ( block instanceof BlockFlatColoredTranslucent )
 		{
 			return false;
 		}
 
-		return super.shouldSideBeRendered( blockState, blockAccess, pos, side );
+		return super.isSideInvisible( state, adjacentBlockState, side );
 	}
 
 	@Override
@@ -58,8 +54,8 @@ public class BlockFlatColoredTranslucent extends BlockFlatColored
 	}
 
 	@Override
-	public boolean isOpaqueCube(
-			final IBlockState state )
+	public boolean isNormalCube(
+			IBlockState state )
 	{
 		return false;
 	}
@@ -67,7 +63,7 @@ public class BlockFlatColoredTranslucent extends BlockFlatColored
 	@Override
 	public float[] getBeaconColorMultiplier(
 			IBlockState state,
-			World world,
+			IWorldReader world,
 			BlockPos pos,
 			BlockPos beaconPos )
 	{

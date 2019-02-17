@@ -37,9 +37,9 @@ public class SlotColoredBlockCrafter extends Slot
 	}
 
 	@Override
-	public ItemStack func_190901_a(
-			final EntityPlayer playerIn,
-			final ItemStack stack )
+	public ItemStack onTake(
+			EntityPlayer thePlayer,
+			ItemStack stack )
 	{
 		secondInv.craftItem( stack, 1, false );
 		return stack;

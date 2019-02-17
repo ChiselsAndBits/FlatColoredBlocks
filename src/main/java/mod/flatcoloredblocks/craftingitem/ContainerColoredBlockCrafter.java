@@ -9,8 +9,8 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * Container for for crafting item's gui, manages scroll communication slots,
@@ -40,7 +40,7 @@ public class ContainerColoredBlockCrafter extends Container
 		{
 			for ( int k = 0; k < 9; ++k )
 			{
-				addSlotToContainer( new SlotColoredBlockCrafter( craftinginv, craftinginv, k + j * 9, 8 + k * 18, 18 + j * 18 ) );
+				addSlot( new SlotColoredBlockCrafter( craftinginv, craftinginv, k + j * 9, 8 + k * 18, 18 + j * 18 ) );
 			}
 		}
 
@@ -48,13 +48,13 @@ public class ContainerColoredBlockCrafter extends Container
 		{
 			for ( int j1 = 0; j1 < 9; ++j1 )
 			{
-				addSlotToContainer( new SlotChangeDetect( playerInventory, craftinginv, j1 + l * 9 + 9, 8 + j1 * 18, 104 + l * 18 + i ) );
+				addSlot( new SlotChangeDetect( playerInventory, craftinginv, j1 + l * 9 + 9, 8 + j1 * 18, 104 + l * 18 + i ) );
 			}
 		}
 
 		for ( int i1 = 0; i1 < 9; ++i1 )
 		{
-			addSlotToContainer( new SlotChangeDetect( playerInventory, craftinginv, i1, 8 + i1 * 18, 162 + i ) );
+			addSlot( new SlotChangeDetect( playerInventory, craftinginv, i1, 8 + i1 * 18, 162 + i ) );
 		}
 	}
 
@@ -111,7 +111,7 @@ public class ContainerColoredBlockCrafter extends Container
 
 		if ( Math.abs( originalScroll - currentScroll ) > 0.00001 )
 		{
-			if ( thePlayer.worldObj.isRemote )
+			if ( thePlayer.world.isRemote )
 			{
 				final ScrolingGuiPacket sgp = new ScrolingGuiPacket();
 				originalScroll = sgp.scroll = scrollPercent;
@@ -127,7 +127,7 @@ public class ContainerColoredBlockCrafter extends Container
 		return craftinginv.getSizeInventory();
 	}
 
-	@SideOnly( Side.CLIENT )
+	@OnlyIn( Dist.CLIENT )
 	public static Object getGuiClass()
 	{
 		return GuiColoredBlockCrafter.class;

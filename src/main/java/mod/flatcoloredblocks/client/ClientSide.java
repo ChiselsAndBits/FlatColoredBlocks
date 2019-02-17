@@ -3,7 +3,7 @@ package mod.flatcoloredblocks.client;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.sun.istack.internal.NotNull;
+import javax.annotation.Nonnull;
 
 import mod.flatcoloredblocks.FlatColoredBlocks;
 import mod.flatcoloredblocks.ModUtil;
@@ -17,15 +17,14 @@ import mod.flatcoloredblocks.textures.TextureGenerator;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.ModelBakery;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.color.IItemColor;
+import net.minecraft.client.renderer.model.ModelBakery;
+import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IWorldReaderBase;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -53,24 +52,25 @@ public class ClientSide implements IClientSide
 	@Override
 	public void init()
 	{
-		Minecraft.getMinecraft().getItemColors().registerItemColorHandler( new IItemColor() {
+		Minecraft.getInstance().getItemColors().register( new IItemColor() {
 
 			@Override
-			public int getColorFromItemstack(
-					@NotNull final ItemStack stack,
+			@Nonnull
+			public int getColor(
+					final ItemStack stack,
 					final int tintIndex )
 			{
 				final Block blk = Block.getBlockFromItem( stack.getItem() );
-				return ( (BlockFlatColored) blk ).colorFromState( ModUtil.getStateFromMeta( blk, stack.getMetadata() ) );
+				return ( (BlockFlatColored) blk ).colorFromState( ModUtil.getStateFromMeta( blk, stack ) );
 			}
 		}, BlockFlatColored.getAllBlocks().toArray( new Block[BlockFlatColored.getAllBlocks().size()] ) );
 
-		Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler( new IBlockColor() {
+		Minecraft.getInstance().getBlockColors().register( new IBlockColor() {
 
 			@Override
-			public int colorMultiplier(
+			public int getColor(
 					final IBlockState state,
-					final IBlockAccess p_186720_2_,
+					final IWorldReaderBase p_186720_2_,
 					final BlockPos pos,
 					final int tintIndex )
 			{

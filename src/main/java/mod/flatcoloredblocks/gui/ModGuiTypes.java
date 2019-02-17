@@ -6,8 +6,6 @@ import mod.flatcoloredblocks.craftingitem.ContainerColoredBlockCrafter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
 
 /**
  * Registry of Guis

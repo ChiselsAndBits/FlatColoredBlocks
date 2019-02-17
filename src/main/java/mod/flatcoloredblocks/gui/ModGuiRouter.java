@@ -2,9 +2,9 @@ package mod.flatcoloredblocks.gui;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.common.network.IGuiHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Client / Server Gui + Container Handler
@@ -34,7 +34,7 @@ public class ModGuiRouter implements IGuiHandler
 
 	// returns an instance of the Gui you made earlier
 	@Override
-	@SideOnly( Side.CLIENT )
+	@OnlyIn( Dist.CLIENT )
 	public Object getClientGuiElement(
 			final int id,
 			final EntityPlayer player,
