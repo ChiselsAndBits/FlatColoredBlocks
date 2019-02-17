@@ -12,8 +12,9 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
@@ -23,12 +24,6 @@ public class ItemBlockFlatColored extends ItemBlock
 	public BlockFlatColored getColoredBlock()
 	{
 		return (BlockFlatColored) getBlock();
-	}
-
-	public IBlockState getStateFromStack(
-			@Nonnull final ItemStack stack )
-	{
-		return ModUtil.getStateFromMeta( getBlock(), stack.getDamage() );
 	}
 
 	private String getColorPrefix(
@@ -64,22 +59,14 @@ public class ItemBlockFlatColored extends ItemBlock
 	public ItemBlockFlatColored(
 			final Block block )
 	{
-		super( block, ( new Item.Properties() ).group( ItemGroup.DECORATIONS ) );
-		setHasSubtypes( true );
+		super( block, ( new Item.Properties() ).group( FlatColoredBlocks.instance.creativeTab ) );
 	}
 
 	@Override
-	public int getMetadata(
-			final int damage )
+	public ITextComponent getDisplayName(
+			@Nonnull ItemStack stack )
 	{
-		return damage; // override and return damage instead of 0
-	}
-
-	@Override
-	public String getItemStackDisplayName(
-			@Nonnull final ItemStack stack )
-	{
-		final IBlockState state = getStateFromStack( stack );
+		final IBlockState state = ModUtil.getStateFromMeta( getBlock(), stack );
 		final int shadeNum = getColoredBlock().getShadeNumber( state );
 
 		final Set<EnumFlatColorAttributes> colorChars = getColoredBlock().getFlatColorAttributes( state );
@@ -88,7 +75,7 @@ public class ItemBlockFlatColored extends ItemBlock
 		final String prefix = getColorPrefix( colorChars );
 		final String hue = getColorHueName( colorChars );
 
-		return type + ModUtil.translateToLocal( prefix + hue + ".name" ) + " " + ModUtil.translateToLocal( "flatcoloredblocks.Shade.name" ) + shadeNum;
+		return new TextComponentString( type + ModUtil.translateToLocal( prefix + hue + ".name" ) + " " + ModUtil.translateToLocal( "flatcoloredblocks.Shade.name" ) + shadeNum );
 	}
 
 	private String getTypeLocalization()
@@ -106,12 +93,12 @@ public class ItemBlockFlatColored extends ItemBlock
 
 	@Override
 	public void addInformation(
-			@Nonnull final ItemStack stack,
-			final World worldIn,
-			final List<String> tooltip,
-			final ITooltipFlag advanced )
+			ItemStack stack,
+			World worldIn,
+			List<ITextComponent> tooltip,
+			ITooltipFlag flagIn )
 	{
-		final IBlockState state = getStateFromStack( stack );
+		final IBlockState state = ModUtil.getStateFromMeta( this.getBlock(), stack );
 		final BlockFlatColored blk = getColoredBlock();
 
 		final int hsv = blk.hsvFromState( state );
@@ -137,7 +124,7 @@ public class ItemBlockFlatColored extends ItemBlock
 			final StringBuilder sb = new StringBuilder();
 			sb.append( ModUtil.translateToLocal( "flatcoloredblocks.tooltips.lightvalue" ) ).append( ' ' );
 			sb.append( blk.lightValue ).append( ModUtil.translateToLocal( "flatcoloredblocks.tooltips.lightValueUnit" ) );
-			tooltip.add( sb.toString() );
+			tooltip.add( new TextComponentString( sb.toString() ) );
 		}
 
 		if ( FlatColoredBlocks.instance.config.showOpacity && blk.opacity < 100 )
@@ -145,10 +132,10 @@ public class ItemBlockFlatColored extends ItemBlock
 			final StringBuilder sb = new StringBuilder();
 			sb.append( ModUtil.translateToLocal( "flatcoloredblocks.tooltips.opacity" ) ).append( ' ' );
 			sb.append( blk.opacity ).append( ModUtil.translateToLocal( "flatcoloredblocks.tooltips.percent" ) );
-			tooltip.add( sb.toString() );
+			tooltip.add( new TextComponentString( sb.toString() ) );
 		}
 
-		super.addInformation( stack, worldIn, tooltip, advanced );
+		super.addInformation( stack, worldIn, tooltip, flagIn );
 	}
 
 	public static enum ColorFormat
@@ -159,7 +146,7 @@ public class ItemBlockFlatColored extends ItemBlock
 	private void addColor(
 			final ColorFormat Format,
 			final int value,
-			final List<String> tooltip )
+			final List<ITextComponent> tooltip )
 	{
 		final int r_h = value >> 16 & 0xff;
 		final int g_s = value >> 8 & 0xff;
@@ -187,7 +174,7 @@ public class ItemBlockFlatColored extends ItemBlock
 			sb.append( 100 * b_v / 255 ).append( ModUtil.translateToLocal( "flatcoloredblocks.tooltips.percent" ) );
 		}
 
-		tooltip.add( sb.toString() );
+		tooltip.add( new TextComponentString( sb.toString() ) );
 	}
 
 	public static String hexPad(
@@ -204,7 +191,7 @@ public class ItemBlockFlatColored extends ItemBlock
 			@Nonnull final ItemStack stack,
 			final int renderPass )
 	{
-		final IBlockState state = getStateFromStack( stack );
+		final IBlockState state = ModUtil.getStateFromMeta( this.getBlock(), stack );
 		return getColoredBlock().colorFromState( state );
 	}
 

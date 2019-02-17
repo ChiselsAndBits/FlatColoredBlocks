@@ -1,6 +1,7 @@
 package mod.flatcoloredblocks.craftingitem;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -16,6 +17,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeSerializer;
@@ -23,7 +25,8 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.oredict.OreDictionary;
+
+// TODO: FlatColoredBlockRecipe is not registered with anything.
 
 public class FlatColoredBlockRecipe implements IRecipe
 {
@@ -60,7 +63,7 @@ public class FlatColoredBlockRecipe implements IRecipe
 
 				flatBlock = (BlockFlatColored) blk;
 				target = i.copy();
-				state = ModUtil.getStateFromMeta( blk, i.getDamage() );
+				state = ModUtil.getStateFromMeta( blk, i );
 			}
 			else if ( i.getItem() instanceof ItemColoredBlockCrafter )
 			{
@@ -100,7 +103,7 @@ public class FlatColoredBlockRecipe implements IRecipe
 				requiredDyes.add( cc.secondaryDye );
 			}
 
-			final HashMap<Object, List<ItemStack>> dyeList = InventoryColoredBlockCrafter.getDyeList();
+			final HashMap<Object, Collection<Item>> dyeList = InventoryColoredBlockCrafter.getDyeList();
 			if ( !alternateSet.isEmpty() && testRequirements( alternateSet, flatBlock.getCraftable(), otherItems, dyeList ) )
 			{
 				return target;
@@ -119,10 +122,10 @@ public class FlatColoredBlockRecipe implements IRecipe
 			final HashSet<EnumDyeColor> requiredDyes,
 			final EnumFlatBlockType craftable,
 			final List<ItemStack> otherItems,
-			final HashMap<Object, List<ItemStack>> dyeList )
+			final HashMap<Object, Collection<Item>> dyeList )
 	{
 		final List<ItemStack> testList = cloneList( otherItems );
-		final List<ItemStack> buildingMaterials = dyeList.get( craftable );
+		final Collection<Item> buildingMaterials = dyeList.get( craftable );
 
 		if ( findAndRemove( buildingMaterials, testList ) )
 		{
@@ -141,15 +144,15 @@ public class FlatColoredBlockRecipe implements IRecipe
 	}
 
 	private boolean findAndRemove(
-			final List<ItemStack> matchList,
+			final Collection<Item> matchList,
 			final List<ItemStack> testList )
 	{
-		for ( final ItemStack match : matchList )
+		for ( final Item match : matchList )
 		{
 			for ( int idx = 0; idx < testList.size(); ++idx )
 			{
 				final ItemStack test = testList.get( idx );
-				if ( OreDictionary.itemMatches( match, test, false ) )
+				if ( test.getItem() == match )
 				{
 					testList.remove( idx );
 					return true;

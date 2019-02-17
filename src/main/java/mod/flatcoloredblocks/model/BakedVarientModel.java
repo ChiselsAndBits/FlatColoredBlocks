@@ -3,10 +3,12 @@ package mod.flatcoloredblocks.model;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
+import java.util.function.Function;
 
 import mod.flatcoloredblocks.block.EnumFlatBlockType;
 import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.model.IUnbakedModel;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModel;
@@ -27,22 +29,12 @@ public class BakedVarientModel implements IModel
 	}
 
 	@Override
-	public Collection<ResourceLocation> getDependencies()
-	{
-		return Collections.emptyList();
-	}
-
-	@Override
-	public Collection<ResourceLocation> getTextures()
-	{
-		return Collections.emptyList();
-	}
-
-	@Override
 	public IBakedModel bake(
+			Function modelGetter,
+			Function spriteGetter,
 			IModelState state,
-			VertexFormat format,
-			java.util.function.Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter )
+			boolean uvlock,
+			VertexFormat format )
 	{
 		return new BakedVarientBlock( type, varient, format );
 	}
@@ -51,6 +43,18 @@ public class BakedVarientModel implements IModel
 	public IModelState getDefaultState()
 	{
 		return TRSRTransformation.identity();
+	}
+
+	public Collection<ResourceLocation> getOverrideLocations()
+	{
+		return Collections.emptyList();
+	}
+
+	public Collection<ResourceLocation> getTextures(
+			Function<ResourceLocation, IUnbakedModel> modelGetter,
+			Set<String> missingTextureErrors )
+	{
+		return Collections.emptyList();
 	}
 
 }

@@ -1,20 +1,23 @@
 package mod.flatcoloredblocks.gui;
 
+import java.util.function.Function;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.common.network.IGuiHandler;
+import net.minecraftforge.fml.network.FMLPlayMessages;
+import net.minecraftforge.fml.network.FMLPlayMessages.OpenContainer;
 
 /**
  * Client / Server Gui + Container Handler
  */
-public class ModGuiRouter implements IGuiHandler
+public class ModGuiRouter implements Function<FMLPlayMessages.OpenContainer, GuiScreen>
 {
 
-	@Override
-	public Object getServerGuiElement(
-			final int id,
+	public static Container createContainer(
+			ModGuiTypes type,
 			final EntityPlayer player,
 			final World world,
 			final int x,
@@ -23,8 +26,7 @@ public class ModGuiRouter implements IGuiHandler
 	{
 		try
 		{
-			final ModGuiTypes guiType = ModGuiTypes.values()[id];
-			return guiType.container_construtor.newInstance( player, world, x, y, z );
+			return (Container) type.container_construtor.newInstance( player, world, x, y, z );
 		}
 		catch ( final Exception e )
 		{
@@ -32,21 +34,14 @@ public class ModGuiRouter implements IGuiHandler
 		}
 	}
 
-	// returns an instance of the Gui you made earlier
 	@Override
-	@OnlyIn( Dist.CLIENT )
-	public Object getClientGuiElement(
-			final int id,
-			final EntityPlayer player,
-			final World world,
-			final int x,
-			final int y,
-			final int z )
+	public GuiScreen apply(
+			OpenContainer t )
 	{
 		try
 		{
-			final ModGuiTypes guiType = ModGuiTypes.values()[id];
-			return guiType.gui_construtor.newInstance( player, world, x, y, z );
+			final ModGuiTypes guiType = ModGuiTypes.valueOf( t.getId().getPath() );
+			return (GuiScreen) guiType.gui_construtor.newInstance( Minecraft.getInstance().player, Minecraft.getInstance().player.world, 0, 0, 0 );
 		}
 		catch ( final Exception e )
 		{

@@ -1,11 +1,11 @@
 package mod.flatcoloredblocks.craftingitem;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -22,9 +22,11 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.common.Tags;
 
 /**
  * Generates and Crafts items that are seen in the crafting item's gui.
@@ -46,31 +48,39 @@ public class InventoryColoredBlockCrafter implements IInventory
 		craftingContainer = coloredCrafterContainer;
 	}
 
-	public static HashMap<Object, List<ItemStack>> getDyeList()
+	public static HashMap<Object, Collection<Item>> getDyeList()
 	{
-		final HashMap<Object, List<ItemStack>> dyeList = new HashMap<Object, List<ItemStack>>();
+		final HashMap<Object, Collection<Item>> dyeList = new HashMap<Object, Collection<Item>>();
 
-		dyeList.put( EnumDyeColor.BLACK, OreDictionary.getOres( "dyeBlack" ) );
-		dyeList.put( EnumDyeColor.RED, OreDictionary.getOres( "dyeRed" ) );
-		dyeList.put( EnumDyeColor.GREEN, OreDictionary.getOres( "dyeGreen" ) );
-		dyeList.put( EnumDyeColor.BROWN, OreDictionary.getOres( "dyeBrown" ) );
-		dyeList.put( EnumDyeColor.BLUE, OreDictionary.getOres( "dyeBlue" ) );
-		dyeList.put( EnumDyeColor.PURPLE, OreDictionary.getOres( "dyePurple" ) );
-		dyeList.put( EnumDyeColor.CYAN, OreDictionary.getOres( "dyeCyan" ) );
-		dyeList.put( EnumDyeColor.SILVER, OreDictionary.getOres( "dyeLightGray" ) );
-		dyeList.put( EnumDyeColor.GRAY, OreDictionary.getOres( "dyeGray" ) );
-		dyeList.put( EnumDyeColor.PINK, OreDictionary.getOres( "dyePink" ) );
-		dyeList.put( EnumDyeColor.LIME, OreDictionary.getOres( "dyeLime" ) );
-		dyeList.put( EnumDyeColor.YELLOW, OreDictionary.getOres( "dyeYellow" ) );
-		dyeList.put( EnumDyeColor.LIGHT_BLUE, OreDictionary.getOres( "dyeLightBlue" ) );
-		dyeList.put( EnumDyeColor.MAGENTA, OreDictionary.getOres( "dyeMagenta" ) );
-		dyeList.put( EnumDyeColor.ORANGE, OreDictionary.getOres( "dyeOrange" ) );
-		dyeList.put( EnumDyeColor.WHITE, OreDictionary.getOres( "dyeWhite" ) );
-		dyeList.put( EnumFlatBlockType.NORMAL, getItems( FlatColoredBlocks.instance.config.solidCraftingBlock ) );
-		dyeList.put( EnumFlatBlockType.GLOWING, getItems( FlatColoredBlocks.instance.config.glowingCraftingBlock ) );
-		dyeList.put( EnumFlatBlockType.TRANSPARENT, getItems( FlatColoredBlocks.instance.config.transparentCraftingBlock ) );
+		tagIntoList( dyeList, EnumDyeColor.BLACK, Tags.Items.DYES_BLACK );
+		tagIntoList( dyeList, EnumDyeColor.RED, Tags.Items.DYES_RED );
+		tagIntoList( dyeList, EnumDyeColor.GREEN, Tags.Items.DYES_GREEN );
+		tagIntoList( dyeList, EnumDyeColor.BROWN, Tags.Items.DYES_BROWN );
+		tagIntoList( dyeList, EnumDyeColor.BLUE, Tags.Items.DYES_BLUE );
+		tagIntoList( dyeList, EnumDyeColor.PURPLE, Tags.Items.DYES_PURPLE );
+		tagIntoList( dyeList, EnumDyeColor.CYAN, Tags.Items.DYES_CYAN );
+		tagIntoList( dyeList, EnumDyeColor.LIGHT_GRAY, Tags.Items.DYES_LIGHT_GRAY );
+		tagIntoList( dyeList, EnumDyeColor.GRAY, Tags.Items.DYES_GRAY );
+		tagIntoList( dyeList, EnumDyeColor.PINK, Tags.Items.DYES_PINK );
+		tagIntoList( dyeList, EnumDyeColor.LIME, Tags.Items.DYES_LIME );
+		tagIntoList( dyeList, EnumDyeColor.YELLOW, Tags.Items.DYES_YELLOW );
+		tagIntoList( dyeList, EnumDyeColor.LIGHT_BLUE, Tags.Items.DYES_LIGHT_BLUE );
+		tagIntoList( dyeList, EnumDyeColor.MAGENTA, Tags.Items.DYES_MAGENTA );
+		tagIntoList( dyeList, EnumDyeColor.ORANGE, Tags.Items.DYES_ORANGE );
+		tagIntoList( dyeList, EnumDyeColor.WHITE, Tags.Items.DYES_WHITE );
+		tagIntoList( dyeList, EnumFlatBlockType.NORMAL, getItems( FlatColoredBlocks.instance.config.solidCraftingBlock ) );
+		tagIntoList( dyeList, EnumFlatBlockType.GLOWING, getItems( FlatColoredBlocks.instance.config.glowingCraftingBlock ) );
+		tagIntoList( dyeList, EnumFlatBlockType.TRANSPARENT, getItems( FlatColoredBlocks.instance.config.transparentCraftingBlock ) );
 
 		return dyeList;
+	}
+
+	private static void tagIntoList(
+			HashMap<Object, Collection<Item>> dyeList,
+			Enum<?> e,
+			Tag<Item> itemList )
+	{
+		dyeList.put( e, itemList.getAllElements() );
 	}
 
 	private InventorySummary scanPlayerInventory()
@@ -78,14 +88,14 @@ public class InventoryColoredBlockCrafter implements IInventory
 		final EnumSet<EnumDyeColor> dyes = EnumSet.noneOf( EnumDyeColor.class );
 		final InventoryPlayer ip = thePlayer.inventory;
 
-		final HashMap<Object, List<ItemStack>> dyeList = getDyeList();
+		final HashMap<Object, Collection<Item>> dyeList = getDyeList();
 		final HashMap<Object, HashSet<ItemCraftingSource>> stacks = new HashMap<Object, HashSet<ItemCraftingSource>>();
 
 		boolean hasCobblestone = false;
 		boolean hasGlowstone = false;
 		boolean hasGlass = false;
 
-		for ( final Entry<Object, List<ItemStack>> items : dyeList.entrySet() )
+		for ( final Entry<Object, Collection<Item>> items : dyeList.entrySet() )
 		{
 			stacks.put( items.getKey(), new HashSet<ItemCraftingSource>() );
 		}
@@ -98,11 +108,11 @@ public class InventoryColoredBlockCrafter implements IInventory
 
 			if ( is != null )
 			{
-				for ( final Entry<Object, List<ItemStack>> items : dyeList.entrySet() )
+				for ( final Entry<Object, Collection<Item>> items : dyeList.entrySet() )
 				{
-					for ( final ItemStack ore : items.getValue() )
+					for ( final Item ore : items.getValue() )
 					{
-						if ( OreDictionary.itemMatches( ore, is, false ) )
+						if ( is.getItem() == ore )
 						{
 
 							if ( items.getKey() instanceof EnumDyeColor )
@@ -137,22 +147,10 @@ public class InventoryColoredBlockCrafter implements IInventory
 		return new InventorySummary( hasCobblestone, hasGlowstone, hasGlass, stacks, dyes );
 	}
 
-	private static List<ItemStack> getItems(
+	private static Tag<Item> getItems(
 			final String name )
 	{
-		List<ItemStack> items = OreDictionary.getOres( name, false );
-
-		if ( items.isEmpty() )
-		{
-			items = new ArrayList<ItemStack>();
-			final Item it = Item.REGISTRY.getObject( new ResourceLocation( name ) );
-			if ( it != null )
-			{
-				items.add( new ItemStack( it, 1, OreDictionary.WILDCARD_VALUE ) );
-			}
-		}
-
-		return items;
+		return new ItemTags.Wrapper( new ResourceLocation( name ) );
 	}
 
 	/**
@@ -171,7 +169,7 @@ public class InventoryColoredBlockCrafter implements IInventory
 		{
 			final ItemStack is = i.next();
 			final Block blk = Block.getBlockFromItem( is.getItem() );
-			final IBlockState state = ModUtil.getStateFromMeta( blk, is.getItemDamage() );
+			final IBlockState state = ModUtil.getStateFromMeta( blk, is );
 
 			final Set<EnumFlatColorAttributes> charistics = ( (BlockFlatColored) blk ).getFlatColorAttributes( state );
 			boolean isGood = true;
@@ -197,12 +195,6 @@ public class InventoryColoredBlockCrafter implements IInventory
 		}
 
 		craftingContainer.setScroll( craftingContainer.scrollPercent );
-	}
-
-	@Override
-	public String getName()
-	{
-		return thePlayer.getName();
 	}
 
 	@Override
@@ -273,7 +265,7 @@ public class InventoryColoredBlockCrafter implements IInventory
 
 		final InventorySummary da = scanPlayerInventory();
 		final Block blk = Block.getBlockFromItem( reqItem.getItem() );
-		final IBlockState state = ModUtil.getStateFromMeta( blk, reqItem.getDamage() );
+		final IBlockState state = ModUtil.getStateFromMeta( blk, reqItem );
 
 		final Set<EnumFlatColorAttributes> charistics = ( (BlockFlatColored) blk ).getFlatColorAttributes( state );
 		final Object Craftable = ( (BlockFlatColored) blk ).getCraftable();
@@ -475,6 +467,18 @@ public class InventoryColoredBlockCrafter implements IInventory
 		}
 
 		return true;
+	}
+
+	@Override
+	public ITextComponent getCustomName()
+	{
+		return null;
+	}
+
+	@Override
+	public ITextComponent getName()
+	{
+		return null;
 	}
 
 }

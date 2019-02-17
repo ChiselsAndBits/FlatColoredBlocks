@@ -70,7 +70,7 @@ public class BlockFlatColored extends Block
 		if ( state.getBlock() instanceof BlockFlatColored )
 		{
 			final BlockFlatColored cb = (BlockFlatColored) state.getBlock();
-			return state.getValue( cb.shade ) + cb.shadeOffset;
+			return state.get( cb.shade ) + cb.shadeOffset;
 		}
 
 		return 0;
@@ -112,14 +112,12 @@ public class BlockFlatColored extends Block
 				.lightValue( FlatColoredBlocks.instance.config.GLOWING_EMITS_LIGHT ? (int) Math.max( 0, Math.min( 15, lightValue / 255.0f ) ) : 0 )
 				.sound( opacity > 0.001 ? SoundType.GLASS : SoundType.STONE ) );
 
-		setUnlocalizedName( "flatcoloredblocks.flatcoloredblock." + offset );
-
 		// mimic stone..
-		setHarvestLevel( "pickaxe", 0 );
+		// TODO: setHarvestLevel( "pickaxe", 0 );
 
-		setLightOpacity( opacity > 0.001 ? 0 : 255 );
+		// TODO: setLightOpacity( opacity > 0.001 ? 0 : 255 );
 
-		translucent = opacity > 0.001;
+		// TODO: translucent = opacity > 0.001;
 		varient = varientNum;
 
 		coloredBlocks.add( this );
@@ -189,7 +187,9 @@ public class BlockFlatColored extends Block
 
 		for ( int x = shadeOffset; x <= maxShade; ++x )
 		{
-			list.add( new ItemStack( item, qty, x - shadeOffset ) );
+			ItemStack is = new ItemStack( item, qty );
+			is.getOrCreateTag().setInt( "Shade", x - shadeOffset );
+			list.add( is );
 		}
 	}
 

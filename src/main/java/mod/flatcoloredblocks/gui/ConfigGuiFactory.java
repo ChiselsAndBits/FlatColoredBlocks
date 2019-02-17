@@ -2,9 +2,7 @@ package mod.flatcoloredblocks.gui;
 
 import net.minecraft.client.gui.GuiScreen;
 
-/**
- * Basic Config Factory.
- */
+/*
 public class ConfigGuiFactory extends FMLConfigGuiFactory
 {
 
@@ -16,3 +14,4 @@ public class ConfigGuiFactory extends FMLConfigGuiFactory
 	}
 
 }
+*/

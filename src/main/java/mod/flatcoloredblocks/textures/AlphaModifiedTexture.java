@@ -1,9 +1,8 @@
 package mod.flatcoloredblocks.textures;
 
-import java.awt.image.BufferedImage;
 import java.util.function.Function;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.resources.IResourceManager;
@@ -11,11 +10,11 @@ import net.minecraft.util.ResourceLocation;
 
 public class AlphaModifiedTexture extends TextureAtlasSprite
 {
-	final BufferedImage image;
+	final NativeImage image;
 
 	protected AlphaModifiedTexture(
 			final ResourceLocation spriteName,
-			final BufferedImage image )
+			final NativeImage image )
 	{
 		super( spriteName, image.getWidth(), image.getHeight() );
 		this.image = image;
@@ -23,11 +22,11 @@ public class AlphaModifiedTexture extends TextureAtlasSprite
 
 	public static TextureAtlasSprite generate(
 			final ResourceLocation name,
-			final BufferedImage bi,
+			final NativeImage bi,
 			final float alphaMultiplier,
 			final TextureMap map )
 	{
-		final BufferedImage image = new BufferedImage( bi.getWidth(), bi.getHeight(), BufferedImage.TYPE_4BYTE_ABGR );
+		final NativeImage image = new NativeImage( bi.getWidth(), bi.getHeight(), false );
 		final int xx = bi.getWidth();
 		final int yy = bi.getHeight();
 
@@ -35,14 +34,13 @@ public class AlphaModifiedTexture extends TextureAtlasSprite
 		{
 			for ( int y = 0; y < yy; ++y )
 			{
-				final int color = bi.getRGB( x, y );
+				final int color = bi.getPixelRGBA( x, y );
 				final int a = (int) ( ( color >> 24 & 0xff ) * alphaMultiplier );
-				image.setRGB( x, y, color & 0xffffff | a << 24 );
+				image.setPixelRGBA( x, y, color & 0xffffff | a << 24 );
 			}
 		}
 
 		final AlphaModifiedTexture out = new AlphaModifiedTexture( name, image );
-		out.register( map );
 		return out;
 	}
 
@@ -60,20 +58,9 @@ public class AlphaModifiedTexture extends TextureAtlasSprite
 			ResourceLocation location,
 			Function<ResourceLocation, TextureAtlasSprite> textureGetter )
 	{
-		final BufferedImage[] images = new BufferedImage[Minecraft.getInstance().gameSettings.mipmapLevels + 1];
-		images[0] = image;
-		final int[][] pixels = new int[Minecraft.getInstance().gameSettings.mipmapLevels + 1][];
-		pixels[0] = new int[image.getWidth() * image.getHeight()];
-		image.getRGB( 0, 0, image.getWidth(), image.getHeight(), pixels[0], 0, image.getWidth() );
-		framesTextureData.add( pixels );
-
+		frames = new NativeImage[1];
+		frames[0] = image;
 		return false;
-	}
-
-	public void register(
-			final TextureMap map )
-	{
-		map.setTextureEntry( this );
 	}
 
 }

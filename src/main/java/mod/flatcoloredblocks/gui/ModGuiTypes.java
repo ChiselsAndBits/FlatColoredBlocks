@@ -6,6 +6,8 @@ import mod.flatcoloredblocks.craftingitem.ContainerColoredBlockCrafter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 
 /**
  * Registry of Guis
@@ -49,7 +51,7 @@ public enum ModGuiTypes
 		{
 			// if and only if we are on the client should this be considered an
 			// error...
-			if ( FMLCommonHandler.instance().getSide() == Side.CLIENT )
+			if ( FMLEnvironment.dist == Dist.CLIENT )
 			{
 				throw new RuntimeException( e );
 			}
@@ -59,5 +61,10 @@ public enum ModGuiTypes
 		gui = g;
 		gui_construtor = g_construtor;
 
+	}
+
+	public String getID()
+	{
+		return toString();
 	}
 }

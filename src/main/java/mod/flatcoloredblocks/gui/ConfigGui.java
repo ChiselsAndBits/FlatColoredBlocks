@@ -8,9 +8,7 @@ import mod.flatcoloredblocks.config.ModConfig;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.client.config.IConfigElement;
 
-/**
- * Basic Config Gui, minor changes to hide startupgui.
- */
+/*x
 public class ConfigGui extends GuiConfig
 {
 
@@ -61,3 +59,4 @@ public class ConfigGui extends GuiConfig
 	}
 
 }
+*/

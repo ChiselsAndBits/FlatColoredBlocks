@@ -2,12 +2,18 @@
 package mod.flatcoloredblocks.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.function.Function;
 
 import mod.flatcoloredblocks.FlatColoredBlocks;
 import mod.flatcoloredblocks.block.EnumFlatBlockType;
 import mod.flatcoloredblocks.client.ClientSide;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.IUnbakedModel;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
@@ -15,8 +21,8 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.ICustomModelLoader;
-import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class ModelGenerator implements ICustomModelLoader
@@ -45,19 +51,19 @@ public class ModelGenerator implements ICustomModelLoader
 		{
 			for ( final int varient : FlatColoredBlocks.instance.glowing.shadeConvertVariant )
 			{
-				final String name = ClientSide.instance.getTextureName( EnumFlatBlockType.GLOWING, varient );
+				final ResourceLocation name = ClientSide.instance.getTextureName( EnumFlatBlockType.GLOWING, varient );
 
 				final BakedVarientModel var = new BakedVarientModel( EnumFlatBlockType.GLOWING, varient );
-				add( new ResourceLocation( name ), var );
+				add( name, var );
 			}
 		}
 
 		for ( final int varient : FlatColoredBlocks.instance.transparent.shadeConvertVariant )
 		{
-			final String name = ClientSide.instance.getTextureName( EnumFlatBlockType.TRANSPARENT, varient );
+			final ResourceLocation name = ClientSide.instance.getTextureName( EnumFlatBlockType.TRANSPARENT, varient );
 
 			final BakedVarientModel var = new BakedVarientModel( EnumFlatBlockType.TRANSPARENT, varient );
-			add( new ResourceLocation( name ), var );
+			add( name, var );
 		}
 
 		MinecraftForge.EVENT_BUS.register( this );
@@ -82,7 +88,7 @@ public class ModelGenerator implements ICustomModelLoader
 		{
 			final BakedVarientModel bvm = getModel( rl );
 			final VertexFormat format = bvm.type == EnumFlatBlockType.GLOWING && rl.getVariant().equals( NORMAL_VARIENT ) ? FCB : DefaultVertexFormats.ITEM;
-			event.getModelRegistry().putObject( rl, bvm.bake( null, format, null ) );
+			event.getModelRegistry().put( rl, bvm.bake( null, null, null, false, format ) );
 		}
 	}
 
@@ -100,10 +106,36 @@ public class ModelGenerator implements ICustomModelLoader
 	}
 
 	@Override
-	public IModel loadModel(
+	public IUnbakedModel loadModel(
 			final ResourceLocation modelLocation )
 	{
-		return getModel( modelLocation );
+		return new IUnbakedModel() {
+
+			@Override
+			public IBakedModel bake(
+					Function<ResourceLocation, IUnbakedModel> modelGetter,
+					Function<ResourceLocation, TextureAtlasSprite> spriteGetter,
+					IModelState state,
+					boolean uvlock,
+					VertexFormat format )
+			{
+				return getModel( modelLocation ).bake( modelGetter, spriteGetter, state, uvlock, format );
+			}
+
+			@Override
+			public Collection<ResourceLocation> getTextures(
+					Function<ResourceLocation, IUnbakedModel> modelGetter,
+					Set<String> missingTextureErrors )
+			{
+				return getModel( modelLocation ).getTextures( modelGetter, missingTextureErrors );
+			}
+
+			@Override
+			public Collection<ResourceLocation> getOverrideLocations()
+			{
+				return getModel( modelLocation ).getOverrideLocations();
+			}
+		};
 	}
 
 	private BakedVarientModel getModel(

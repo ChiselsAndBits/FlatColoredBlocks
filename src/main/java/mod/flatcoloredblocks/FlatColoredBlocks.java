@@ -1,63 +1,45 @@
 package mod.flatcoloredblocks;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import mod.flatcoloredblocks.block.BlockFlatColored;
 import mod.flatcoloredblocks.block.BlockHSVConfiguration;
 import mod.flatcoloredblocks.block.EnumFlatBlockType;
 import mod.flatcoloredblocks.block.ItemBlockFlatColored;
-import mod.flatcoloredblocks.client.ClientSide;
-import mod.flatcoloredblocks.client.DummyClientSide;
 import mod.flatcoloredblocks.client.IClientSide;
-import mod.flatcoloredblocks.commands.ExportFCBlockList;
 import mod.flatcoloredblocks.config.ModConfig;
-import mod.flatcoloredblocks.craftingitem.FlatColoredBlockRecipe;
 import mod.flatcoloredblocks.craftingitem.ItemColoredBlockCrafter;
 import mod.flatcoloredblocks.gui.GuiScreenStartup;
-import mod.flatcoloredblocks.gui.ModGuiRouter;
 import mod.flatcoloredblocks.network.NetworkRouter;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.item.Item;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLPaths;
 
-@Mod(
-		name = FlatColoredBlocks.MODNAME,
-		modid = FlatColoredBlocks.MODID,
-		acceptedMinecraftVersions = "[1.12]",
-		version = FlatColoredBlocks.VERSION,
-		dependencies = FlatColoredBlocks.DEPENDENCIES,
-		guiFactory = "mod.flatcoloredblocks.gui.ConfigGuiFactory" )
+@Mod( FlatColoredBlocks.MODID )
 public class FlatColoredBlocks
 {
 	// create creative tab...
 	public static FlatColoredBlocks instance;
 
-	public static final String MODNAME = "FlatColoredBlocks";
 	public static final String MODID = "flatcoloredblocks";
-	public static final String VERSION = "@VERSION@";
-
-	public static final String DEPENDENCIES = "required-after:forge@[" // forge.
-			+ net.minecraftforge.common.ForgeVersion.majorVersion + '.' // majorVersion
-			+ net.minecraftforge.common.ForgeVersion.minorVersion + '.' // minorVersion
-			+ net.minecraftforge.common.ForgeVersion.revisionVersion + '.' // revisionVersion
-			+ net.minecraftforge.common.ForgeVersion.buildVersion + ",)"; // buildVersion";
 
 	public CreativeTab creativeTab;
 	public ModConfig config;
 
 	public ItemColoredBlockCrafter itemColoredBlockCrafting;
 
-	public final IntegerationJEI jei = new IntegerationJEI();
 	private IClientSide clientSide;
 
 	public BlockHSVConfiguration normal;
@@ -67,6 +49,30 @@ public class FlatColoredBlocks
 	public FlatColoredBlocks()
 	{
 		instance = this;
+
+		// configure creative tab.
+		creativeTab = new CreativeTab();
+
+		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
+		// configure networking and gui.
+		NetworkRouter.instance = new NetworkRouter();
+
+		config = new ModConfig( new File( FMLPaths.CONFIGDIR.get().toFile(), MODID ) );
+		initHSVFromConfiguration( config );
+
+		// TODO: GUIFACTORY
+		DistExecutor.runWhenOn( Dist.CLIENT, () -> () ->
+		{
+			clientSide.preinit();
+			clientSide.init();
+
+			// ModLoadingContext.get().registerExtensionPoint(
+			// ExtensionPoint.GUIFACTORY, new ModGuiRouter() );
+		} );
+
+		initRegistration();
+		MinecraftForge.EVENT_BUS.register( this );
 	}
 
 	public int getFullNumberOfShades()
@@ -85,35 +91,6 @@ public class FlatColoredBlocks
 
 	ArrayList<BlockFlatColored> blocks = new ArrayList<BlockFlatColored>();
 	ArrayList<ItemBlockFlatColored> items = new ArrayList<ItemBlockFlatColored>();
-
-	@EventHandler
-	public void preinit(
-			final FMLPreInitializationEvent event )
-	{
-		config = new ModConfig( event.getSuggestedConfigurationFile() );
-		initHSVFromConfiguration( config );
-
-		if ( FMLCommonHandler.instance().getSide().isClient() )
-		{
-			clientSide = ClientSide.instance;
-			ClientCommandHandler.instance.registerCommand( new ExportFCBlockList() );
-		}
-		else
-		{
-			clientSide = new DummyClientSide();
-		}
-
-		// inform Version Checker Mod of our existence.
-		initVersionChecker();
-
-		// configure creative tab.
-		creativeTab = new CreativeTab();
-
-		MinecraftForge.EVENT_BUS.register( this );
-		initRegistration();
-
-		clientSide.preinit();
-	}
 
 	public void initHSVFromConfiguration(
 			final ModConfig config )
@@ -158,7 +135,7 @@ public class FlatColoredBlocks
 					// blacklist with JEI
 					if ( !config.ShowBlocksInJEI )
 					{
-						jei.blackListBlock( cbi );
+						// TODO: JEI BLACK LIST jei.blackListBlock( cbi );
 					}
 				}
 			}
@@ -172,7 +149,6 @@ public class FlatColoredBlocks
 		for ( BlockFlatColored block : blocks )
 		{
 			registry.getRegistry().register( block );
-			clientSide.configureBlockRender( block, null );
 		}
 	}
 
@@ -182,48 +158,10 @@ public class FlatColoredBlocks
 	{
 		registry.getRegistry().register( itemColoredBlockCrafting );
 
-		clientSide.configureCraftingRender( itemColoredBlockCrafting );
-
 		for ( ItemBlockFlatColored item : items )
 		{
 			registry.getRegistry().register( item );
-			clientSide.configureBlockRender( null, item );
 		}
-	}
-
-	@SubscribeEvent
-	public void registerRecipes(
-			RegistryEvent.Register<IRecipe> registry )
-	{
-		if ( config.allowCraftingTable )
-		{
-			registry.getRegistry().register( new FlatColoredBlockRecipe() );
-		}
-	}
-
-	private void initVersionChecker()
-	{
-		final NBTTagCompound compound = new NBTTagCompound();
-		compound.setString( "curseProjectName", "flat-colored-blocks" );
-		compound.setString( "curseFilenameParser", "flatcoloredblocks-[].jar" );
-		FMLInterModComms.sendRuntimeMessage( MODID, "VersionChecker", "addCurseCheck", compound );
-	}
-
-	@EventHandler
-	public void init(
-			final FMLInitializationEvent event )
-	{
-	}
-
-	@EventHandler
-	public void postinit(
-			final FMLPostInitializationEvent event )
-	{
-		clientSide.init();
-
-		// configure networking and gui.
-		NetworkRouter.instance = new NetworkRouter();
-		NetworkRegistry.INSTANCE.registerGuiHandler( this, new ModGuiRouter() );
 	}
 
 	@SubscribeEvent

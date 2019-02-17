@@ -1,17 +1,24 @@
 package mod.flatcoloredblocks.network;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
 import io.netty.buffer.Unpooled;
 import mod.flatcoloredblocks.FlatColoredBlocks;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.INetHandler;
-import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.PacketThreadUtil;
 import net.minecraft.network.ThreadQuickExitException;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.network.ICustomPacket;
+import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.fml.network.event.EventNetworkChannel;
 
 /**
  * Sends packets and handles networking.
@@ -25,16 +32,19 @@ public class NetworkRouter
 	private class ClientPacketHandler
 	{
 
-		@SuppressWarnings( "unchecked" )
 		public void onPacketData(
-				final FMLProxyPacket packet,
-				final INetHandler handler )
+				final PacketBuffer buffer )
 		{
-			final PacketBuffer buffer = new PacketBuffer( packet.payload() );
 			final ModPacket innerPacket = parsePacket( buffer );
 
-			PacketThreadUtil.checkThreadAndEnqueue( innerPacket, handler, Minecraft.getMinecraft() );
-			innerPacket.client();
+			Minecraft.getInstance().addScheduledTask( new Runnable() {
+
+				@Override
+				public void run()
+				{
+					innerPacket.client();
+				}
+			} );
 		}
 
 	};
@@ -45,10 +55,8 @@ public class NetworkRouter
 	private class ServerPacketHandler
 	{
 
-		@SuppressWarnings( "unchecked" )
 		public void onPacketData(
-				final FMLProxyPacket packet,
-				final INetHandler handler,
+				final PacketBuffer buffer,
 				final EntityPlayerMP playerEntity )
 		{
 			if ( playerEntity == null )
@@ -56,19 +64,24 @@ public class NetworkRouter
 				return;
 			}
 
-			final PacketBuffer buffer = new PacketBuffer( packet.payload() );
 			final ModPacket innerPacket = parsePacket( buffer );
 			innerPacket.serverEntity = playerEntity;
 
-			PacketThreadUtil.checkThreadAndEnqueue( innerPacket, handler, playerEntity.getServer() );
-			innerPacket.server( playerEntity );
+			playerEntity.getServer().addScheduledTask( new Runnable() {
+
+				@Override
+				public void run()
+				{
+					innerPacket.server( playerEntity );
+				}
+			} );
 		}
 	};
 
 	public static NetworkRouter instance;
 
-	final FMLEventChannel ec;
-	final String channelName = FlatColoredBlocks.MODID;
+	private final EventNetworkChannel ec;
+	private final ResourceLocation channel;
 
 	final ServerPacketHandler serverPacketHandler;
 	final ClientPacketHandler clientPacketHandler;
@@ -76,28 +89,28 @@ public class NetworkRouter
 	public NetworkRouter()
 	{
 		ModPacketTypes.init();
+		channel = new ResourceLocation( FlatColoredBlocks.MODID, "basic" );
 
-		ec = NetworkRegistry.INSTANCE.newEventDrivenChannel( channelName );
-		ec.register( this );
-
-		MinecraftForge.EVENT_BUS.register( this );
+		ec = NetworkRegistry.newEventChannel( channel, () -> "1.0.0", s -> true, s -> true );
 
 		clientPacketHandler = new ClientPacketHandler();
+		ec.addListener( this::clientPacket );
+
 		serverPacketHandler = new ServerPacketHandler();
+		ec.addListener( this::serverPacket );
 	}
 
-	@SubscribeEvent
 	public void serverPacket(
-			final ServerCustomPacketEvent ev )
+			final NetworkEvent.ServerCustomPayloadEvent ev )
 	{
 		// find player
-		final NetHandlerPlayServer srv = (NetHandlerPlayServer) ev.getPacket().handler();
+		NetworkEvent.Context context = ev.getSource().get();
 
 		try
 		{
 			if ( serverPacketHandler != null )
 			{
-				serverPacketHandler.onPacketData( ev.getPacket(), ev.getHandler(), srv.playerEntity );
+				serverPacketHandler.onPacketData( ev.getPayload(), context.getSender() );
 			}
 		}
 		catch ( final ThreadQuickExitException ext )
@@ -106,15 +119,14 @@ public class NetworkRouter
 		}
 	}
 
-	@SubscribeEvent
 	public void clientPacket(
-			final ClientCustomPacketEvent ev )
+			final NetworkEvent.ClientCustomPayloadEvent ev )
 	{
 		try
 		{
 			if ( clientPacketHandler != null )
 			{
-				clientPacketHandler.onPacketData( ev.getPacket(), ev.getHandler() );
+				clientPacketHandler.onPacketData( ev.getPayload() );
 			}
 		}
 		catch ( final ThreadQuickExitException ext )
@@ -144,63 +156,45 @@ public class NetworkRouter
 		}
 	}
 
-	private FMLProxyPacket getProxyPacket(
-			final ModPacket packet )
-	{
-		final PacketBuffer buffer = new PacketBuffer( Unpooled.buffer() );
-
-		buffer.writeByte( ModPacketTypes.getID( packet.getClass() ) );
-		packet.getPayload( buffer );
-
-		return new FMLProxyPacket( buffer, channelName );
-	}
-
-	/**
-	 * from client to server
-	 *
-	 * @param packet
-	 */
+	@OnlyIn( Dist.CLIENT )
 	public void sendToServer(
-			final ModPacket packet )
+			ModPacket packet )
 	{
-		ec.sendToServer( getProxyPacket( packet ) );
+		Minecraft minecraft = Minecraft.getInstance();
+		if ( minecraft != null )
+		{
+			NetHandlerPlayClient netHandler = minecraft.getConnection();
+			if ( netHandler != null )
+			{
+				int id = ModPacketTypes.getID( packet.getClass() );
+				PacketBuffer buffer = new PacketBuffer( Unpooled.buffer() );
+				packet.getPayload( buffer );
+
+				Pair<PacketBuffer, Integer> packetData = new ImmutablePair<PacketBuffer, Integer>( buffer, id );
+				ICustomPacket<Packet<?>> mcPacket = NetworkDirection.PLAY_TO_SERVER.buildPacket( packetData, channel );
+				netHandler.sendPacket( mcPacket.getThis() );
+			}
+		}
 	}
 
-	/**
-	 * from server to clients...
-	 *
-	 * @param message
-	 */
-	public void sendToAll(
-			final ModPacket packet )
+	public void sendPacketToClient(
+			ModPacket packet,
+			EntityPlayerMP player )
 	{
-		ec.sendToAll( getProxyPacket( packet ) );
-	}
+		Minecraft minecraft = Minecraft.getInstance();
+		if ( minecraft != null )
+		{
+			NetHandlerPlayClient netHandler = minecraft.getConnection();
+			if ( netHandler != null )
+			{
+				int id = ModPacketTypes.getID( packet.getClass() );
+				PacketBuffer buffer = new PacketBuffer( Unpooled.buffer() );
+				packet.getPayload( buffer );
 
-	/**
-	 * from server to specific client.
-	 *
-	 * @param message
-	 * @param player
-	 */
-	public void sendTo(
-			final ModPacket packet,
-			final EntityPlayerMP player )
-	{
-		ec.sendTo( getProxyPacket( packet ), player );
+				Pair<PacketBuffer, Integer> packetData = new ImmutablePair<PacketBuffer, Integer>( buffer, id );
+				ICustomPacket<Packet<?>> mcPacket = NetworkDirection.PLAY_TO_CLIENT.buildPacket( packetData, channel );
+				player.connection.sendPacket( mcPacket.getThis() );
+			}
+		}
 	}
-
-	/**
-	 * send to any players around the location.
-	 *
-	 * @param packet
-	 * @param point
-	 */
-	public void sendToAllAround(
-			final ModPacket packet,
-			final NetworkRegistry.TargetPoint point )
-	{
-		ec.sendToAllAround( getProxyPacket( packet ), point );
-	}
-
 }

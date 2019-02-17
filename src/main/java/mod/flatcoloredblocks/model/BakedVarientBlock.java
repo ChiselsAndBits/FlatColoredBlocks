@@ -4,6 +4,7 @@ package mod.flatcoloredblocks.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
@@ -15,6 +16,7 @@ import mod.flatcoloredblocks.FlatColoredBlocks;
 import mod.flatcoloredblocks.block.EnumFlatBlockType;
 import mod.flatcoloredblocks.client.ClientSide;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.BlockFaceUV;
 import net.minecraft.client.renderer.model.BlockPartFace;
@@ -92,7 +94,7 @@ public class BakedVarientBlock implements IBakedModel
 
 		final float lightMap = maxLightmap * Math.max( 0, Math.min( 15, lightValue ) );
 
-		for ( final EnumFacing side : EnumFacing.VALUES )
+		for ( final EnumFacing side : EnumFacing.BY_INDEX )
 		{
 			final BlockPartFace bpf = new BlockPartFace( side, 1, "", uv );
 
@@ -101,28 +103,28 @@ public class BakedVarientBlock implements IBakedModel
 			switch ( side )
 			{
 				case UP:
-					toB = new Vector3f( to.x, from.y, to.z );
-					fromB = new Vector3f( from.x, from.y, from.z );
+					toB = new Vector3f( to.getX(), from.getY(), to.getZ() );
+					fromB = new Vector3f( from.getX(), from.getY(), from.getZ() );
 					break;
 				case EAST:
-					toB = new Vector3f( from.x, to.y, to.z );
-					fromB = new Vector3f( from.x, from.y, from.z );
+					toB = new Vector3f( from.getX(), to.getY(), to.getZ() );
+					fromB = new Vector3f( from.getX(), from.getY(), from.getZ() );
 					break;
 				case NORTH:
-					toB = new Vector3f( to.x, to.y, to.z );
-					fromB = new Vector3f( from.x, from.y, to.z );
+					toB = new Vector3f( to.getX(), to.getY(), to.getZ() );
+					fromB = new Vector3f( from.getX(), from.getY(), to.getZ() );
 					break;
 				case SOUTH:
-					toB = new Vector3f( to.x, to.y, from.z );
-					fromB = new Vector3f( from.x, from.y, from.z );
+					toB = new Vector3f( to.getX(), to.getY(), from.getZ() );
+					fromB = new Vector3f( from.getX(), from.getY(), from.getZ() );
 					break;
 				case DOWN:
-					toB = new Vector3f( to.x, to.y, to.z );
-					fromB = new Vector3f( from.x, to.y, from.z );
+					toB = new Vector3f( to.getX(), to.getY(), to.getZ() );
+					fromB = new Vector3f( from.getX(), to.getY(), from.getZ() );
 					break;
 				case WEST:
-					toB = new Vector3f( to.x, to.y, to.z );
-					fromB = new Vector3f( to.x, from.y, from.z );
+					toB = new Vector3f( to.getX(), to.getY(), to.getZ() );
+					fromB = new Vector3f( to.getX(), from.getY(), from.getZ() );
 					break;
 				default:
 					throw new NullPointerException();
@@ -164,7 +166,7 @@ public class BakedVarientBlock implements IBakedModel
 						break;
 
 					case NORMAL:
-						b.put( elementIndex, myFace.getFrontOffsetX(), myFace.getFrontOffsetY(), myFace.getFrontOffsetZ() );
+						b.put( elementIndex, myFace.getXOffset(), myFace.getYOffset(), myFace.getZOffset() );
 						break;
 
 					case UV:
@@ -199,9 +201,9 @@ public class BakedVarientBlock implements IBakedModel
 
 	@Override
 	public List<BakedQuad> getQuads(
-			final IBlockState state,
-			final EnumFacing side,
-			final long rand )
+			IBlockState state,
+			EnumFacing side,
+			Random rand )
 	{
 		if ( side == null )
 		{
@@ -246,7 +248,7 @@ public class BakedVarientBlock implements IBakedModel
 			final Quat4f rotation = TRSRTransformation.quatFromXYZDegrees( new javax.vecmath.Vector3f( 30, 225, 0 ) );
 
 			final TRSRTransformation transform = new TRSRTransformation( translation, rotation, scale, null );
-			gui = transform.getMatrix();
+			gui = transform.getMatrixVec();
 		}
 
 		{
@@ -255,7 +257,7 @@ public class BakedVarientBlock implements IBakedModel
 			final Quat4f rotation = TRSRTransformation.quatFromXYZDegrees( new javax.vecmath.Vector3f( 0, 0, 0 ) );
 
 			final TRSRTransformation transform = new TRSRTransformation( translation, rotation, scale, null );
-			ground = transform.getMatrix();
+			ground = transform.getMatrixVec();
 		}
 
 		{
@@ -264,7 +266,7 @@ public class BakedVarientBlock implements IBakedModel
 			final Quat4f rotation = TRSRTransformation.quatFromXYZDegrees( new javax.vecmath.Vector3f( 0, 0, 0 ) );
 
 			final TRSRTransformation transform = new TRSRTransformation( translation, rotation, scale, null );
-			fixed = transform.getMatrix();
+			fixed = transform.getMatrixVec();
 		}
 
 		{
@@ -273,7 +275,7 @@ public class BakedVarientBlock implements IBakedModel
 			final Quat4f rotation = TRSRTransformation.quatFromXYZDegrees( new javax.vecmath.Vector3f( 75, 45, 0 ) );
 
 			final TRSRTransformation transform = new TRSRTransformation( translation, rotation, scale, null );
-			thirdPerson_lefthand = thirdPerson_righthand = transform.getMatrix();
+			thirdPerson_lefthand = thirdPerson_righthand = transform.getMatrixVec();
 		}
 
 		{
@@ -282,7 +284,7 @@ public class BakedVarientBlock implements IBakedModel
 			final Quat4f rotation = TRSRTransformation.quatFromXYZDegrees( new javax.vecmath.Vector3f( 0, 45, 0 ) );
 
 			final TRSRTransformation transform = new TRSRTransformation( translation, rotation, scale, null );
-			firstPerson_righthand = transform.getMatrix();
+			firstPerson_righthand = transform.getMatrixVec();
 		}
 
 		{
@@ -291,7 +293,7 @@ public class BakedVarientBlock implements IBakedModel
 			final Quat4f rotation = TRSRTransformation.quatFromXYZDegrees( new javax.vecmath.Vector3f( 0, 225, 0 ) );
 
 			final TRSRTransformation transform = new TRSRTransformation( translation, rotation, scale, null );
-			firstPerson_lefthand = transform.getMatrix();
+			firstPerson_lefthand = transform.getMatrixVec();
 		}
 	}
 
@@ -331,6 +333,6 @@ public class BakedVarientBlock implements IBakedModel
 	@Override
 	public ItemOverrideList getOverrides()
 	{
-		return ItemOverrideList.NONE;
+		return ItemOverrideList.EMPTY;
 	}
 }

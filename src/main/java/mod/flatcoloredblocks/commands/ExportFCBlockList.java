@@ -17,6 +17,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentTranslation;
 
+// TODO: ExportFCBlockList command
+
+/*
 public class ExportFCBlockList
 {
 
@@ -119,3 +122,4 @@ public class ExportFCBlockList
 	}
 
 }
+*/

@@ -1,15 +1,11 @@
 package mod.flatcoloredblocks.config;
 
 import java.io.File;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 
-import mod.flatcoloredblocks.FlatColoredBlocks;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 
-public class ModConfig extends Configuration
+// TODO: Loading, Managing and Saving Values
+public class ModConfig
 {
 
 	// file path...
@@ -203,9 +199,9 @@ public class ModConfig extends Configuration
 
 	void setDefaults()
 	{
-		solidCraftingBlock = "cobblestone";
-		transparentCraftingBlock = "blockGlass";
-		glowingCraftingBlock = "glowstone";
+		solidCraftingBlock = "#forge:cobblestone";
+		transparentCraftingBlock = "#forge:glass";
+		glowingCraftingBlock = "#forge:glowstone";
 		solidCraftingOutput = 1;
 		transparentCraftingOutput = 1;
 		glowingCraftingOutput = 1;
@@ -289,137 +285,28 @@ public class ModConfig extends Configuration
 	public ModConfig(
 			final File path )
 	{
-		super( path );
 		myPath = path;
 
 		MinecraftForge.EVENT_BUS.register( this );
 
 		setDefaults();
-		populateSettings();
-		save();
-	}
-
-	public void updateLastMaxShades()
-	{
-		LAST_MAX_SHADES = FlatColoredBlocks.instance.getFullNumberOfShades();
-		get( "StartupGui", "LAST_MAX_SHADES", LAST_MAX_SHADES ).set( LAST_MAX_SHADES );
-	}
-
-	void populateSettings()
-	{
-		LAST_MAX_SHADES = get( "StartupGui", "LAST_MAX_SHADES", 0 ).getInt();
-
-		final Class<ModConfig> me = ModConfig.class;
-		for ( final Field f : me.getDeclaredFields() )
-		{
-			final Configured c = f.getAnnotation( Configured.class );
-			if ( c != null )
-			{
-				try
-				{
-					if ( f.getType() == long.class || f.getType() == Long.class )
-					{
-						final long defaultValue = f.getLong( this );
-						final long value = get( c.category(), f.getName(), (int) defaultValue ).getInt();
-						f.set( this, value );
-					}
-					else if ( f.getType().isEnum() )
-					{
-						final Enum<?> defaultValue = (Enum<?>) f.get( this );
-						try
-						{
-							final Enum<?>[] valuesList = (Enum[]) f.getType().getMethod( "values" ).invoke( null );
-							final String[] values = new String[valuesList.length];
-
-							for ( int x = 0; x < values.length; ++x )
-							{
-								values[x] = valuesList[x].name();
-							}
-
-							final String strValue = get( c.category(), f.getName(), defaultValue.name(), "", values ).getString();
-							final Method method = f.getType().getMethod( "valueOf", Class.class, String.class );
-							final Enum<?> value = (Enum<?>) method.invoke( null, f.getType(), strValue );
-							f.set( this, value );
-						}
-						catch ( final Exception e )
-						{
-							e.printStackTrace();
-						}
-					}
-					else if ( f.getType() == String.class )
-					{
-						final String defaultValue = (String) f.get( this );
-						final String value = get( c.category(), f.getName(), defaultValue ).getString();
-						f.set( this, value );
-					}
-					else if ( f.getType() == int.class || f.getType() == Integer.class )
-					{
-						final int defaultValue = f.getInt( this );
-						final int value = get( c.category(), f.getName(), defaultValue ).getInt();
-						f.set( this, value );
-					}
-					else if ( f.getType() == double.class || f.getType() == Double.class )
-					{
-						final double defaultValue = f.getDouble( this );
-						final double value = get( c.category(), f.getName(), defaultValue ).getDouble();
-						f.set( this, value );
-					}
-					else if ( f.getType() == boolean.class || f.getType() == Boolean.class )
-					{
-						final boolean defaultValue = f.getBoolean( this );
-						final boolean value = get( c.category(), f.getName(), defaultValue ).getBoolean();
-						f.set( this, value );
-					}
-				}
-				catch ( final Throwable e )
-				{
-					throw new RuntimeException( e );
-				}
-			}
-		}
-	}
-
-	@Override
-	public Property get(
-			final String category,
-			final String key,
-			final String defaultValue,
-			final String comment,
-			final Property.Type type )
-	{
-		final Property prop = super.get( category, key, defaultValue, comment, type );
-
-		if ( prop != null && !category.equals( "Client Settings" ) )
-		{
-			prop.setRequiresMcRestart( true );
-		}
-
-		return prop == null ? null : prop;
-	}
-
-	@SubscribeEvent
-	public void onConfigChanged(
-			final ConfigChangedEvent.OnConfigChangedEvent eventArgs )
-	{
-		if ( eventArgs.getModID().equals( FlatColoredBlocks.MODID ) )
-		{
-			populateSettings();
-			save();
-		}
-	}
-
-	@Override
-	public void save()
-	{
-		if ( hasChanged() )
-		{
-			super.save();
-		}
 	}
 
 	public File getFilePath()
 	{
 		return myPath;
+	}
+
+	public void updateLastMaxShades()
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	public void save()
+	{
+		// TODO Auto-generated method stub
+
 	}
 
 }

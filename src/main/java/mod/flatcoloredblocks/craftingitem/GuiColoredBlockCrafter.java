@@ -3,7 +3,6 @@ package mod.flatcoloredblocks.craftingitem;
 import org.lwjgl.opengl.GL11;
 
 import mod.flatcoloredblocks.FlatColoredBlocks;
-import net.java.games.input.Mouse;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
@@ -22,7 +21,6 @@ public class GuiColoredBlockCrafter extends GuiContainer
 	private static final ResourceLocation CRAFTER_GUI_TEXTURE = new ResourceLocation( FlatColoredBlocks.MODID, "textures/gui/container/coloredcrafting.png" );
 
 	private final ContainerColoredBlockCrafter myContainer;
-	private boolean wasClicking = false;
 	private boolean isScrolling = false;
 	private float currentScroll = 0;
 
@@ -102,46 +100,83 @@ public class GuiColoredBlockCrafter extends GuiContainer
 			}
 
 			currentScroll = (float) ( currentScroll - (double) mouseWheelChange / (double) rowsToScroll );
-			currentScroll = MathHelper.clamp_float( currentScroll, 0.0F, 1.0F );
+			currentScroll = MathHelper.clamp( currentScroll, 0.0F, 1.0F );
 			myContainer.setScroll( currentScroll );
+			return true;
 		}
+		return false;
 	}
 
-	@Override
-	public void drawScreen(
-			final int mouseX,
-			final int mouseY,
-			final float partialTicks )
+	protected boolean func_195376_a(
+			double x,
+			double y )
 	{
-		final boolean isMouseDown = Mouse.isButtonDown( 0 );
-
 		final int scrollBarLeft = guiLeft + 175;
 		final int scrollBarTop = guiTop + 18;
 		final int scrollBarRight = scrollBarLeft + 14;
 		final int scrollBarBottom = scrollBarTop + 112 + 14;
 
-		if ( !wasClicking && isMouseDown && mouseX >= scrollBarLeft && mouseY >= scrollBarTop && mouseX < scrollBarRight && mouseY < scrollBarBottom )
+		return x >= (double) scrollBarLeft && y >= (double) scrollBarTop && x < (double) scrollBarRight && y < (double) scrollBarBottom;
+	}
+
+	public boolean mouseClicked(
+			double x,
+			double y,
+			int button )
+	{
+		if ( button == 0 && this.func_195376_a( x, y ) )
 		{
-			isScrolling = true;
+			this.isScrolling = true;
+			return true;
 		}
 
-		if ( !isMouseDown )
+		return super.mouseClicked( x, y, button );
+	}
+
+	public boolean mouseReleased(
+			double x,
+			double y,
+			int button )
+	{
+		if ( button == 0 )
 		{
-			isScrolling = false;
+			this.isScrolling = false;
 		}
 
-		wasClicking = isMouseDown;
+		return super.mouseReleased( x, y, button );
+	}
 
-		if ( isScrolling )
+	public boolean mouseDragged(
+			double x,
+			double y,
+			int button,
+			double sx,
+			double sy )
+	{
+		if ( this.isScrolling )
 		{
-			currentScroll = ( mouseY - scrollBarTop - 7.5F ) / ( scrollBarBottom - scrollBarTop - 15.0F );
-			currentScroll = MathHelper.clamp_float( currentScroll, 0.0F, 1.0F );
-			myContainer.setScroll( currentScroll );
+			final int scrollBarTop = guiTop + 18;
+			final int scrollBarBottom = scrollBarTop + 112 + 14;
+			currentScroll = (float) ( y - scrollBarTop - 7.5F ) / ( scrollBarBottom - scrollBarTop - 15.0F );
+			currentScroll = MathHelper.clamp( currentScroll, 0.0F, 1.0F );
+			myContainer.setScroll( this.currentScroll );
+			return true;
 		}
+		else
+		{
+			return super.mouseDragged( x, y, button, sx, sy );
+		}
+	}
 
+	@Override
+	public void render(
+			int mouseX,
+			int mouseY,
+			float partialTicks )
+	{
 		this.drawDefaultBackground();
-		super.drawScreen( mouseX, mouseY, partialTicks );
-		this.func_191948_b( mouseX, mouseY );
+		super.render( mouseX, mouseY, partialTicks );
+		this.renderHoveredToolTip( mouseX, mouseY );
 	}
 
 }

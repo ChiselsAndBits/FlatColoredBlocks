@@ -1,6 +1,5 @@
 package mod.flatcoloredblocks.textures;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,8 +9,8 @@ import mod.flatcoloredblocks.Log;
 import mod.flatcoloredblocks.block.EnumFlatBlockType;
 import mod.flatcoloredblocks.client.ClientSide;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.resources.IResource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -31,11 +30,11 @@ public class TextureGenerator
 		{
 			final ResourceLocation sourceLoc = ClientSide.instance.getTextureResourceLocation( EnumFlatBlockType.TRANSPARENT );
 			final IResource iresource = Minecraft.getInstance().getResourceManager().getResource( sourceLoc );
-			final BufferedImage bi = TextureUtil.readBufferedImage( iresource.getInputStream() );
+			final NativeImage bi = NativeImage.read( iresource.getInputStream() );
 
 			for ( final int varient : FlatColoredBlocks.instance.transparent.shadeConvertVariant )
 			{
-				final String name = ClientSide.instance.getTextureName( EnumFlatBlockType.TRANSPARENT, varient );
+				final ResourceLocation name = ClientSide.instance.getTextureName( EnumFlatBlockType.TRANSPARENT, varient );
 				final TextureAtlasSprite out = AlphaModifiedTexture.generate( name, bi, varient / 255.0f, ev.getMap() );
 
 				// register.
@@ -47,7 +46,7 @@ public class TextureGenerator
 			// just load the texture if for some reason the above fails.
 			Log.logError( "Unable to load Base Texture", e );
 
-			final TextureAtlasSprite out = ev.getMap().registerSprite( new ResourceLocation( ClientSide.instance.getBaseTextureNameWithBlocks( EnumFlatBlockType.TRANSPARENT ) ) );
+			final TextureAtlasSprite out = ev.getMap().getSprite( new ResourceLocation( ClientSide.instance.getBaseTextureNameWithBlocks( EnumFlatBlockType.TRANSPARENT ) ) );
 
 			for ( final int varient : FlatColoredBlocks.instance.transparent.shadeConvertVariant )
 			{
@@ -57,7 +56,7 @@ public class TextureGenerator
 
 		if ( !FlatColoredBlocks.instance.config.GLOWING_EMITS_LIGHT )
 		{
-			glowingTexture = ev.getMap().registerSprite( new ResourceLocation( ClientSide.instance.getBaseTextureNameWithBlocks( EnumFlatBlockType.GLOWING ) ) );
+			glowingTexture = ev.getMap().getSprite( new ResourceLocation( ClientSide.instance.getBaseTextureNameWithBlocks( EnumFlatBlockType.GLOWING ) ) );
 		}
 	}
 
