@@ -29,4 +29,10 @@ public class Log
 		getLogger().info( message );
 	}
 
+	public static void debug(
+			String string )
+	{
+		getLogger().debug( string );
+	}
+
 }

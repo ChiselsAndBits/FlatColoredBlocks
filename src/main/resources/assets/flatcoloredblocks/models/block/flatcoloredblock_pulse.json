@@ -1,8 +1,8 @@
 {
     "parent": "block/block",
 	"textures": {
-		"all": "flatcoloredblocks:blocks/flatcoloredblock_PULSE",
-		"particle": "flatcoloredblocks:blocks/flatcoloredblock_PULSE"
+		"all": "flatcoloredblocks:blocks/flatcoloredblock_pulse",
+		"particle": "flatcoloredblocks:blocks/flatcoloredblock_pulse"
 	},
     "elements": [
         {   "from": [ 0, 0, 0 ],

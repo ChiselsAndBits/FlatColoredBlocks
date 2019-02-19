@@ -63,7 +63,7 @@ public class FlatColoredBlockRecipe implements IRecipe
 
 				flatBlock = (BlockFlatColored) blk;
 				target = i.copy();
-				state = ModUtil.getStateFromMeta( blk, i );
+				state = ModUtil.getFlatColoredBlockState( flatBlock, i );
 			}
 			else if ( i.getItem() instanceof ItemColoredBlockCrafter )
 			{

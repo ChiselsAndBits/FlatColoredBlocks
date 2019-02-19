@@ -60,13 +60,14 @@ public class ItemBlockFlatColored extends ItemBlock
 			final Block block )
 	{
 		super( block, ( new Item.Properties() ).group( FlatColoredBlocks.instance.creativeTab ) );
+		setRegistryName( block.getRegistryName() );
 	}
 
 	@Override
 	public ITextComponent getDisplayName(
 			@Nonnull ItemStack stack )
 	{
-		final IBlockState state = ModUtil.getStateFromMeta( getBlock(), stack );
+		final IBlockState state = ModUtil.getFlatColoredBlockState( getColoredBlock(), stack );
 		final int shadeNum = getColoredBlock().getShadeNumber( state );
 
 		final Set<EnumFlatColorAttributes> colorChars = getColoredBlock().getFlatColorAttributes( state );
@@ -98,7 +99,7 @@ public class ItemBlockFlatColored extends ItemBlock
 			List<ITextComponent> tooltip,
 			ITooltipFlag flagIn )
 	{
-		final IBlockState state = ModUtil.getStateFromMeta( this.getBlock(), stack );
+		final IBlockState state = ModUtil.getFlatColoredBlockState( getColoredBlock(), stack );
 		final BlockFlatColored blk = getColoredBlock();
 
 		final int hsv = blk.hsvFromState( state );
@@ -191,7 +192,7 @@ public class ItemBlockFlatColored extends ItemBlock
 			@Nonnull final ItemStack stack,
 			final int renderPass )
 	{
-		final IBlockState state = ModUtil.getStateFromMeta( this.getBlock(), stack );
+		final IBlockState state = ModUtil.getFlatColoredBlockState( getColoredBlock(), stack );
 		return getColoredBlock().colorFromState( state );
 	}
 

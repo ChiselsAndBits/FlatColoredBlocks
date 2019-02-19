@@ -12,11 +12,12 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class BlockFlatColoredTranslucent extends BlockFlatColored
 {
 	public BlockFlatColoredTranslucent(
+			BlockHSVConfiguration type,
 			final int i,
 			final int j,
 			final int varientNum )
 	{
-		super( i, j, varientNum );
+		super( type, i, j, varientNum );
 
 		// Its still a full block.. even if its not a opaque cube
 		// C&B requires this.
@@ -40,7 +41,7 @@ public class BlockFlatColoredTranslucent extends BlockFlatColored
 
 		if ( block instanceof BlockFlatColoredTranslucent )
 		{
-			return false;
+			return true;
 		}
 
 		return super.isSideInvisible( state, adjacentBlockState, side );

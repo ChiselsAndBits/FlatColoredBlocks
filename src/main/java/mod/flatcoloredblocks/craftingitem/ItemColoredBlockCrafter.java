@@ -36,6 +36,7 @@ public class ItemColoredBlockCrafter extends Item
 	public ItemColoredBlockCrafter()
 	{
 		super( ( new Item.Properties() ).group( FlatColoredBlocks.instance.creativeTab ) );
+		setRegistryName( FlatColoredBlocks.MODID, "coloredcraftingitem" );
 	}
 
 	@Override

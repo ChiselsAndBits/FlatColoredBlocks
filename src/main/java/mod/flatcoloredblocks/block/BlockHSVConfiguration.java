@@ -50,6 +50,8 @@ public class BlockHSVConfiguration
 
 	final public EnumFlatBlockType type;
 
+	public String textureStyle;
+
 	public BlockHSVConfiguration(
 			final EnumFlatBlockType type,
 			final ModConfig config )
@@ -154,6 +156,8 @@ public class BlockHSVConfiguration
 				VARIANT_EXPONENT = 1;
 				VARIANT_MIN = 1;
 				VARIANT_MAX = 1;
+
+				textureStyle = config.DISPLAY_TEXTURE.resourceName();
 				break;
 			case GLOWING:
 				MAX_SHADE_HUE = config.HUE_SHADES_GLOWING;
@@ -176,6 +180,8 @@ public class BlockHSVConfiguration
 				VARIANT_EXPONENT = config.GLOWING_RANGE_EXPONENT;
 				VARIANT_MIN = config.GLOWING_MIN;
 				VARIANT_MAX = config.GLOWING_MAX;
+
+				textureStyle = config.DISPLAY_TEXTURE_GLOWING.resourceName();
 				break;
 			case TRANSPARENT:
 				MAX_SHADE_HUE = config.HUE_SHADES_TRANSPARENT;
@@ -198,6 +204,8 @@ public class BlockHSVConfiguration
 				VARIANT_EXPONENT = config.TRANSPARENCY_RANGE_EXPONENT;
 				VARIANT_MIN = config.TRANSPARENCY_MIN;
 				VARIANT_MAX = config.TRANSPARENCY_MAX;
+
+				textureStyle = config.DISPLAY_TEXTURE_TRANSPARENT.resourceName();
 				break;
 		}
 	}
@@ -251,12 +259,6 @@ public class BlockHSVConfiguration
 		return MAX_SHADES;
 	}
 
-	// how many blocks are generated?
-	public int getNumberOfBlocks()
-	{
-		return MAX_SHADE_BLOCKS;
-	}
-
 	public String getBlockName(
 			final int varientNum )
 	{
@@ -265,7 +267,7 @@ public class BlockHSVConfiguration
 			return type.blockName;
 		}
 
-		return type.blockName + varientNum + "_";
+		return type.blockName + "_" + shadeConvertVariant[varientNum];
 	}
 
 }

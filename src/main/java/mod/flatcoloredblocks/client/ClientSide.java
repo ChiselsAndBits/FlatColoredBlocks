@@ -6,26 +6,27 @@ import mod.flatcoloredblocks.FlatColoredBlocks;
 import mod.flatcoloredblocks.ModUtil;
 import mod.flatcoloredblocks.block.BlockFlatColored;
 import mod.flatcoloredblocks.block.EnumFlatBlockType;
-import mod.flatcoloredblocks.model.ModelGenerator;
-import mod.flatcoloredblocks.textures.TextureGenerator;
+import mod.flatcoloredblocks.resource.ResourceGenerator;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.color.IItemColor;
+import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReaderBase;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 
 public class ClientSide implements IClientSide
 {
 
 	public static final ClientSide instance = new ClientSide();
 
-	public TextureGenerator textureGenerator = new TextureGenerator();
-	public ModelGenerator modelGenerator = new ModelGenerator();
+	public ResourceGenerator resourceGenerator = new ResourceGenerator();
 
 	private ClientSide()
 	{
@@ -34,16 +35,33 @@ public class ClientSide implements IClientSide
 	@Override
 	public void preinit()
 	{
-		modelGenerator.preinit();
+		resourceGenerator.init();
+		MinecraftForge.EVENT_BUS.register( resourceGenerator );
+	}
 
-		MinecraftForge.EVENT_BUS.register( textureGenerator );
-		MinecraftForge.EVENT_BUS.register( modelGenerator );
+	public void createResources()
+	{
+		resourceGenerator.populateResources();
 	}
 
 	@Override
-	public void init()
+	public void init(
+			FMLLoadCompleteEvent ev )
 	{
-		Minecraft.getInstance().getItemColors().register( new IItemColor() {
+		// TODO: GUIFACTORY
+		// ModLoadingContext.get().registerExtensionPoint(
+		// ExtensionPoint.GUIFACTORY, new ModGuiRouter() );
+
+		clientItems();
+		clientBlocks();
+	}
+
+	public void clientItems()
+	{
+		Block[] flatColoredBlocks = BlockFlatColored.getAllBlocks().toArray( new Block[BlockFlatColored.getAllBlocks().size()] );
+		ItemColors colors = Minecraft.getInstance().getItemColors();
+
+		colors.register( new IItemColor() {
 
 			@Override
 			@Nonnull
@@ -52,11 +70,17 @@ public class ClientSide implements IClientSide
 					final int tintIndex )
 			{
 				final Block blk = Block.getBlockFromItem( stack.getItem() );
-				return ( (BlockFlatColored) blk ).colorFromState( ModUtil.getStateFromMeta( blk, stack ) );
+				return ( (BlockFlatColored) blk ).colorFromState( ModUtil.getFlatColoredBlockState( ( (BlockFlatColored) blk ), stack ) );
 			}
-		}, BlockFlatColored.getAllBlocks().toArray( new Block[BlockFlatColored.getAllBlocks().size()] ) );
+		}, flatColoredBlocks );
+	}
 
-		Minecraft.getInstance().getBlockColors().register( new IBlockColor() {
+	public void clientBlocks()
+	{
+		Block[] flatColoredBlocks = BlockFlatColored.getAllBlocks().toArray( new Block[BlockFlatColored.getAllBlocks().size()] );
+		BlockColors colors = Minecraft.getInstance().getBlockColors();
+
+		colors.register( new IBlockColor() {
 
 			@Override
 			public int getColor(
@@ -68,45 +92,35 @@ public class ClientSide implements IClientSide
 				return ( (BlockFlatColored) state.getBlock() ).colorFromState( state );
 			}
 
-		}, BlockFlatColored.getAllBlocks().toArray( new Block[BlockFlatColored.getAllBlocks().size()] ) );
+		}, flatColoredBlocks );
 	}
 
 	public ResourceLocation getTextureName(
 			final EnumFlatBlockType type,
 			final int varient )
 	{
-		if ( !FlatColoredBlocks.instance.config.GLOWING_EMITS_LIGHT && type == EnumFlatBlockType.GLOWING )
-		{
-			return new ResourceLocation( FlatColoredBlocks.MODID, getBaseTextureName( type ) + "_" + varient );
-		}
-
-		if ( type == EnumFlatBlockType.TRANSPARENT )
-		{
-			return new ResourceLocation( FlatColoredBlocks.MODID, getBaseTextureName( type ) + "_" + varient );
-		}
-
-		return new ResourceLocation( FlatColoredBlocks.MODID, getBaseTextureName( type ) );
+		return new ResourceLocation( FlatColoredBlocks.MODID, getBaseTextureName( type ) + "_" + varient );
 	}
 
 	public String getBaseTextureName(
 			final EnumFlatBlockType type )
 	{
-		return FlatColoredBlocks.MODID + ":flatcoloredblock_" + getTextureFor( type );
+		return "flatcoloredblock" + getTextureFor( type );
 	}
 
 	public String getBaseTextureNameWithBlocks(
 			final EnumFlatBlockType type )
 	{
-		return FlatColoredBlocks.MODID + ":blocks/flatcoloredblock_" + getTextureFor( type );
+		return "blocks/flatcoloredblock" + getTextureFor( type );
 	}
 
 	public ResourceLocation getTextureResourceLocation(
 			final EnumFlatBlockType type )
 	{
-		return new ResourceLocation( FlatColoredBlocks.MODID, "textures/blocks/flatcoloredblock_" + getTextureFor( type ) + ".png" );
+		return new ResourceLocation( FlatColoredBlocks.MODID, "textures/blocks/flatcoloredblock_" + getTextureFileFor( type ) + ".png" );
 	}
 
-	private String getTextureFor(
+	private String getTextureFileFor(
 			final EnumFlatBlockType type )
 	{
 		switch ( type )
@@ -117,6 +131,26 @@ public class ClientSide implements IClientSide
 				return FlatColoredBlocks.instance.config.DISPLAY_TEXTURE_TRANSPARENT.resourceName();
 			default:
 				return FlatColoredBlocks.instance.config.DISPLAY_TEXTURE.resourceName();
+		}
+	}
+
+	private String getTextureFor(
+			final EnumFlatBlockType type )
+	{
+		switch ( type )
+		{
+			case GLOWING:
+				return "_glowing";
+			// return
+			// FlatColoredBlocks.instance.config.DISPLAY_TEXTURE_GLOWING.resourceName();
+			case TRANSPARENT:
+				return "_transparent";
+			// return
+			// FlatColoredBlocks.instance.config.DISPLAY_TEXTURE_TRANSPARENT.resourceName();
+			default:
+				return "";
+			// return
+			// FlatColoredBlocks.instance.config.DISPLAY_TEXTURE.resourceName();
 		}
 	}
 

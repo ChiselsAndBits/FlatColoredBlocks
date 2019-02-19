@@ -1,8 +1,8 @@
 {
     "parent": "block/block",
 	"textures": {
-		"all": "flatcoloredblocks:blocks/flatcoloredblock_DRYWALL",
-		"particle": "flatcoloredblocks:blocks/flatcoloredblock_DRYWALL"
+		"all": "flatcoloredblocks:blocks/flatcoloredblock_drywall",
+		"particle": "flatcoloredblocks:blocks/flatcoloredblock_drywall"
 	},
     "elements": [
         {   "from": [ 0, 0, 0 ],

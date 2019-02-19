@@ -1,0 +1,20 @@
+modLoader="javafml"
+loaderVersion="[25,)"
+issueTrackerURL="https://github.com/AlgorithmX2/FlatColoredBlocks/issues"
+displayURL="https://minecraft.curseforge.com/projects/flat-colored-blocks"
+logoFile="fcb.png"
+authors="AlgorithmX2"
+
+[[mods]]
+modId="flatcoloredblocks"
+version="${file.jarVersion}"
+displayName="Flat Colored Blocks"
+# The description text for the mod (multi line!) (#mandatory)
+description='''
+A mod that generates a selection of simple colored blocks, transparent blocks, and glowing blocks ( all configurable ) for use in building and creative projects.'''
+[[dependencies.flatcoloredblocks]]
+    modId="forge"
+    mandatory=false
+    versionRange="[24.0.42,)"
+    ordering="NONE"
+    side="BOTH"

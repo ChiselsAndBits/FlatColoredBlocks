@@ -169,7 +169,7 @@ public class InventoryColoredBlockCrafter implements IInventory
 		{
 			final ItemStack is = i.next();
 			final Block blk = Block.getBlockFromItem( is.getItem() );
-			final IBlockState state = ModUtil.getStateFromMeta( blk, is );
+			final IBlockState state = ModUtil.getFlatColoredBlockState( (BlockFlatColored) blk, is );
 
 			final Set<EnumFlatColorAttributes> charistics = ( (BlockFlatColored) blk ).getFlatColorAttributes( state );
 			boolean isGood = true;
@@ -265,7 +265,7 @@ public class InventoryColoredBlockCrafter implements IInventory
 
 		final InventorySummary da = scanPlayerInventory();
 		final Block blk = Block.getBlockFromItem( reqItem.getItem() );
-		final IBlockState state = ModUtil.getStateFromMeta( blk, reqItem );
+		final IBlockState state = ModUtil.getFlatColoredBlockState( (BlockFlatColored) blk, reqItem );
 
 		final Set<EnumFlatColorAttributes> charistics = ( (BlockFlatColored) blk ).getFlatColorAttributes( state );
 		final Object Craftable = ( (BlockFlatColored) blk ).getCraftable();

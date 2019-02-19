@@ -11,7 +11,9 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.IProperty;
 import net.minecraft.state.IntegerProperty;
@@ -38,6 +40,13 @@ public class BlockFlatColored extends Block
 	// only used for description.
 	public final int opacity;
 	public final int lightValue;
+
+	@Override
+	public IBlockState getStateForPlacement(
+			BlockItemUseContext context )
+	{
+		return super.getStateForPlacement( context ).with( shade, context.getItem().getOrCreateTag().getInt( "Shade" ) );
+	}
 
 	@Override
 	public MaterialColor getMapColor(
@@ -103,14 +112,20 @@ public class BlockFlatColored extends Block
 	}
 
 	protected BlockFlatColored(
+			BlockHSVConfiguration type,
 			final float lightValue,
 			final float opacity,
 			final int varientNum )
 	{
 		super( Block.Properties.create( opacity > 0.001 ? Material.GLASS : Material.ROCK )
 				.hardnessAndResistance( 1.5F, 10.0F )
-				.lightValue( FlatColoredBlocks.instance.config.GLOWING_EMITS_LIGHT ? (int) Math.max( 0, Math.min( 15, lightValue / 255.0f ) ) : 0 )
+				.lightValue( (int) ( FlatColoredBlocks.instance.config.GLOWING_EMITS_LIGHT ? Math.max( 0, Math.min( 15, 15.0f * ( lightValue / 255.0f ) ) ) : 0 ) )
 				.sound( opacity > 0.001 ? SoundType.GLASS : SoundType.STONE ) );
+
+		final String regName = type.getBlockName( varientNum );
+
+		// use the same name for item/block combo.
+		this.setRegistryName( FlatColoredBlocks.MODID, regName );
 
 		// mimic stone..
 		// TODO: setHarvestLevel( "pickaxe", 0 );
@@ -121,28 +136,26 @@ public class BlockFlatColored extends Block
 		varient = varientNum;
 
 		coloredBlocks.add( this );
+		this.lightValue = (int) ( FlatColoredBlocks.instance.config.GLOWING_EMITS_LIGHT ? Math.max( 0, Math.min( 15, 15.0f * ( lightValue / 255.0f ) ) ) : 0 );
 		this.opacity = 100 - Math.round( opacity * 100 / 255 );
-		this.lightValue = (int) ( lightValue * 15 / 255 );
 	}
 
 	public static BlockFlatColored construct(
 			final BlockHSVConfiguration type,
-			final int offsetIn,
 			final int varientNum )
 	{
 		// pass these to createBlockState
-		offset = offsetIn;
 		newConfig = type;
 
 		// construct the block..
 		switch ( type.type )
 		{
 			case GLOWING:
-				return new BlockFlatColored( type.shadeConvertVariant[varientNum], 0, varientNum );
+				return new BlockFlatColored( type, type.shadeConvertVariant[varientNum], 0, varientNum );
 			case NORMAL:
-				return new BlockFlatColored( 0, 0, varientNum );
+				return new BlockFlatColored( type, 0, 0, varientNum );
 			case TRANSPARENT:
-				return new BlockFlatColoredTranslucent( 0, type.shadeConvertVariant[varientNum], varientNum );
+				return new BlockFlatColoredTranslucent( type, 0, type.shadeConvertVariant[varientNum], varientNum );
 			default:
 				throw new RuntimeException( "Invalid construction." );
 		}
@@ -153,17 +166,10 @@ public class BlockFlatColored extends Block
 	{
 		shadeOffset = offset;
 		configuration = newConfig;
-		maxShade = shadeOffset + configuration.META_SCALE_MINUS_ONE;
+		maxShade = shadeOffset + configuration.MAX_SHADES_MINUS_ONE;
 
-		if ( configuration.MAX_SHADES_MINUS_ONE < maxShade )
-		{
-			maxShade = configuration.MAX_SHADES_MINUS_ONE;
-			builder.add( shade = IntegerProperty.create( "shade", 0, maxShade - shadeOffset ) );
-		}
-		else
-		{
-			builder.add( shade = IntegerProperty.create( "shade", 0, configuration.META_SCALE_MINUS_ONE ) );
-		}
+		maxShade = configuration.MAX_SHADES_MINUS_ONE;
+		builder.add( shade = IntegerProperty.create( "shade", 0, maxShade - shadeOffset ) );
 	}
 
 	@Override
@@ -174,8 +180,18 @@ public class BlockFlatColored extends Block
 			BlockPos pos,
 			int fortune )
 	{
-		// TODO Auto-generated method stub
-		super.getDrops( state, drops, world, pos, fortune );
+		drops.add( getItem( world, pos, state ) );
+	}
+
+	@Override
+	public ItemStack getItem(
+			IBlockReader world,
+			BlockPos pos,
+			IBlockState state )
+	{
+		ItemStack is = new ItemStack( this );
+		is.getOrCreateTag().setInt( "Shade", state.get( shade ) );
+		return is;
 	}
 
 	// convert block into all possible ItemStacks.
@@ -191,6 +207,24 @@ public class BlockFlatColored extends Block
 			is.getOrCreateTag().setInt( "Shade", x - shadeOffset );
 			list.add( is );
 		}
+	}
+
+	public void fillItemGroup(
+			ItemGroup group,
+			NonNullList<ItemStack> items )
+	{
+		for ( int x = shadeOffset; x <= maxShade; ++x )
+		{
+			ItemStack is = new ItemStack( this, 1 );
+			is.getOrCreateTag().setInt( "Shade", x - shadeOffset );
+			items.add( is );
+		}
+	}
+
+	public IBlockState getstateForStack(
+			ItemStack stack )
+	{
+		return getDefaultState().with( shade, stack.getOrCreateTag().getInt( "Shade" ) );
 	}
 
 	// generates a list of all shades without caring about which block it is.

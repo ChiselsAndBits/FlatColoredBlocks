@@ -6,6 +6,7 @@ import com.google.common.base.Stopwatch;
 
 import mod.flatcoloredblocks.block.BlockFlatColored;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -28,6 +29,11 @@ public class CreativeTab extends ItemGroup
 		if ( list == null )
 		{
 			initalizeList();
+		}
+
+		if ( list.size() == 0 )
+		{
+			return new ItemStack( Blocks.COBBLESTONE );
 		}
 
 		// check timer, and if 0.7 seconds has elapsed, step it forwards ( and
@@ -70,7 +76,7 @@ public class CreativeTab extends ItemGroup
 				continue;
 			}
 
-			final int out = ( (BlockFlatColored) b ).hsvFromState( ModUtil.getStateFromMeta( b, is ) );
+			final int out = ( (BlockFlatColored) b ).hsvFromState( ModUtil.getFlatColoredBlockState( ( (BlockFlatColored) b ), is ) );
 
 			final int s = out >> 8 & 0xff;
 			final int v = out & 0xff;

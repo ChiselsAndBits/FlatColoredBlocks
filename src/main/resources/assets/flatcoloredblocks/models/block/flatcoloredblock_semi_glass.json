@@ -1,8 +1,8 @@
 {
     "parent": "block/block",
 	"textures": {
-		"all": "flatcoloredblocks:blocks/flatcoloredblock_SEMI_GLASS",
-		"particle": "flatcoloredblocks:blocks/flatcoloredblock_SEMI_GLASS"
+		"all": "flatcoloredblocks:blocks/flatcoloredblock_semi_glass",
+		"particle": "flatcoloredblocks:blocks/flatcoloredblock_semi_glass"
 	},
     "elements": [
         {   "from": [ 0, 0, 0 ],
