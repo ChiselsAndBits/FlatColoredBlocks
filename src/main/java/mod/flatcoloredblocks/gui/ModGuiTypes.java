@@ -2,9 +2,14 @@ package mod.flatcoloredblocks.gui;
 
 import java.lang.reflect.Constructor;
 
+import mod.flatcoloredblocks.FlatColoredBlocks;
 import mod.flatcoloredblocks.craftingitem.ContainerColoredBlockCrafter;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.IInteractionObject;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
@@ -16,7 +21,7 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 public enum ModGuiTypes
 {
 
-	ColoredCrafter( ContainerColoredBlockCrafter.class );
+	colored_crafter( ContainerColoredBlockCrafter.class );
 
 	private final Class<? extends Container> container;
 	private final Class<?> gui;
@@ -63,8 +68,53 @@ public enum ModGuiTypes
 
 	}
 
-	public String getID()
+	public ResourceLocation getID()
 	{
-		return toString();
+		return new ResourceLocation( FlatColoredBlocks.MODID, toString() );
+	}
+
+	public IInteractionObject create(
+			EntityPlayer player,
+			World worldIn,
+			int x,
+			int y,
+			int z )
+	{
+		final ModGuiTypes self = this;
+		return new IInteractionObject() {
+
+			@Override
+			public boolean hasCustomName()
+			{
+				return false;
+			}
+
+			@Override
+			public ITextComponent getName()
+			{
+				return null;
+			}
+
+			@Override
+			public ITextComponent getCustomName()
+			{
+				return null;
+			}
+
+			@Override
+			public String getGuiID()
+			{
+				return self.getID().toString();
+			}
+
+			@Override
+			public Container createContainer(
+					InventoryPlayer arg0,
+					EntityPlayer player )
+			{
+				return ModGuiRouter.createContainer( ModGuiTypes.colored_crafter, player, worldIn, 0, 0, 0 );
+			}
+
+		};
 	}
 }

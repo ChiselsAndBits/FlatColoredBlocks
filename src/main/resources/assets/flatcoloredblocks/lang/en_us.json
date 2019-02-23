@@ -7,16 +7,9 @@
 	"flatcoloredblocks.tooltips.rgb":	"RGB:",
 	"flatcoloredblocks.tooltips.hsv":	"HSV:",
 	
-	"item.flatcoloredblocks.coloredcraftingitem.name":	"Colored Block Crafter",
-	"item.flatcoloredblocks.coloredcraftingitem.tip1":	"Craft blocks with %% and Dyes.",
+	"item.flatcoloredblocks.coloredcraftingitem":	"Colored Block Crafter",
+	"item.flatcoloredblocks.coloredcraftingitem.tip1":	"Craft blocks with %s and Dyes.",
 	"item.flatcoloredblocks.coloredcraftingitem.tip2":	"Put materials in your inventory and use this.",
-	
-	"flatcoloredblocks.startup_a":	"Flat Colored Blocks adds a variable number of shades of various blocks, the number can be configured in the settings screen.",
-	"flatcoloredblocks.startup_b":	"Depending on the number of shades it will consume more blocks, the mod is currently configure to have...",
-	"flatcoloredblocks.startup_c":	"shades using a total of",
-	"flatcoloredblocks.startup_d":	"block ids",
-	"flatcoloredblocks.startup_e":	"If you wish to change this use the options screen.",
-	"flatcoloredblocks.startup_f":	"It is recommended to use the creative tab to confirm your options before you begin using the mod since changing the configuation after the fact may result in the blocks changing color, or disappearing. If you are playing on a server ensure that the client and server configuration matches.",
 	
 	"flatcoloredblocks.Shade.name":	"#",
 	"flatcoloredblocks.Transparent.name":	"Transparent",
@@ -70,7 +63,7 @@
 	"flatcoloredblocks.darkmagenta.name":	"Dark Magenta Block",
 	
 	"flatcoloredblocks.tooltips.deg":	" deg",
-	"flatcoloredblocks.tooltips.percent":	"%",
+	"flatcoloredblocks.tooltips.percent":	"%%",
 	"flatcoloredblocks.tooltips.lightValueUnit":	"/15",
 	
 	"flatcoloredblocks.commands.export_list.usage":	"no arguments, saves CSV in config folder.",

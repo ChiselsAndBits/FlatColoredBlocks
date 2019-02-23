@@ -1,11 +1,14 @@
 package mod.flatcoloredblocks.client;
 
+import java.util.function.Predicate;
+
 import javax.annotation.Nonnull;
 
 import mod.flatcoloredblocks.FlatColoredBlocks;
 import mod.flatcoloredblocks.ModUtil;
 import mod.flatcoloredblocks.block.BlockFlatColored;
 import mod.flatcoloredblocks.block.EnumFlatBlockType;
+import mod.flatcoloredblocks.gui.ModGuiRouter;
 import mod.flatcoloredblocks.resource.ResourceGenerator;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -15,13 +18,19 @@ import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.item.ItemStack;
+import net.minecraft.resources.IReloadableResourceManager;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReaderBase;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.ExtensionPoint;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraftforge.resource.IResourceType;
+import net.minecraftforge.resource.ISelectiveResourceReloadListener;
 
-public class ClientSide implements IClientSide
+public class ClientSide
 {
 
 	public static final ClientSide instance = new ClientSide();
@@ -32,11 +41,29 @@ public class ClientSide implements IClientSide
 	{
 	}
 
-	@Override
 	public void preinit()
 	{
 		resourceGenerator.init();
 		MinecraftForge.EVENT_BUS.register( resourceGenerator );
+
+		IResourceManager manager = Minecraft.getInstance().getResourceManager();
+		if ( manager instanceof IReloadableResourceManager )
+		{
+			( (IReloadableResourceManager) manager ).addReloadListener( new ISelectiveResourceReloadListener() {
+
+				@Override
+				public void onResourceManagerReload(
+						IResourceManager resourceManager,
+						Predicate<IResourceType> resourcePredicate )
+				{
+					if ( FlatColoredBlocks.instance.itemColoredBlockCrafting != null )
+					{
+						FlatColoredBlocks.instance.itemColoredBlockCrafting.scrollIndex = -1;
+					}
+				}
+
+			} );
+		}
 	}
 
 	public void createResources()
@@ -44,13 +71,10 @@ public class ClientSide implements IClientSide
 		resourceGenerator.populateResources();
 	}
 
-	@Override
 	public void init(
 			FMLLoadCompleteEvent ev )
 	{
-		// TODO: GUIFACTORY
-		// ModLoadingContext.get().registerExtensionPoint(
-		// ExtensionPoint.GUIFACTORY, new ModGuiRouter() );
+		ModLoadingContext.get().registerExtensionPoint( ExtensionPoint.GUIFACTORY, new ModGuiRouter() );
 
 		clientItems();
 		clientBlocks();
@@ -141,16 +165,10 @@ public class ClientSide implements IClientSide
 		{
 			case GLOWING:
 				return "_glowing";
-			// return
-			// FlatColoredBlocks.instance.config.DISPLAY_TEXTURE_GLOWING.resourceName();
 			case TRANSPARENT:
 				return "_transparent";
-			// return
-			// FlatColoredBlocks.instance.config.DISPLAY_TEXTURE_TRANSPARENT.resourceName();
 			default:
 				return "";
-			// return
-			// FlatColoredBlocks.instance.config.DISPLAY_TEXTURE.resourceName();
 		}
 	}
 

@@ -1,6 +1,7 @@
 package mod.flatcoloredblocks.gui;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -13,7 +14,7 @@ import net.minecraftforge.fml.network.FMLPlayMessages.OpenContainer;
 /**
  * Client / Server Gui + Container Handler
  */
-public class ModGuiRouter implements Function<FMLPlayMessages.OpenContainer, GuiScreen>
+public class ModGuiRouter implements Function<FMLPlayMessages.OpenContainer, GuiScreen>, Supplier<Function<FMLPlayMessages.OpenContainer, GuiScreen>>
 {
 
 	public static Container createContainer(
@@ -47,5 +48,11 @@ public class ModGuiRouter implements Function<FMLPlayMessages.OpenContainer, Gui
 		{
 			throw new RuntimeException( e );
 		}
+	}
+
+	@Override
+	public Function<OpenContainer, GuiScreen> get()
+	{
+		return this;
 	}
 }

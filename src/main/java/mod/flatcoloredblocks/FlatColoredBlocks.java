@@ -9,18 +9,13 @@ import mod.flatcoloredblocks.block.BlockHSVConfiguration;
 import mod.flatcoloredblocks.block.EnumFlatBlockType;
 import mod.flatcoloredblocks.block.ItemBlockFlatColored;
 import mod.flatcoloredblocks.client.ClientSide;
-import mod.flatcoloredblocks.client.DummyClientSide;
-import mod.flatcoloredblocks.client.IClientSide;
 import mod.flatcoloredblocks.config.ModConfig;
 import mod.flatcoloredblocks.craftingitem.ItemColoredBlockCrafter;
 import mod.flatcoloredblocks.network.NetworkRouter;
 import net.minecraft.block.Block;
-import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -46,8 +41,6 @@ public class FlatColoredBlocks
 	// @ObjectHolder( "flatcoloredblocks:coloredcraftingitem" )
 	public ItemColoredBlockCrafter itemColoredBlockCrafting;
 
-	private IClientSide clientSide = new DummyClientSide();
-
 	public BlockHSVConfiguration normal;
 	public BlockHSVConfiguration transparent;
 	public BlockHSVConfiguration glowing;
@@ -67,10 +60,8 @@ public class FlatColoredBlocks
 
 		DistExecutor.runWhenOn( Dist.CLIENT, () -> () ->
 		{
-			clientSide = ClientSide.instance;
-			clientSide.preinit();
-
-			FMLJavaModLoadingContext.get().getModEventBus().addListener( clientSide::init );
+			ClientSide.instance.preinit();
+			FMLJavaModLoadingContext.get().getModEventBus().addListener( ClientSide.instance::init );
 		} );
 
 		FMLJavaModLoadingContext.get().getModEventBus().addListener( this::init );
@@ -167,18 +158,4 @@ public class FlatColoredBlocks
 		}
 	}
 
-	@SubscribeEvent
-	@OnlyIn( Dist.CLIENT )
-	public void openMainMenu(
-			final GuiOpenEvent event )
-	{
-		// if the max shades has changed in form the user of the new usage.
-		if ( config.LAST_MAX_SHADES != FlatColoredBlocks.instance.getFullNumberOfShades()
-				&& event.getGui() != null
-				&& event.getGui().getClass() == GuiMainMenu.class )
-		{
-			// TODO: Findout out why this won't close.
-			// event.setGui( new GuiScreenStartup() );
-		}
-	}
 }

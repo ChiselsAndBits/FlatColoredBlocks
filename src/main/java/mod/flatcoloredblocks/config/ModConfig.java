@@ -199,9 +199,9 @@ public class ModConfig
 
 	void setDefaults()
 	{
-		solidCraftingBlock = "forge:cobblestone";
-		transparentCraftingBlock = "forge:glass";
-		glowingCraftingBlock = "forge:glowstone";
+		solidCraftingBlock = "flatcoloredblocks:solid_crafting_block";
+		transparentCraftingBlock = "flatcoloredblocks:transparent_crafting_block";
+		glowingCraftingBlock = "flatcoloredblocks:glowing_crafting_block";
 		solidCraftingOutput = 1;
 		transparentCraftingOutput = 1;
 		glowingCraftingOutput = 1;

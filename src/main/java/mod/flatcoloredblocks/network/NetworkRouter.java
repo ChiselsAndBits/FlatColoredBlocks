@@ -100,8 +100,24 @@ public class NetworkRouter
 		ec.addListener( this::serverPacket );
 	}
 
-	public void serverPacket(
+	public void clientPacket(
 			final NetworkEvent.ServerCustomPayloadEvent ev )
+	{
+		try
+		{
+			if ( clientPacketHandler != null )
+			{
+				clientPacketHandler.onPacketData( ev.getPayload() );
+			}
+		}
+		catch ( final ThreadQuickExitException ext )
+		{
+			;
+		}
+	}
+
+	public void serverPacket(
+			final NetworkEvent.ClientCustomPayloadEvent ev )
 	{
 		// find player
 		NetworkEvent.Context context = ev.getSource().get();
@@ -111,22 +127,6 @@ public class NetworkRouter
 			if ( serverPacketHandler != null )
 			{
 				serverPacketHandler.onPacketData( ev.getPayload(), context.getSender() );
-			}
-		}
-		catch ( final ThreadQuickExitException ext )
-		{
-			;
-		}
-	}
-
-	public void clientPacket(
-			final NetworkEvent.ClientCustomPayloadEvent ev )
-	{
-		try
-		{
-			if ( clientPacketHandler != null )
-			{
-				clientPacketHandler.onPacketData( ev.getPayload() );
 			}
 		}
 		catch ( final ThreadQuickExitException ext )
@@ -168,6 +168,7 @@ public class NetworkRouter
 			{
 				int id = ModPacketTypes.getID( packet.getClass() );
 				PacketBuffer buffer = new PacketBuffer( Unpooled.buffer() );
+				buffer.writeVarInt( id );
 				packet.getPayload( buffer );
 
 				Pair<PacketBuffer, Integer> packetData = new ImmutablePair<PacketBuffer, Integer>( buffer, id );
@@ -181,20 +182,16 @@ public class NetworkRouter
 			ModPacket packet,
 			EntityPlayerMP player )
 	{
-		Minecraft minecraft = Minecraft.getInstance();
-		if ( minecraft != null )
+		if ( player != null && player.connection != null )
 		{
-			NetHandlerPlayClient netHandler = minecraft.getConnection();
-			if ( netHandler != null )
-			{
-				int id = ModPacketTypes.getID( packet.getClass() );
-				PacketBuffer buffer = new PacketBuffer( Unpooled.buffer() );
-				packet.getPayload( buffer );
+			int id = ModPacketTypes.getID( packet.getClass() );
+			PacketBuffer buffer = new PacketBuffer( Unpooled.buffer() );
+			buffer.writeVarInt( id );
+			packet.getPayload( buffer );
 
-				Pair<PacketBuffer, Integer> packetData = new ImmutablePair<PacketBuffer, Integer>( buffer, id );
-				ICustomPacket<Packet<?>> mcPacket = NetworkDirection.PLAY_TO_CLIENT.buildPacket( packetData, channel );
-				player.connection.sendPacket( mcPacket.getThis() );
-			}
+			Pair<PacketBuffer, Integer> packetData = new ImmutablePair<PacketBuffer, Integer>( buffer, id );
+			ICustomPacket<Packet<?>> mcPacket = NetworkDirection.PLAY_TO_CLIENT.buildPacket( packetData, channel );
+			player.connection.sendPacket( mcPacket.getThis() );
 		}
 	}
 }

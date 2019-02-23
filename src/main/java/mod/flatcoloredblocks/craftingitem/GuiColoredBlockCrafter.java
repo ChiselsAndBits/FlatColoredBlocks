@@ -44,7 +44,7 @@ public class GuiColoredBlockCrafter extends GuiContainer
 			final int mouseX,
 			final int mouseY )
 	{
-		fontRenderer.drawString( FlatColoredBlocks.instance.itemColoredBlockCrafting.getDisplayName( null ).getFormattedText(), 8, 6, 0x404040 );
+		fontRenderer.drawString( FlatColoredBlocks.instance.itemColoredBlockCrafting.getDisplayName( null ).getUnformattedComponentText(), 8, 6, 0x404040 );
 		fontRenderer.drawString( I18n.format( "container.inventory", new Object[0] ), 8, ySize - 93, 0x404040 );
 	}
 

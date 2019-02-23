@@ -13,9 +13,10 @@ import mod.flatcoloredblocks.block.EnumFlatBlockType;
 import mod.flatcoloredblocks.client.ClientSide;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.NativeImage;
+import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResource;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.MinecraftForge;
 
 public class ResourceGenerator
@@ -23,7 +24,13 @@ public class ResourceGenerator
 
 	public void init()
 	{
-		ModelLoaderRegistry.registerLoader( new CustomResourceInjector() );
+		IResourceManager manager = Minecraft.getInstance().getResourceManager();
+
+		if ( manager instanceof IReloadableResourceManager )
+		{
+			( (IReloadableResourceManager) manager ).addReloadListener( new CustomResourceInjector() );
+		}
+
 		MinecraftForge.EVENT_BUS.register( this );
 	}
 

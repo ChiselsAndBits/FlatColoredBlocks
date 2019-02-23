@@ -1,13 +1,15 @@
 package mod.flatcoloredblocks.resource;
 
+import java.util.function.Predicate;
+
 import mod.flatcoloredblocks.client.ClientSide;
-import net.minecraft.client.renderer.model.IUnbakedModel;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.SimpleReloadableResourceManager;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.ICustomModelLoader;
+import net.minecraftforge.resource.IResourceType;
+import net.minecraftforge.resource.ISelectiveResourceReloadListener;
+import net.minecraftforge.resource.VanillaResourceType;
 
-public class CustomResourceInjector implements ICustomModelLoader
+public class CustomResourceInjector implements ISelectiveResourceReloadListener
 {
 	static CustomFileProvider generatedFiles = new CustomFileProvider();
 
@@ -22,27 +24,17 @@ public class CustomResourceInjector implements ICustomModelLoader
 
 	@Override
 	public void onResourceManagerReload(
-			IResourceManager resourceManager )
+			IResourceManager resourceManager,
+			Predicate<IResourceType> resourcePredicate )
 	{
-		if ( resourceManager instanceof SimpleReloadableResourceManager )
+		if ( resourcePredicate.test( VanillaResourceType.MODELS ) )
 		{
-			( (SimpleReloadableResourceManager) resourceManager ).addResourcePack( generatedFiles );
-			ClientSide.instance.createResources();
+			if ( resourceManager instanceof SimpleReloadableResourceManager )
+			{
+				( (SimpleReloadableResourceManager) resourceManager ).addResourcePack( generatedFiles );
+				ClientSide.instance.createResources();
+			}
 		}
-	}
-
-	@Override
-	public boolean accepts(
-			ResourceLocation modelLocation )
-	{
-		return false;
-	}
-
-	@Override
-	public IUnbakedModel loadModel(
-			ResourceLocation modelLocation ) throws Exception
-	{
-		return null;
 	}
 
 }
