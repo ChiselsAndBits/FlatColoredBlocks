@@ -162,6 +162,10 @@ public class BlockFlatColored extends Block
 		if ( configuration.MAX_SHADES_MINUS_ONE < maxShade )
 		{
 			maxShade = configuration.MAX_SHADES_MINUS_ONE;
+			
+			if ( maxShade - shadeOffset == 0 ) // if there is only a single shade in this block, then just pretend... fixes a crash.
+				return new BlockStateContainer( this, new IProperty[] { shade = PropertyInteger.create( "shade", 0, 1 ) } );
+			
 			return new BlockStateContainer( this, new IProperty[] { shade = PropertyInteger.create( "shade", 0, maxShade - shadeOffset ) } );
 		}
 
