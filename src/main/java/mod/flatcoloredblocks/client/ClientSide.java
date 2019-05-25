@@ -3,7 +3,7 @@ package mod.flatcoloredblocks.client;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.sun.istack.internal.NotNull;
+import javax.annotation.Nonnull;
 
 import mod.flatcoloredblocks.FlatColoredBlocks;
 import mod.flatcoloredblocks.ModUtil;
@@ -57,7 +57,7 @@ public class ClientSide implements IClientSide
 
 			@Override
 			public int getColorFromItemstack(
-					@NotNull final ItemStack stack,
+					@Nonnull final ItemStack stack,
 					final int tintIndex )
 			{
 				final Block blk = Block.getBlockFromItem( stack.getItem() );

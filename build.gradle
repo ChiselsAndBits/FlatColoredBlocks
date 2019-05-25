@@ -17,7 +17,7 @@ compileJava {
     sourceCompatibility = targetCompatibility = "1.6"
 }
 
-version = "mc1.12-6.2"
+version = "mc1.12-6.8"
 group= "mod.flatcoloredblocks"
 archivesBaseName = "flatcoloredblocks"
 

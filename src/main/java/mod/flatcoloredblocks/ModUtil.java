@@ -1,6 +1,7 @@
 package mod.flatcoloredblocks;
 
-import com.sun.istack.internal.NotNull;
+
+import javax.annotation.Nonnull;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -12,21 +13,21 @@ public class ModUtil
 {
 
 	public static void alterStack(
-			@NotNull final ItemStack stack,
+			@Nonnull final ItemStack stack,
 			final int deltaStackSize )
 	{
 		setStackSize( stack, getStackSize( stack ) + deltaStackSize );
 	}
 
 	public static void setStackSize(
-			@NotNull final ItemStack stack,
+			@Nonnull final ItemStack stack,
 			final int stackSize )
 	{
 		stack.func_190920_e( stackSize );
 	}
 
 	public static int getStackSize(
-			@NotNull final ItemStack stack )
+			@Nonnull final ItemStack stack )
 	{
 		return stack.func_190916_E();
 	}

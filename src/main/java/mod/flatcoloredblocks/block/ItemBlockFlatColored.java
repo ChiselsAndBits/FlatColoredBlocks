@@ -3,7 +3,7 @@ package mod.flatcoloredblocks.block;
 import java.util.List;
 import java.util.Set;
 
-import com.sun.istack.internal.NotNull;
+import javax.annotation.Nonnull;
 
 import mod.flatcoloredblocks.FlatColoredBlocks;
 import mod.flatcoloredblocks.ModUtil;
@@ -24,7 +24,7 @@ public class ItemBlockFlatColored extends ItemBlock
 	}
 
 	public IBlockState getStateFromStack(
-			@NotNull final ItemStack stack )
+			@Nonnull final ItemStack stack )
 	{
 		return ModUtil.getStateFromMeta( getBlock(), stack.getItemDamage() );
 	}
@@ -75,7 +75,7 @@ public class ItemBlockFlatColored extends ItemBlock
 
 	@Override
 	public String getItemStackDisplayName(
-			@NotNull final ItemStack stack )
+			@Nonnull final ItemStack stack )
 	{
 		final IBlockState state = getStateFromStack( stack );
 		final int shadeNum = getColoredBlock().getShadeNumber( state );
@@ -104,7 +104,7 @@ public class ItemBlockFlatColored extends ItemBlock
 
 	@Override
 	public void addInformation(
-			@NotNull final ItemStack stack,
+			@Nonnull final ItemStack stack,
 			final World worldIn,
 			final List<String> tooltip,
 			final ITooltipFlag advanced )
@@ -199,7 +199,7 @@ public class ItemBlockFlatColored extends ItemBlock
 	}
 
 	public int getColorFromItemStack(
-			@NotNull final ItemStack stack,
+			@Nonnull final ItemStack stack,
 			final int renderPass )
 	{
 		final IBlockState state = getStateFromStack( stack );
