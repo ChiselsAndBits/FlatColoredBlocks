@@ -1,0 +1,44 @@
+plugins {
+    id 'fabric-loom'
+}
+
+project.addCoreProject()
+
+project.dependencies.minecraft "com.mojang:minecraft:${project.minecraftVersion}"
+project.dependencies.modImplementation "net.fabricmc:fabric-loader:${project.fabricLoaderVersion}"
+project.dependencies.modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabricVersion}+${project.minecraftVersion}"
+project.dependencies.modImplementation "com.communi-suggestu.scena:scena-fabric:${project.scenaVersion}"
+project.dependencies.modImplementation "com.communi-suggestu.saecularia-caudices:saecularia-caudices-fabric:${project.saeculariaCaudicesVersion}"
+
+project.dependencies.include "com.communi-suggestu.scena:scena-fabric:${project.scenaVersion}"
+project.dependencies.include "com.communi-suggestu.saecularia-caudices:saecularia-caudices-fabric:${project.saeculariaCaudicesVersion}"
+
+project.dependencies.mappings loom.layered() { layer ->
+    layer.officialMojangMappings()
+    layer.parchment("org.parchmentmc.data:parchment-${project.parchmentMinecraftVersion}:${project.parchmentVersion}@zip")
+}
+
+project.loom.accessWidenerPath = project(':common').file("accesswidener.accesswidener")
+project.tasks.processResources.from project(':common').file("accesswidener.accesswidener")
+setupResourceProcessing(project.tasks.processResources)
+
+project.remapJar.addNestedDependencies = true
+
+project.loom {
+    runs {
+        client {
+            client()
+            setConfigName("Fabric Client")
+            ideConfigGenerated(true)
+            runDir("runs/client")
+        }
+        server {
+            server()
+            setConfigName("Fabric Server")
+            ideConfigGenerated(true)
+            runDir("runs/server")
+        }
+    }
+}
+
+project.publishToCurseForge(tasks.jar)

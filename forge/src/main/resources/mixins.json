@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "@package@.forge.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "@id@.refmap.json",
+  "mixins": [
+  ],
+  "client": [
+  ],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

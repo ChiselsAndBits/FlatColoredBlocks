@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "paint_basin",
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "P": {
+      "item": "flatcoloredblocks:paint_bucket"
+    },
+    "S": {
+      "item": "minecraft:smooth_stone"
+    }
+  },
+  "pattern": [
+    "S S",
+    "IPI",
+    "SSS"
+  ],
+  "result": {
+    "item": "flatcoloredblocks:paint_basin"
+  }
+}

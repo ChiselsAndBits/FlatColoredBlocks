@@ -1,0 +1,18 @@
+plugins {
+    id ("net.minecraftforge.gradle")
+    id ("org.parchmentmc.librarian.forgegradle")
+}
+
+project.sourceSets.main.resources.srcDir "src/datagen/generated"
+
+project.dependencies.minecraft "net.minecraft:joined:${project.minecraftVersion}"
+project.dependencies.implementation fg.deobf("com.communi-suggestu.scena:scena-core:${project.scenaVersion}")
+project.dependencies.implementation fg.deobf("com.communi-suggestu.saecularia-caudices:saecularia-caudices-core:${project.saeculariaCaudicesVersion}")
+
+project.minecraft.mappings channel: "parchment", version: "${project.parchmentMinecraftVersion}-${project.parchmentVersion}-${project.minecraftVersion}"
+project.minecraft.accessTransformer = project(':common').file("accesstransformer.cfg")
+
+//Subsequent code is needed to fix FG
+if (!project.file("build\\fg_cache\\net\\minecraft\\joined\\${project.minecraftVersion}").exists()) {
+    project.file("build\\fg_cache\\net\\minecraft\\joined\\${project.minecraftVersion}").mkdirs()
+}

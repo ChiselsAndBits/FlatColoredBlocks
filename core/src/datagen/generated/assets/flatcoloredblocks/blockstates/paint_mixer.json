@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "flatcoloredblocks:block/paint_mixer",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "flatcoloredblocks:block/paint_mixer"
+    },
+    "facing=south": {
+      "model": "flatcoloredblocks:block/paint_mixer",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "flatcoloredblocks:block/paint_mixer",
+      "y": 270
+    }
+  }
+}

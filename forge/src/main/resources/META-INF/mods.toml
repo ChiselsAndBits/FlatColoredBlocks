@@ -1,0 +1,31 @@
+modLoader="javafml"
+loaderVersion="[28,)"
+license="GLGPLv3"
+
+[[mods]] #mandatory
+modId="@id@"
+version="@version@"
+displayName="@name@"
+authors="@author@"
+logoFile="logo-forge.png"
+description='''
+@description@
+'''
+[[dependencies.@id@]]
+    modId="forge" #mandatory
+    mandatory=true #mandatory
+    versionRange="[@forgeVersion@,)"
+    ordering="AFTER"
+    side="BOTH"
+[[dependencies.@id@]]
+    modId="minecraft" #mandatory
+    mandatory=true #mandatory
+    versionRange="[@minecraftVersion@]"
+    ordering="AFTER"
+    side="BOTH"
+[[dependencies.@id@]]
+    modId="scena" #mandatory
+    mandatory=true #mandatory
+    versionRange="@supportedScenaVersionRange@"
+    ordering="AFTER"
+    side="BOTH"

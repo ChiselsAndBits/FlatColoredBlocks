@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "@id@",
+  "version": "@version@",
+
+  "name": "@name@",
+  "description": "@description@",
+  "authors": [
+    "@author@"
+  ],
+  "contact": {
+    "sources": "@sources@"
+  },
+
+  "license": "@license@",
+  "icon": "logo.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "@package@.Fabric"
+    ],
+    "client": [
+      "@package@.Fabric$Client"
+    ]
+  },
+  "mixins": [
+    "@id@.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=@fabricLoaderVersion@",
+    "fabric": ">=@fabricVersion@",
+    "minecraft": "@minecraftVersion@",
+    "java": ">=17",
+    "scena": ">=@scenaVersion@"
+  },
+  "suggests": {
+  }
+}
