@@ -42,4 +42,4 @@ project.loom {
     }
 }
 
-project.publishToCurseForge(tasks.jar)
+project.publishToCurseForge(tasks.remapJar)
