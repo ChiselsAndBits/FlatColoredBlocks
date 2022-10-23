@@ -140,7 +140,7 @@ subprojects { Project subProject ->
     subProject.ext.publishToCurseForge = { jar ->
         if (System.getenv().containsKey("CURSE_API_KEY")) {
             subProject.curseforge { cf ->
-                cf.apiKey = System.getEnv().get("CURSE_API_KEY")
+                cf.apiKey = System.getenv("CURSE_API_KEY")
 
                 project { cp ->
                     cp.id = subProject.curseId
