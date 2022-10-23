@@ -1,5 +1,6 @@
 plugins {
     id 'fabric-loom'
+    id 'com.matthewprenger.cursegradle'
 }
 
 project.addCoreProject()
