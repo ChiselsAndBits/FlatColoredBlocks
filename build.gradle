@@ -151,7 +151,9 @@ subprojects { Project subProject ->
                     cp.releaseType = 'release'
 
                     subProject.additionalMinecraftVersions.toString().split(";").each { v ->
-                        cp.addGameVersion(v)
+                        if (!v.trim().isEmpty()) {
+                            cp.addGameVersion(v)
+                        }
                     }
 
                     cp.mainArtifact(jar)
