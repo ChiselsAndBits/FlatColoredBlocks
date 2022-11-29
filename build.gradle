@@ -1,7 +1,7 @@
 import groovy.json.JsonOutput
 import org.apache.tools.ant.filters.ReplaceTokens
 
-project.group = "com.communi.suggestu.formula"
+project.group = "mod.flatcoloredblocks"
 project.version = (System.getenv().containsKey("Version") ? System.getenv("Version") : project.localVersion)
 
 //Configure extension utility methods on all subprojects.
@@ -92,7 +92,7 @@ subprojects { Project subProject ->
         def propertiesToExpand = [
                 "version"                   : project.version,
                 "name"                      : rootProject.name.toString(),
-                "id"                        : rootProject.name.toLowerCase().toString(),
+                "id"                        : rootProject.modId.toString(),
                 "description"               : (rootProject.description == null ? "" : rootProject.description).toString(),
                 "author"                    : rootProject.author.toString(),
                 "sources"                   : rootProject.githubUrl.toString(),

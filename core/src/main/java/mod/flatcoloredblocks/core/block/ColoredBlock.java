@@ -1,6 +1,7 @@
 package mod.flatcoloredblocks.core.block;
 
 import com.communi.suggestu.scena.core.fluid.IFluidManager;
+import com.google.common.collect.ImmutableList;
 import mod.flatcoloredblocks.core.ColorNameManager;
 import mod.flatcoloredblocks.core.block.entity.ColoredBlockEntity;
 import mod.flatcoloredblocks.core.registrars.BlockEntityTypes;
@@ -20,6 +21,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
 
 public abstract class ColoredBlock extends BaseEntityBlock
 {
@@ -46,30 +49,7 @@ public abstract class ColoredBlock extends BaseEntityBlock
     public void fillItemCategory(final @NotNull CreativeModeTab pTab, final NonNullList<ItemStack> pItems)
     {
         pItems.add(new ItemStack(this));
-        pItems.add(Util.make(new ItemStack(this), (pStack) -> {
-            pStack.getOrCreateTag().putInt("color", 0xFFFF0000);
-        }));
-        pItems.add(Util.make(new ItemStack(this), (pStack) -> {
-            pStack.getOrCreateTag().putInt("color", 0xFF00FF00);
-        }));
-        pItems.add(Util.make(new ItemStack(this), (pStack) -> {
-            pStack.getOrCreateTag().putInt("color", 0xFF0000FF);
-        }));
-        pItems.add(Util.make(new ItemStack(this), (pStack) -> {
-            pStack.getOrCreateTag().putInt("color", 0xFFFFFF00);
-        }));
-        pItems.add(Util.make(new ItemStack(this), (pStack) -> {
-            pStack.getOrCreateTag().putInt("color", 0xFF00FFFF);
-        }));
-        pItems.add(Util.make(new ItemStack(this), (pStack) -> {
-            pStack.getOrCreateTag().putInt("color", 0xFFFF00FF);
-        }));
-        pItems.add(Util.make(new ItemStack(this), (pStack) -> {
-            pStack.getOrCreateTag().putInt("color", 0xFFFFFFFF);
-        }));
-        pItems.add(Util.make(new ItemStack(this), (pStack) -> {
-            pStack.getOrCreateTag().putInt("color", 0xFF000000);
-        }));
+        getDefaultColors().forEach(color -> pItems.add(Util.make(new ItemStack(this), stack -> setColor(stack, color))));
     }
 
     @Override
@@ -109,5 +89,18 @@ public abstract class ColoredBlock extends BaseEntityBlock
             return 0XFFFFFFFF;
 
         return stack.getTag().getInt("color");
+    }
+
+    public Collection<Integer> getDefaultColors() {
+        return ImmutableList.of(
+                0xFFFF0000,
+                0xFF00FF00,
+                0xFF0000FF,
+                0xFFFFFF00,
+                0xFF00FFFF,
+                0xFFFF00FF,
+                0xFFFFFFFF,
+                0xFF000000
+        );
     }
 }

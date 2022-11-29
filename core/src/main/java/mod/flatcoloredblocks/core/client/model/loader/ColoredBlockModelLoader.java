@@ -9,10 +9,12 @@ import com.communi.suggestu.scena.core.client.models.loaders.IModelSpecification
 import com.communi.suggestu.scena.core.client.models.loaders.IModelSpecificationLoader;
 import com.communi.suggestu.scena.core.client.models.loaders.context.IModelBakingContext;
 import com.communi.suggestu.scena.core.client.rendering.type.IRenderTypeManager;
+import com.communi.suggestu.scena.core.client.utils.LightUtil;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
 import mod.flatcoloredblocks.core.block.ColoredBlock;
+import mod.flatcoloredblocks.core.client.model.baked.BakedQuadAdapter;
 import mod.flatcoloredblocks.core.registrars.ModelDataKeys;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -246,8 +248,9 @@ public final class ColoredBlockModelLoader implements IModelSpecificationLoader<
         {
             final List<BakedQuad> coloredQuads = new ArrayList<>(parentQuads.size());
             for (final BakedQuad parentQuad : parentQuads) {
-                final BakedQuad coloredQuad = new BakedQuad(parentQuad.getVertices(), color, parentQuad.getDirection(), parentQuad.getSprite(), parentQuad.isShade());
-                coloredQuads.add(coloredQuad);
+                final BakedQuadAdapter adapter = new BakedQuadAdapter(color);
+                LightUtil.put(adapter, parentQuad);
+                coloredQuads.add(adapter.build());
             }
 
             return coloredQuads;

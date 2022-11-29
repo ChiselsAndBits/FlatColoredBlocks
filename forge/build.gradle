@@ -82,6 +82,7 @@ project.dependencies.includedLibraries fg.deobf("com.communi-suggestu.scena:scen
     jarJar.ranged(it, buildSupportedVersionRange(project.scenaVersion))
 }
 project.dependencies.compileOnly fg.deobf("com.communi-suggestu.saecularia-caudices:saecularia-caudices-core:${project.saeculariaCaudicesVersion}")
+project.dependencies.runtimeOnly fg.deobf("mod.chiselsandbits:chisels-and-bits-forge:${project.chiselsAndBitsVersion}")
 
 project.tasks.processResources.from (project(":common").file("accesstransformer.cfg")) {
     into 'META-INF'

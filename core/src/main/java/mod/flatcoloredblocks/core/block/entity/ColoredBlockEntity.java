@@ -1,20 +1,18 @@
 package mod.flatcoloredblocks.core.block.entity;
 
 import com.communi.suggestu.scena.core.client.models.data.IBlockModelData;
-import com.communi.suggestu.scena.core.client.models.data.IModelDataBuilder;
 import com.communi.suggestu.scena.core.client.models.data.IModelDataManager;
 import com.communi.suggestu.scena.core.dist.Dist;
 import com.communi.suggestu.scena.core.dist.DistExecutor;
 import com.communi.suggestu.scena.core.entity.block.IBlockEntityWithModelData;
 import mod.flatcoloredblocks.core.registrars.BlockEntityTypes;
-import mod.flatcoloredblocks.core.registrars.ModelDataKeys;
+import mod.flatcoloredblocks.core.util.ModelDataUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +21,7 @@ import java.util.Objects;
 public final class ColoredBlockEntity extends BlockEntity implements IBlockEntityWithModelData
 {
     private int color = 0xFFFFFFFF;
-    private IBlockModelData modelData = IModelDataBuilder.create().withInitial(ModelDataKeys.COLOR, color).build();
+    private IBlockModelData modelData = ModelDataUtils.createModelDataForColor(color);
 
     public ColoredBlockEntity(final BlockPos pPos, final BlockState pBlockState)
     {
@@ -70,9 +68,7 @@ public final class ColoredBlockEntity extends BlockEntity implements IBlockEntit
 
     public void updateModelData()
     {
-        this.modelData = IModelDataBuilder.create()
-                                 .withInitial(ModelDataKeys.COLOR, color)
-                                 .build();
+        this.modelData = ModelDataUtils.createModelDataForColor(this.color);
 
         DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> IModelDataManager.getInstance().requestModelDataRefresh(this));
         Objects.requireNonNull(getLevel()).sendBlockUpdated(getBlockPos(), Blocks.AIR.defaultBlockState(), getBlockState(), Block.UPDATE_ALL);

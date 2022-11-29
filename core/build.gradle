@@ -9,6 +9,8 @@ project.dependencies.minecraft "net.minecraft:joined:${project.minecraftVersion}
 project.dependencies.implementation fg.deobf("com.communi-suggestu.scena:scena-core:${project.scenaVersion}")
 project.dependencies.implementation fg.deobf("com.communi-suggestu.saecularia-caudices:saecularia-caudices-core:${project.saeculariaCaudicesVersion}")
 
+project.dependencies.implementation fg.deobf("mod.chiselsandbits:chisels-and-bits-api:${project.chiselsAndBitsVersion}")
+
 project.minecraft.mappings channel: "parchment", version: "${project.parchmentMinecraftVersion}-${project.parchmentVersion}-${project.minecraftVersion}"
 project.minecraft.accessTransformer = project(':common').file("accesstransformer.cfg")
 

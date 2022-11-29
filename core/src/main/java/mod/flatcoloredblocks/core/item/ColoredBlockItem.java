@@ -46,4 +46,8 @@ public class ColoredBlockItem extends BlockItem
         pTooltipComponents.add(Component.translatable("item.flatcoloredblocks.tooltip.color.blue", blue).withStyle(ChatFormatting.BLUE));
         super.appendHoverText(pStack, pLevel, pTooltipComponents, pIsAdvanced);
     }
+
+    public ColoredBlock getColoredBlock() {
+        return coloredBlock;
+    }
 }
