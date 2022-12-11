@@ -6,8 +6,10 @@ import mod.chiselsandbits.api.variant.state.IStateVariantProvider;
 import mod.flatcoloredblocks.core.block.ColoredBlock;
 import mod.flatcoloredblocks.core.block.entity.ColoredBlockEntity;
 import mod.flatcoloredblocks.core.item.ColoredBlockItem;
+import mod.flatcoloredblocks.core.util.NameUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -112,5 +114,13 @@ public class ColoredStateVariantProvider implements IStateVariantProvider {
     @Override
     public Optional<FluidInformation> getFluidInformation(IStateVariant iStateVariant, long l) {
         return Optional.empty();
+    }
+
+    @Override
+    public Optional<Component> getName(IStateVariant iStateVariant) {
+        if (!(iStateVariant instanceof ColoredStateVariant coloredStateVariant))
+            return Optional.empty();
+
+        return Optional.of(NameUtils.getName(coloredStateVariant.getColor(), this.blockGetter.get().getName()));
     }
 }

@@ -26,6 +26,7 @@ public class FCBCandBPlugin implements IChiselsAndBitsPlugin {
     public void onClientConstruction() {
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             IClientStateVariantManager.getInstance().registerStateVariantProvider(Blocks.COLORED_CONCRETE::get, new ClientColoredStateVariantProvider());
+            IClientStateVariantManager.getInstance().registerStateVariantProvider(Blocks.COLORED_GLASS::get, new ClientColoredStateVariantProvider());
         });
     }
 }
