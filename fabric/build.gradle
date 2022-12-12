@@ -10,6 +10,7 @@ project.dependencies.modImplementation "net.fabricmc:fabric-loader:${project.fab
 project.dependencies.modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabricVersion}+${project.minecraftVersion}"
 project.dependencies.modImplementation "com.communi-suggestu.scena:scena-fabric:${project.scenaVersion}"
 project.dependencies.modImplementation "com.communi-suggestu.saecularia-caudices:saecularia-caudices-fabric:${project.saeculariaCaudicesVersion}"
+project.dependencies.modRuntimeOnly "mod.chiselsandbits:chisels-and-bits-fabric:${project.chiselsAndBitsVersion}"
 
 project.dependencies.include "com.communi-suggestu.scena:scena-fabric:${project.scenaVersion}"
 project.dependencies.include "com.communi-suggestu.saecularia-caudices:saecularia-caudices-fabric:${project.saeculariaCaudicesVersion}"
@@ -19,6 +20,10 @@ project.dependencies.mappings loom.layered() { layer ->
     layer.parchment("org.parchmentmc.data:parchment-${project.parchmentMinecraftVersion}:${project.parchmentVersion}@zip")
 }
 
+project.loom.mods.create("flatcoloredblocks", mod -> {
+    mod.sourceSet sourceSets.main
+    mod.sourceSet(project(":core").sourceSets.main, project(":core"))
+})
 project.loom.accessWidenerPath = project(':common').file("accesswidener.accesswidener")
 project.tasks.processResources.from project(':common').file("accesswidener.accesswidener")
 setupResourceProcessing(project.tasks.processResources)

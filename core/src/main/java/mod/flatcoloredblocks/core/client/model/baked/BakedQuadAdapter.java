@@ -24,12 +24,12 @@ public class BakedQuadAdapter extends BakedQuadBuilder {
         final VertexFormat format = getVertexFormat();
         final VertexFormatElement element = format.getElements().get(elementIndex);
 
-        if (element.getUsage() == VertexFormatElement.Usage.COLOR && this.colorOverride != -1) {
+        if (element.getUsage() == VertexFormatElement.Usage.COLOR) {
             final float[] colorData = new float[4];
             colorData[0] = ((this.colorOverride >> 16) & 0xFF) / 255.0F;
             colorData[1] = ((this.colorOverride >> 8) & 0xFF) / 255.0F;
             colorData[2] = (this.colorOverride & 0xFF) / 255.0F;
-            colorData[3] = ((this.colorOverride >> 24) & 0xFF) / 255.0F;
+            colorData[3] = 1f;
             super.put(vertexIndex, elementIndex, colorData);
         } else {
             super.put(vertexIndex, elementIndex, data);

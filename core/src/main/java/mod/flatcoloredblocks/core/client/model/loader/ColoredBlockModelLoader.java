@@ -8,6 +8,7 @@ import com.communi.suggestu.scena.core.client.models.data.IBlockModelData;
 import com.communi.suggestu.scena.core.client.models.loaders.IModelSpecification;
 import com.communi.suggestu.scena.core.client.models.loaders.IModelSpecificationLoader;
 import com.communi.suggestu.scena.core.client.models.loaders.context.IModelBakingContext;
+import com.communi.suggestu.scena.core.client.rendering.IRenderingManager;
 import com.communi.suggestu.scena.core.client.rendering.type.IRenderTypeManager;
 import com.communi.suggestu.scena.core.client.utils.LightUtil;
 import com.google.gson.JsonDeserializationContext;
@@ -202,7 +203,7 @@ public final class ColoredBlockModelLoader implements IModelSpecificationLoader<
             if (!extraData.hasProperty(ModelDataKeys.COLOR))
                 return parentQuads;
 
-            final Integer color = extraData.getData(ModelDataKeys.COLOR);
+            final Integer color = IRenderingManager.getInstance().adaptVertexColor(extraData.getData(ModelDataKeys.COLOR));
             if (color == null)
                 return parentQuads;
 
@@ -232,7 +233,7 @@ public final class ColoredBlockModelLoader implements IModelSpecificationLoader<
                 stackModels.put(color, buildStackModel(stack, color));
             }
 
-            return stackModels.get(color);
+            return IModelManager.getInstance().adaptToPlatform(stackModels.get(color));
         }
 
         private List<BakedQuad> buildParentQuadData(final BlockState state, final Direction side, final RandomSource rand, final IBlockModelData extraData, final RenderType renderType)
@@ -256,8 +257,9 @@ public final class ColoredBlockModelLoader implements IModelSpecificationLoader<
             return coloredQuads;
         }
 
-        private BakedModel buildStackModel(final ItemStack stack, final int color)
+        private BakedModel buildStackModel(final ItemStack stack, int color)
         {
+            color = IRenderingManager.getInstance().adaptVertexColor(color);
             final SimpleBakedModel.Builder builder = new SimpleBakedModel.Builder(
                     useAmbientOcclusion(),
                     usesBlockLight(),
