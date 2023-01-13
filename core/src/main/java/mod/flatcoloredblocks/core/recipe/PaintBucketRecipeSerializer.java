@@ -132,8 +132,22 @@ public class PaintBucketRecipeSerializer implements RecipeSerializer<PaintBucket
         {
             final ItemStack stack = new ItemStack(Items.PAINT_BUCKET.get());
             Items.PAINT_BUCKET.get().setAmount(stack, (int) IFluidManager.getInstance().getBucketAmount());
-            Items.PAINT_BUCKET.get().setColor(stack, dyeColor.getFireworkColor());
+            Items.PAINT_BUCKET.get().setColor(stack, getColor());
             return stack;
+        }
+
+        public int getColor() {
+            return switch (dyeColor) {
+                case WHITE -> 0xFFFFFF;
+                case RED -> 0xFF0000;
+                case BLUE -> 0x0000FF;
+                case GREEN -> 0x00FF00;
+                case BLACK -> 0x000000;
+                case YELLOW -> 0xFFFF00;
+                case PURPLE -> 0xFF00FF;
+                case CYAN -> 0x00FFFF;
+                default -> dyeColor.getFireworkColor();
+            };
         }
 
         @Override
