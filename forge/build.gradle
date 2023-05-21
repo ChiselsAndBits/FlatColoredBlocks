@@ -1,5 +1,3 @@
-//for Ant filter
-import org.apache.tools.ant.filters.ReplaceTokens;
 plugins {
     id 'net.minecraftforge.gradle'
     id 'org.spongepowered.mixin'
@@ -7,28 +5,38 @@ plugins {
     id 'com.matthewprenger.cursegradle'
 }
 
-repositories.mavenLocal()
-
 configurations.create("includedLibraries")
 configurations.implementation.extendsFrom configurations.includedLibraries
 configurations.includedLibraries.transitive false
+
+def libraryConfigs = new HashSet<org.gradle.api.artifacts.Configuration>();
+configurations { configContainer ->
+    sourceSets.each { sourceSet ->
+        def configName = sourceSet.name == "main" ? "forgeLibrary" : sourceSet.name + "ForgeLibrary";
+        def implementationConfigName = sourceSet.name == "main" ? "implementation" : sourceSet.name + "Implementation"
+
+        def libraryConfig = configContainer.maybeCreate(configName)
+        def implementationConfig = configContainer.maybeCreate(implementationConfigName)
+
+        implementationConfig.extendsFrom libraryConfig
+
+        libraryConfigs.add(libraryConfig);
+    }
+}
+
 
 project.addCoreProject()
 
 project.minecraft.mappings channel: "parchment", version: "${project.parchmentMinecraftVersion}-${project.parchmentVersion}-${project.minecraftVersion}"
 project.minecraft.accessTransformer = project(':common').file("accesstransformer.cfg")
 
-project.minecraft.runs {
+project.minecraft.runs { runSpecContainer ->
     client { clientRun ->
         clientRun.workingDirectory project.file('run')
         clientRun.ideaModule "${rootProject.name.toLowerCase()}.${project.name.toLowerCase()}.main"
         clientRun.taskName 'Client'
-        clientRun.arg "--mixin=${rootProject.name.toLowerCase()}.mixins.json"
-        clientRun.jvmArgs "-Dmixin.debug=true", "-Dmixin.debug.export=true"
-        clientRun.property 'mixin.env.remapRefMap', 'true'
-        clientRun.property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
         clientRun.mods { modsContainer ->
-            modsContainer.create(rootProject.name.toLowerCase(), {
+            modsContainer.create(project.modId, {
                 source sourceSets.main
                 source project(":common").sourceSets.main
                 source project(":core").sourceSets.main
@@ -40,12 +48,8 @@ project.minecraft.runs {
         serverRun.workingDirectory project.file('run')
         serverRun.ideaModule "${rootProject.name.toLowerCase()}.${project.name.toLowerCase()}.main"
         serverRun.taskName 'Server'
-        serverRun.arg "--mixin=${rootProject.name.toLowerCase()}.mixins.json"
-        serverRun.jvmArgs "-Dmixin.debug=true", "-Dmixin.debug.export=true"
-        serverRun.property 'mixin.env.remapRefMap', 'true'
-        serverRun.property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
         serverRun.mods { modsContainer ->
-            modsContainer.create(rootProject.name.toLowerCase(), {
+            modsContainer.create(project.modId, {
                 source sourceSets.main
                 source project(":common").sourceSets.main
                 source project(":core").sourceSets.main
@@ -57,20 +61,30 @@ project.minecraft.runs {
         dataRun.workingDirectory project.file('run')
         dataRun.ideaModule "${rootProject.name.toLowerCase()}.${project.name.toLowerCase()}.main"
         dataRun.taskName "Data"
-        dataRun.arg "--mixin=${rootProject.name.toLowerCase()}.mixins.json"
-        dataRun.property 'mixin.env.remapRefMap', 'true'
-        dataRun.property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-        dataRun.args '--mod', "${rootProject.name.toLowerCase()}",
+        dataRun.args '--mod', "${project.modId.toLowerCase()}",
                 '--output', project(":core").file("src/datagen/generated"),
                 '--existing', file('src/main/resources/'),
                 '--existing', project(":core").file('src/main/resources/'),
                 '--existing-mod', 'scena'
         dataRun.mods { modsContainer ->
-            modsContainer.create(rootProject.name.toLowerCase(), {
+            modsContainer.create(project.modId, {
                 source sourceSets.main
                 source project(":common").sourceSets.main
                 source project(":core").sourceSets.main
             })
+        }
+    }
+
+    project.afterEvaluate {
+        def paths = new HashSet<String>();
+        libraryConfigs.each { config ->
+            config.copyRecursive().resolve().collect { it.absolutePath.toString() }.each {path -> paths.add(path)}
+        }
+
+        runSpecContainer.each { runSpec ->
+            runSpec.lazyToken('minecraft_classpath') {
+                paths.join(File.pathSeparator)
+            }
         }
     }
 }
@@ -81,16 +95,11 @@ project.dependencies.includedLibraries fg.deobf("com.communi-suggestu.scena:scen
     jarJar.pin(it, project.scenaVersion)
     jarJar.ranged(it, buildSupportedVersionRange(project.scenaVersion))
 }
-project.dependencies.compileOnly fg.deobf("com.communi-suggestu.saecularia-caudices:saecularia-caudices-core:${project.saeculariaCaudicesVersion}")
-project.dependencies.runtimeOnly fg.deobf("mod.chiselsandbits:chisels-and-bits-forge:${project.chiselsAndBitsVersion}")
 
 project.tasks.processResources.from (project(":common").file("accesstransformer.cfg")) {
     into 'META-INF'
 }
 setupResourceProcessing(project.tasks.processResources)
-
-project.mixin.config "${rootProject.name.toLowerCase()}.mixins.json"
-project.mixin.add project.sourceSets.main, "${rootProject.name.toLowerCase()}.refmap.json"
 
 ////////////////
 // IntelliJ Project Import

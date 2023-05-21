@@ -21,7 +21,7 @@ public final class ItemColors
 
         IColorManager.getInstance().setupItemColors(colors -> {
             colors.register(new PaintSplattedItemColor(), Items.PAINT_BUCKET.get(), Items.PAINT_BRUSH.get());
-            colors.register(new ColoredBlockItemColors(), Items.COLORED_CONCRETE.get(), Items.COLORED_GLASS.get());
+            colors.register(new ColoredBlockItemColors(), Items.COLORED_CONCRETE.get(), Items.COLORED_GLASS.get(), Items.COLORED_WOOL.get(), Items.COLORED_WOOL_CARPET.get());
         });
     }
 }

@@ -3,6 +3,7 @@ package mod.flatcoloredblocks.core.registrars;
 import com.communi.suggestu.scena.core.registries.deferred.IRegistrar;
 import com.communi.suggestu.scena.core.registries.deferred.IRegistryObject;
 import mod.flatcoloredblocks.core.recipe.PaintBucketRecipeSerializer;
+import mod.flatcoloredblocks.core.recipe.WoolCarpetRecipeSerializer;
 import mod.flatcoloredblocks.core.util.Constants;
 import net.minecraft.core.Registry;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -26,4 +27,5 @@ public final class RecipeSerializers
     private static final IRegistrar<RecipeSerializer<?>> RECIPE_SERIALIZER_REGISTRAR = IRegistrar.create(Registry.RECIPE_SERIALIZER_REGISTRY, Constants.MOD_ID);
 
     public static final IRegistryObject<PaintBucketRecipeSerializer> PAINT_BUCKET = RECIPE_SERIALIZER_REGISTRAR.register("paint_bucket", PaintBucketRecipeSerializer::getInstance);
+    public static final IRegistryObject<WoolCarpetRecipeSerializer> WOOL_CARPET = RECIPE_SERIALIZER_REGISTRAR.register("wool_carpet", WoolCarpetRecipeSerializer::getInstance);
 }

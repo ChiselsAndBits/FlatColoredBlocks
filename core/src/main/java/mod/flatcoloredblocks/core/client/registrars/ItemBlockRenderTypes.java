@@ -24,6 +24,8 @@ public final class ItemBlockRenderTypes
                 registrar -> {
                     registrar.register(Blocks.COLORED_CONCRETE.get(), RenderType.solid());
                     registrar.register(Blocks.COLORED_GLASS.get(), RenderType.translucent());
+                    registrar.register(Blocks.COLORED_WOOL.get(), RenderType.cutoutMipped());
+                    registrar.register(Blocks.COLORED_WOOL_CARPET.get(), RenderType.cutoutMipped());
                 }
         );
     }

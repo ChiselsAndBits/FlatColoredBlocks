@@ -27,6 +27,8 @@ public final class Items
     public final static IRegistryObject<BlockItem> PAINT_MIXER = ITEM_REGISTRAR.register("paint_mixer", () -> new BlockItem(Blocks.PAINT_MIXER.get(), new Item.Properties().tab(CreativeModeTabs.TOOLS)));
     public final static IRegistryObject<BlockItem> PAINT_BASIN = ITEM_REGISTRAR.register("paint_basin", () -> new BlockItem(Blocks.PAINT_BASIN.get(), new Item.Properties().tab(CreativeModeTabs.TOOLS)));
     public final static IRegistryObject<BlockItem> COLORED_CONCRETE = ITEM_REGISTRAR.register("colored_concrete", () -> new ColoredBlockItem(Blocks.COLORED_CONCRETE.get(), new Item.Properties().tab(CreativeModeTabs.BLOCKS)));
+    public final static IRegistryObject<BlockItem> COLORED_WOOL = ITEM_REGISTRAR.register("colored_wool", () -> new ColoredBlockItem(Blocks.COLORED_WOOL.get(), new Item.Properties().tab(CreativeModeTabs.BLOCKS)));
+    public final static IRegistryObject<BlockItem> COLORED_WOOL_CARPET = ITEM_REGISTRAR.register("colored_wool_carpet", () -> new ColoredBlockItem(Blocks.COLORED_WOOL_CARPET.get(), new Item.Properties().tab(CreativeModeTabs.BLOCKS)));
     public final static IRegistryObject<BlockItem> COLORED_GLASS = ITEM_REGISTRAR.register("colored_glass", () -> new ColoredBlockItem(Blocks.COLORED_GLASS.get(), new Item.Properties().tab(CreativeModeTabs.BLOCKS)));
     public final static IRegistryObject<PaintBucketItem> PAINT_BUCKET = ITEM_REGISTRAR.register("paint_bucket", () -> new PaintBucketItem(new Item.Properties().tab(CreativeModeTabs.TOOLS).stacksTo(1)));
     public final static IRegistryObject<PaintBrushItem> PAINT_BRUSH = ITEM_REGISTRAR.register("paint_brush", () -> new PaintBrushItem(new Item.Properties().tab(CreativeModeTabs.TOOLS).stacksTo(1)));

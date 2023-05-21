@@ -1,6 +1,8 @@
 {
   "block.flatcoloredblocks.colored_concrete": "Concrete",
   "block.flatcoloredblocks.colored_glass": "Glass",
+  "block.flatcoloredblocks.colored_wool": "Wool",
+  "block.flatcoloredblocks.colored_wool_carpet": "Carpet",
   "block.flatcoloredblocks.paint_basin": "Paint Basin",
   "block.flatcoloredblocks.paint_mixer": "Paint Mixer",
   "color.flatcoloredblocks.__default__prefixed": "Custom Color",

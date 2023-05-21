@@ -1,7 +1,9 @@
 package mod.flatcoloredblocks.core.client;
 
+import mod.flatcoloredblocks.core.client.keys.KeyBindingManager;
 import mod.flatcoloredblocks.core.client.registrars.BlockColors;
 import mod.flatcoloredblocks.core.client.registrars.BlockEntityRenderers;
+import mod.flatcoloredblocks.core.client.registrars.EventHandlers;
 import mod.flatcoloredblocks.core.client.registrars.ItemBlockRenderTypes;
 import mod.flatcoloredblocks.core.client.registrars.ItemColors;
 import mod.flatcoloredblocks.core.client.registrars.ItemProperties;
@@ -18,6 +20,8 @@ public class FlatColoredBlocksClient
         ModelLoaders.onClientConstruct();
         ItemProperties.onClientConstruction();
         Textures.onClientConstruction();
+        KeyBindingManager.getInstance().onClientConstruction();
         ItemBlockRenderTypes.onModConstruction();
+        EventHandlers.onClientConstruction();
     }
 }

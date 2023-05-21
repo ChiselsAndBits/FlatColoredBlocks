@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class ColoredBlockItem extends BlockItem
+public class ColoredBlockItem extends BlockItem implements IWithColorItem
 {
     private final ColoredBlock coloredBlock;
 
@@ -41,5 +41,15 @@ public class ColoredBlockItem extends BlockItem
 
     public ColoredBlock getColoredBlock() {
         return coloredBlock;
+    }
+
+    @Override
+    public void setColor(ItemStack target, int value) {
+        coloredBlock.setColor(target, value);
+    }
+
+    @Override
+    public int getColor(ItemStack target) {
+        return coloredBlock.getColor(target);
     }
 }

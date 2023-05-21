@@ -41,6 +41,10 @@ public class FluidTank
         this.amount = 0;
     }
 
+    public boolean isEmpty() {
+        return amount <= 0 || unitContents == null;
+    }
+
     public void setAmount(final long amount) {
         this.amount = amount;
         if (this.amount <= 0)

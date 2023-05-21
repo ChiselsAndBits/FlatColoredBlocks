@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public abstract class PaintContainingItem extends Item
+public abstract class PaintContainingItem extends Item implements IWithColorItem
 {
     private static final String COLOR = "color";
     private static final String AMOUNT = "amount";

@@ -29,5 +29,8 @@ public class TagGenerator extends BlockTagsProvider
     protected void addTags()
     {
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(Blocks.COLORED_CONCRETE.get(), Blocks.COLORED_GLASS.get());
+
+        tag(BlockTags.WOOL).add(Blocks.COLORED_WOOL.get());
+        tag(BlockTags.WOOL_CARPETS).add(Blocks.COLORED_WOOL_CARPET.get());
     }
 }

@@ -21,6 +21,8 @@ public final class BlockColors
         IColorManager.getInstance().setupBlockColors(colors -> {
             colors.register(new ColoredBlockBlockColors(), Blocks.COLORED_CONCRETE.get());
             colors.register(new ColoredBlockBlockColors(), Blocks.COLORED_GLASS.get());
+            colors.register(new ColoredBlockBlockColors(), Blocks.COLORED_WOOL.get());
+            colors.register(new ColoredBlockBlockColors(), Blocks.COLORED_WOOL_CARPET.get());
         });
     }
 }

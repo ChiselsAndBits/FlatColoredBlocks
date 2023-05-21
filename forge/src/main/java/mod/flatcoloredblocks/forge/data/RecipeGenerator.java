@@ -4,6 +4,7 @@ import mod.flatcoloredblocks.core.registrars.Blocks;
 import mod.flatcoloredblocks.core.registrars.Items;
 import mod.flatcoloredblocks.core.util.Constants;
 import mod.flatcoloredblocks.forge.data.builders.PaintBucketRecipeBuilder;
+import mod.flatcoloredblocks.forge.data.builders.WoolCarpetRecipeBuilder;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeProvider;
@@ -100,5 +101,10 @@ public class RecipeGenerator extends RecipeProvider
                            .pattern("IPI")
                            .pattern("SSS")
                            .save(pFinishedRecipeConsumer);
+
+        WoolCarpetRecipeBuilder.create()
+                .group("wool_carpet")
+                 .unlockedBy("has_wool", has(Items.COLORED_WOOL.get()))
+                 .save(pFinishedRecipeConsumer);
     }
 }

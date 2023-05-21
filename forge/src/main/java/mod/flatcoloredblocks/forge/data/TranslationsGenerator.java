@@ -31,7 +31,8 @@ public class TranslationsGenerator extends LanguageProvider
         addBlock(Blocks.PAINT_BASIN, "Paint Basin");
         addBlock(Blocks.COLORED_CONCRETE, "Concrete");
         addBlock(Blocks.COLORED_GLASS, "Glass");
-
+        addBlock(Blocks.COLORED_WOOL, "Wool");
+        addBlock(Blocks.COLORED_WOOL_CARPET, "Carpet");
         addItem(Items.PAINT_BUCKET, "Empty Paint Bucket");
         addItem(Items.PAINT_BRUSH, "Empty Paint Roller");
 
@@ -51,6 +52,14 @@ public class TranslationsGenerator extends LanguageProvider
         add("item.flatcoloredblocks.tooltip.color.red", "Red: %d");
         add("item.flatcoloredblocks.tooltip.color.green", "Green: %d");
         add("item.flatcoloredblocks.tooltip.color.blue", "Blue: %d");
+
+        add("widget.flatcoloredblocks.hue_selector", "Select Hue");
+        add("widget.flatcoloredblocks.saturation_and_value_selector", "Select Saturation and Value");
+
+        add("gui.flatcoloredblocks.color_selection.title", "Select Color for %s");
+
+        add("key_categories.flatcoloredblocks", "Flat Colored Blocks");
+        add("key.flatcoloredblocks.select_color_menu", "Open Color Selection Menu");
     }
 
     private static String extractNameFromColorKey(final String key) {

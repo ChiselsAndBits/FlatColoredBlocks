@@ -1,2 +1,4 @@
-// 1.19.2	2022-09-04T11:31:43.431239	Tags for minecraft:block
+// 1.19.2	2023-02-25T12:52:14.9356568	Tags for minecraft:block
 1fbacfa6c610e1440b771c4981d994058066b280 data/minecraft/tags/blocks/mineable/pickaxe.json
+99b8439b508605bec3f38f96d8924f135c047372 data/minecraft/tags/blocks/wool.json
+e63799ea75a8ce0e9181ac6b7c76cee8d2f404ab data/minecraft/tags/blocks/wool_carpets.json

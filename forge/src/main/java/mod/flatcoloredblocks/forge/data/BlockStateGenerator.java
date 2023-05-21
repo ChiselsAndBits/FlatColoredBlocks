@@ -35,6 +35,16 @@ public class BlockStateGenerator extends BlockStateProvider
                                                                .parent(itemModels().getExistingFile(new ResourceLocation("white_concrete")))
                                                                .customLoader((modelBuilder, existingFileHelper) -> new CustomLoaderBuilder<ItemModelBuilder>(Constants.COLORED_MODEL_LOADER_ID, modelBuilder, existingFileHelper) {})
                                                                .end());
+        simpleBlock(Blocks.COLORED_WOOL.get(), itemModels().getBuilder("colored_wool")
+                .parent(itemModels().getExistingFile(new ResourceLocation("white_wool")))
+                .customLoader((modelBuilder, existingFileHelper) -> new CustomLoaderBuilder<ItemModelBuilder>(Constants.COLORED_MODEL_LOADER_ID, modelBuilder, existingFileHelper) {})
+                .end());
+
+        simpleBlock(Blocks.COLORED_WOOL_CARPET.get(), itemModels().getBuilder("colored_wool_carpet")
+                .parent(itemModels().getExistingFile(new ResourceLocation("white_carpet")))
+                .customLoader((modelBuilder, existingFileHelper) -> new CustomLoaderBuilder<ItemModelBuilder>(Constants.COLORED_MODEL_LOADER_ID, modelBuilder, existingFileHelper) {})
+                .end());
+
         simpleBlock(Blocks.COLORED_GLASS.get(), itemModels().getBuilder("colored_glass")
                                                                .parent(itemModels().getExistingFile(new ResourceLocation("white_stained_glass")))
                                                                .customLoader((modelBuilder, existingFileHelper) -> new CustomLoaderBuilder<ItemModelBuilder>(Constants.COLORED_MODEL_LOADER_ID, modelBuilder, existingFileHelper) {})

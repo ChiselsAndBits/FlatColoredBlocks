@@ -4,6 +4,8 @@ import com.communi.suggestu.scena.core.registries.deferred.IRegistrar;
 import com.communi.suggestu.scena.core.registries.deferred.IRegistryObject;
 import mod.flatcoloredblocks.core.block.ColoredConcreteBlock;
 import mod.flatcoloredblocks.core.block.ColoredGlassBlock;
+import mod.flatcoloredblocks.core.block.ColoredWoolBlock;
+import mod.flatcoloredblocks.core.block.ColoredWoolCarpetBlock;
 import mod.flatcoloredblocks.core.block.PaintBasinBlock;
 import mod.flatcoloredblocks.core.block.PaintMixerBlock;
 import mod.flatcoloredblocks.core.util.Constants;
@@ -16,6 +18,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MaterialColor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +31,8 @@ public final class Blocks
     public static final IRegistryObject<PaintBasinBlock> PAINT_BASIN = BLOCK_REGISTRAR.register("paint_basin", () -> new PaintBasinBlock(BlockBehaviour.Properties.of(Material.STONE).requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
 
     public static final IRegistryObject<ColoredConcreteBlock> COLORED_CONCRETE = BLOCK_REGISTRAR.register("colored_concrete", () -> new ColoredConcreteBlock(BlockBehaviour.Properties.of(Material.STONE).requiresCorrectToolForDrops().strength(1.8F)));
+    public static final IRegistryObject<ColoredWoolBlock> COLORED_WOOL = BLOCK_REGISTRAR.register("colored_wool", () -> new ColoredWoolBlock(BlockBehaviour.Properties.of(Material.WOOL).strength(0.8F).sound(SoundType.WOOL)));
+    public static final IRegistryObject<ColoredWoolCarpetBlock> COLORED_WOOL_CARPET = BLOCK_REGISTRAR.register("colored_wool_carpet", () -> new ColoredWoolCarpetBlock(BlockBehaviour.Properties.of(Material.CLOTH_DECORATION).strength(0.1F).sound(SoundType.WOOL)));
     public static final IRegistryObject<ColoredGlassBlock> COLORED_GLASS = BLOCK_REGISTRAR.register("colored_glass", () -> new ColoredGlassBlock(BlockBehaviour.Properties.of(Material.GLASS).strength(0.3F).sound(SoundType.GLASS).noOcclusion().isValidSpawn(Blocks::never).isRedstoneConductor(Blocks::never).isSuffocating(Blocks::never).isViewBlocking(Blocks::never)));
 
     private Blocks()

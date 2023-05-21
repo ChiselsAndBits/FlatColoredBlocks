@@ -20,6 +20,8 @@ public class FCBCandBPlugin implements IChiselsAndBitsPlugin {
     public void onConstruction() {
         IStateVariantManager.getInstance().registerProvider(Blocks.COLORED_CONCRETE::get, new ColoredStateVariantProvider(Blocks.COLORED_CONCRETE::get));
         IStateVariantManager.getInstance().registerProvider(Blocks.COLORED_GLASS::get, new ColoredStateVariantProvider(Blocks.COLORED_GLASS::get));
+        IStateVariantManager.getInstance().registerProvider(Blocks.COLORED_WOOL::get, new ColoredStateVariantProvider(Blocks.COLORED_WOOL::get));
+        IStateVariantManager.getInstance().registerProvider(Blocks.COLORED_WOOL_CARPET::get, new ColoredStateVariantProvider(Blocks.COLORED_WOOL_CARPET::get));
     }
 
     @Override
@@ -27,6 +29,8 @@ public class FCBCandBPlugin implements IChiselsAndBitsPlugin {
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             IClientStateVariantManager.getInstance().registerStateVariantProvider(Blocks.COLORED_CONCRETE::get, new ClientColoredStateVariantProvider());
             IClientStateVariantManager.getInstance().registerStateVariantProvider(Blocks.COLORED_GLASS::get, new ClientColoredStateVariantProvider());
+            IClientStateVariantManager.getInstance().registerStateVariantProvider(Blocks.COLORED_WOOL::get, new ClientColoredStateVariantProvider());
+            IClientStateVariantManager.getInstance().registerStateVariantProvider(Blocks.COLORED_WOOL_CARPET::get, new ClientColoredStateVariantProvider());
         });
     }
 }

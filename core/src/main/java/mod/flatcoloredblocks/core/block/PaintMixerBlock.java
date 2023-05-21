@@ -1,10 +1,13 @@
 package mod.flatcoloredblocks.core.block;
 
+import com.communi.suggestu.scena.core.fluid.IFluidManager;
 import mod.flatcoloredblocks.core.block.entity.PaintMixerBlockEntity;
+import mod.flatcoloredblocks.core.fluid.FluidTank;
 import mod.flatcoloredblocks.core.registrars.BlockEntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.stats.Stats;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
@@ -36,6 +39,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public class PaintMixerBlock extends HorizontalDirectionalBlock implements EntityBlock
@@ -109,11 +113,18 @@ public class PaintMixerBlock extends HorizontalDirectionalBlock implements Entit
             if (blockEntity instanceof PaintMixerBlockEntity paintMixerBlockEntity)
             {
                 final ItemStack stack = pPlayer.getItemInHand(pHand);
-                if (!stack.isEmpty() && paintMixerBlockEntity.canPlaceItem(0, stack)) {
-                    final ItemStack toInsert = stack.split(1);
-                    paintMixerBlockEntity.setItem(0, toInsert);
-                }
-                else if (stack.isEmpty() && !paintMixerBlockEntity.getItem(0).isEmpty()) {
+                if (!stack.isEmpty()) {
+                    if (paintMixerBlockEntity.canPlaceItem(0, stack)) {
+                        final ItemStack toInsert = stack.split(1);
+                        paintMixerBlockEntity.setItem(0, toInsert);
+                    } else if (IFluidManager.getInstance().get(stack).isPresent()) {
+                        IFluidManager.getInstance().get(stack).ifPresent(fluid -> {
+                            if (fluid.fluid().is(FluidTags.WATER)) {
+                                paintMixerBlockEntity.insertWater(fluid.amount());
+                            }
+                        });
+                    }
+                } else if (stack.isEmpty() && !paintMixerBlockEntity.getItem(0).isEmpty()) {
                     pPlayer.addItem(paintMixerBlockEntity.getItem(0));
                     paintMixerBlockEntity.setItem(0, ItemStack.EMPTY);
                 }

@@ -1,5 +1,7 @@
-import groovy.json.JsonOutput
 import org.apache.tools.ant.filters.ReplaceTokens
+
+apply from: 'https://raw.githubusercontent.com/ldtteam/OperaPublicaCreator/main/gradle/modules/git.gradle'
+apply from: 'https://raw.githubusercontent.com/ldtteam/OperaPublicaCreator/main/gradle/modules/util.gradle'
 
 project.group = "mod.flatcoloredblocks"
 project.version = (System.getenv().containsKey("Version") ? System.getenv("Version") : project.localVersion)
@@ -92,7 +94,7 @@ subprojects { Project subProject ->
         def propertiesToExpand = [
                 "version"                   : project.version,
                 "name"                      : rootProject.name.toString(),
-                "id"                        : rootProject.modId.toString(),
+                "id"                        : rootProject.modId,
                 "description"               : (rootProject.description == null ? "" : rootProject.description).toString(),
                 "author"                    : rootProject.author.toString(),
                 "sources"                   : rootProject.githubUrl.toString(),
@@ -144,7 +146,7 @@ subprojects { Project subProject ->
 
                 project { cp ->
                     cp.id = subProject.curseId
-                    cp.addGameVersion("Java ${subProject.java.toolchain.languageVersion.get().asInt()}")
+                    cp.addGameVersion "Java ${subProject.java.toolchain.languageVersion.get().asInt()}"
                     cp.addGameVersion(subProject.minecraftVersion)
                     cp.changelog = rootProject.file('build/changelog.md')
                     cp.changelogType = 'markdown'
@@ -159,8 +161,6 @@ subprojects { Project subProject ->
                     cp.mainArtifact(jar)
                 }
             }
-
-            subProject.tasks.curseforge.dependsOn subProject.rootProject.tasks.createChangelog
         }
     }
 }
@@ -173,6 +173,9 @@ subprojects { subProject ->
         configure.plugin("maven-publish")
     }
 
+    subProject.apply from: 'https://raw.githubusercontent.com/ldtteam/OperaPublicaCreator/main/gradle/modules/git.gradle'
+    subProject.apply from: 'https://raw.githubusercontent.com/ldtteam/OperaPublicaCreator/main/gradle/modules/util.gradle'
+
     subProject.archivesBaseName = "${rootProject.name}-${subProject.name}"
 
     subProject.repositories.mavenLocal()
@@ -180,6 +183,10 @@ subprojects { subProject ->
     subProject.repositories.maven {
         name 'LDTTeam - Modding'
         url 'https://ldtteam.jfrog.io/ldtteam/modding/'
+    }
+    subProject.repositories.maven {
+        name = 'TTerag maven'
+        url = 'https://maven.tterrag.com/'
     }
 
     subProject.group = rootProject.group
@@ -199,6 +206,14 @@ subprojects { subProject ->
     subProject.dependencies.compileOnly "org.jetbrains:annotations:${project.jetbrainsAnnotationsVersion}"
     subProject.dependencies.testCompileOnly "org.jetbrains:annotations:${project.jetbrainsAnnotationsVersion}"
 
+    tasks.withType(Javadoc.class, {task ->
+        task.options.tags(
+                'apiNote:a:API Note:',
+                'implSpec:a:Implementation Requirements:',
+                'implNote:a:Implementation Note:',
+                'reason:a:The reason for adding an @Overwrite'
+        )
+    })
 
     subProject.afterEvaluate {
         if (subProject.tasks.build.enabled) {
@@ -233,6 +248,19 @@ subprojects { subProject ->
 
                         subProject.cleanMavenPublication(pub)
                         subProject.setupEmbeddedPublishing(pub)
+                    }
+                }
+
+                if (System.getenv().containsKey("LDTTeamJfrogUsername") && System.getenv().containsKey("LDTTeamJfrogPassword")) {
+                    repositories {
+                        maven {
+                            name 'LDTTeamJfrog'
+                            credentials {
+                                username System.getenv().get("LDTTeamJfrogUsername")
+                                password System.getenv().get("LDTTeamJfrogPassword")
+                            }
+                            url 'https://ldtteam.jfrog.io/ldtteam/mods-maven'
+                        }
                     }
                 }
             }
