@@ -24,12 +24,7 @@ import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.client.resources.model.SimpleBakedModel;
-import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.client.resources.model.*;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
@@ -83,21 +78,21 @@ public final class ColoredBlockModelLoader implements IModelSpecificationLoader<
         public ModelSpecification(final ResourceLocation parentModel) {this.parentModel = parentModel;}
 
         @Override
-        public BakedModel bake(final IModelBakingContext iModelBakingContext, final ModelBakery modelBakery, final Function<Material, TextureAtlasSprite> function, final ModelState modelState, final ResourceLocation resourceLocation)
-        {
-            final UnbakedModel unbakedModel = modelBakery.getModel(parentModel);
-            final BakedModel parentBakedModel = IModelManager.getInstance().adaptToPlatform(unbakedModel.bake(modelBakery, function, modelState, resourceLocation));
+        public BakedModel bake(IModelBakingContext iModelBakingContext, ModelBaker modelBaker, Function<Material, TextureAtlasSprite> function, ModelState modelState, ResourceLocation resourceLocation) {
+            final UnbakedModel unbakedModel = modelBaker.getModel(parentModel);
+            final BakedModel parentBakedModel = IModelManager.getInstance().adaptToPlatform(unbakedModel.bake(modelBaker, function, modelState, resourceLocation));
 
             return new Baked(parentBakedModel);
         }
 
+        /*
         @Override
         public Collection<Material> getTextures(final IModelBakingContext iModelBakingContext, final Function<ResourceLocation, UnbakedModel> function, final Set<Pair<String, String>> set)
         {
             final UnbakedModel parentModel = function.apply(this.parentModel);
 
             return parentModel.getMaterials(function, set);
-        }
+        }*/
     }
 
     public static class Baked extends BaseDelegatingSmartModel

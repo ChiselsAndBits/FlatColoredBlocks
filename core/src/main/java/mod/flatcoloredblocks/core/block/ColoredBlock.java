@@ -1,21 +1,17 @@
 package mod.flatcoloredblocks.core.block;
 
-import com.communi.suggestu.scena.core.fluid.IFluidManager;
 import com.google.common.collect.ImmutableList;
-import mod.flatcoloredblocks.core.ColorNameManager;
 import mod.flatcoloredblocks.core.block.entity.ColoredBlockEntity;
 import mod.flatcoloredblocks.core.registrars.BlockEntityTypes;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -23,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.function.Consumer;
 
 public abstract class ColoredBlock extends BaseEntityBlock
 {
@@ -45,11 +42,10 @@ public abstract class ColoredBlock extends BaseEntityBlock
         return BlockEntityTypes.COLORED_BLOCK.get().create(pPos, pState);
     }
 
-    @Override
-    public void fillItemCategory(final @NotNull CreativeModeTab pTab, final NonNullList<ItemStack> pItems)
+    public void fillItemCategory(final Consumer<ItemStack> pItems)
     {
-        pItems.add(new ItemStack(this));
-        getDefaultColors().forEach(color -> pItems.add(Util.make(new ItemStack(this), stack -> setColor(stack, color))));
+        pItems.accept(new ItemStack(this));
+        getDefaultColors().forEach(color -> pItems.accept(Util.make(new ItemStack(this), stack -> setColor(stack, color))));
     }
 
     @Override
@@ -64,7 +60,7 @@ public abstract class ColoredBlock extends BaseEntityBlock
     }
 
     @Override
-    public @NotNull ItemStack getCloneItemStack(final @NotNull BlockGetter pLevel, final @NotNull BlockPos pPos, final @NotNull BlockState pState)
+    public @NotNull ItemStack getCloneItemStack(final @NotNull LevelReader pLevel, final @NotNull BlockPos pPos, final @NotNull BlockState pState)
     {
         final ItemStack stack = new ItemStack(this);
         final BlockEntity blockEntity = pLevel.getBlockEntity(pPos);

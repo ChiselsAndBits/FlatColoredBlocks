@@ -11,29 +11,28 @@ import mod.flatcoloredblocks.core.block.PaintMixerBlock;
 import mod.flatcoloredblocks.core.util.Constants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class Blocks
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(Blocks.class);
-    private static final IRegistrar<Block> BLOCK_REGISTRAR = IRegistrar.create(Registry.BLOCK_REGISTRY, Constants.MOD_ID);
+    private static final IRegistrar<Block> BLOCK_REGISTRAR = IRegistrar.create(Registries.BLOCK, Constants.MOD_ID);
 
-    public static final IRegistryObject<PaintMixerBlock> PAINT_MIXER = BLOCK_REGISTRAR.register("paint_mixer", () -> new PaintMixerBlock(BlockBehaviour.Properties.of(Material.STONE).requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
-    public static final IRegistryObject<PaintBasinBlock> PAINT_BASIN = BLOCK_REGISTRAR.register("paint_basin", () -> new PaintBasinBlock(BlockBehaviour.Properties.of(Material.STONE).requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
+    public static final IRegistryObject<PaintMixerBlock> PAINT_MIXER = BLOCK_REGISTRAR.register("paint_mixer", () -> new PaintMixerBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
+    public static final IRegistryObject<PaintBasinBlock> PAINT_BASIN = BLOCK_REGISTRAR.register("paint_basin", () -> new PaintBasinBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.5F, 6.0F)));
 
-    public static final IRegistryObject<ColoredConcreteBlock> COLORED_CONCRETE = BLOCK_REGISTRAR.register("colored_concrete", () -> new ColoredConcreteBlock(BlockBehaviour.Properties.of(Material.STONE).requiresCorrectToolForDrops().strength(1.8F)));
-    public static final IRegistryObject<ColoredWoolBlock> COLORED_WOOL = BLOCK_REGISTRAR.register("colored_wool", () -> new ColoredWoolBlock(BlockBehaviour.Properties.of(Material.WOOL).strength(0.8F).sound(SoundType.WOOL)));
-    public static final IRegistryObject<ColoredWoolCarpetBlock> COLORED_WOOL_CARPET = BLOCK_REGISTRAR.register("colored_wool_carpet", () -> new ColoredWoolCarpetBlock(BlockBehaviour.Properties.of(Material.CLOTH_DECORATION).strength(0.1F).sound(SoundType.WOOL)));
-    public static final IRegistryObject<ColoredGlassBlock> COLORED_GLASS = BLOCK_REGISTRAR.register("colored_glass", () -> new ColoredGlassBlock(BlockBehaviour.Properties.of(Material.GLASS).strength(0.3F).sound(SoundType.GLASS).noOcclusion().isValidSpawn(Blocks::never).isRedstoneConductor(Blocks::never).isSuffocating(Blocks::never).isViewBlocking(Blocks::never)));
+    public static final IRegistryObject<ColoredConcreteBlock> COLORED_CONCRETE = BLOCK_REGISTRAR.register("colored_concrete", () -> new ColoredConcreteBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(1.8F)));
+    public static final IRegistryObject<ColoredWoolBlock> COLORED_WOOL = BLOCK_REGISTRAR.register("colored_wool", () -> new ColoredWoolBlock(BlockBehaviour.Properties.of().strength(0.8F).sound(SoundType.WOOL)));
+    public static final IRegistryObject<ColoredWoolCarpetBlock> COLORED_WOOL_CARPET = BLOCK_REGISTRAR.register("colored_wool_carpet", () -> new ColoredWoolCarpetBlock(BlockBehaviour.Properties.of().strength(0.1F).sound(SoundType.WOOL)));
+    public static final IRegistryObject<ColoredGlassBlock> COLORED_GLASS = BLOCK_REGISTRAR.register("colored_glass", () -> new ColoredGlassBlock(BlockBehaviour.Properties.of().strength(0.3F).sound(SoundType.GLASS).noOcclusion().isValidSpawn(Blocks::never).isRedstoneConductor(Blocks::never).isSuffocating(Blocks::never).isViewBlocking(Blocks::never)));
 
     private Blocks()
     {

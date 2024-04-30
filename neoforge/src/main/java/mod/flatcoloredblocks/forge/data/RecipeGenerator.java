@@ -5,19 +5,23 @@ import mod.flatcoloredblocks.core.registrars.Items;
 import mod.flatcoloredblocks.core.util.Constants;
 import mod.flatcoloredblocks.forge.data.builders.PaintBucketRecipeBuilder;
 import mod.flatcoloredblocks.forge.data.builders.WoolCarpetRecipeBuilder;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.PackOutput;
+import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.data.event.GatherDataEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import static net.minecraft.world.item.Items.IRON_INGOT;
@@ -28,7 +32,7 @@ import static net.minecraft.world.item.Items.WATER_BUCKET;
 @Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class RecipeGenerator extends RecipeProvider
 {
-    private RecipeGenerator(final DataGenerator pGenerator)
+    private RecipeGenerator(final PackOutput pGenerator)
     {
         super(pGenerator);
     }
@@ -36,11 +40,11 @@ public class RecipeGenerator extends RecipeProvider
     @SubscribeEvent
     public static void dataGeneratorSetup(final GatherDataEvent event)
     {
-        event.getGenerator().addProvider(true, new RecipeGenerator(event.getGenerator()));
+        event.getGenerator().addProvider(true, new RecipeGenerator(event.getGenerator().getPackOutput()));
     }
 
     @Override
-    protected void buildCraftingRecipes(final @NotNull Consumer<FinishedRecipe> pFinishedRecipeConsumer)
+    protected void buildRecipes(final @NotNull RecipeOutput pFinishedRecipeConsumer)
     {
         for (final DyeColor color : DyeColor.values())
         {
@@ -52,7 +56,7 @@ public class RecipeGenerator extends RecipeProvider
                                     .save(pFinishedRecipeConsumer);
         }
 
-        ShapedRecipeBuilder.shaped(Items.PAINT_BUCKET.get(), 1)
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, Items.PAINT_BUCKET.get(), 1)
                            .group("paint_bucket")
                            .unlockedBy("has_iron_ingot", has(IRON_INGOT))
                            .unlockedBy("has_iron_nugget", has(IRON_NUGGET))
@@ -63,7 +67,7 @@ public class RecipeGenerator extends RecipeProvider
                            .pattern("III")
                            .save(pFinishedRecipeConsumer);
 
-        ShapedRecipeBuilder.shaped(Items.PAINT_BRUSH.get(), 1)
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, Items.PAINT_BRUSH.get(), 1)
                            .group("paint_brush")
                            .unlockedBy("has_stick", has(Tags.Items.RODS_WOODEN))
                            .unlockedBy("has_wood", has(ItemTags.PLANKS))
@@ -76,7 +80,7 @@ public class RecipeGenerator extends RecipeProvider
                            .pattern("S  ")
                            .save(pFinishedRecipeConsumer);
 
-        ShapedRecipeBuilder.shaped(Blocks.PAINT_MIXER.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, Blocks.PAINT_MIXER.get())
                            .group("paint_mixer")
                            .unlockedBy("has_paint_basin", has(Blocks.PAINT_BASIN.get()))
                            .unlockedBy("has_iron_ingot", has(IRON_INGOT))
@@ -89,7 +93,7 @@ public class RecipeGenerator extends RecipeProvider
                            .pattern(" B ")
                            .save(pFinishedRecipeConsumer);
 
-        ShapedRecipeBuilder.shaped(Blocks.PAINT_BASIN.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, Blocks.PAINT_BASIN.get())
                            .group("paint_basin")
                            .unlockedBy("has_iron_ingot", has(IRON_INGOT))
                            .unlockedBy("has_paint_bucket", has(Items.PAINT_BUCKET.get()))
@@ -103,7 +107,6 @@ public class RecipeGenerator extends RecipeProvider
                            .save(pFinishedRecipeConsumer);
 
         WoolCarpetRecipeBuilder.create()
-                .group("wool_carpet")
                  .unlockedBy("has_wool", has(Items.COLORED_WOOL.get()))
                  .save(pFinishedRecipeConsumer);
     }

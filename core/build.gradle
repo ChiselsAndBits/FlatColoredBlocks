@@ -1,20 +1,26 @@
 plugins {
-    id ("net.minecraftforge.gradle")
-    id ("org.parchmentmc.librarian.forgegradle")
+    id ("net.neoforged.gradle.vanilla")
+}
+
+project.minecraft.accessTransformers.file project(":common").file("accesstransformer.cfg")
+
+project.dependencies.implementation "net.minecraft:client:${project.minecraftVersion}"
+project.dependencies.implementation "com.communi-suggestu.scena:scena-core:${project.scenaVersion}"
+project.dependencies.implementation "mod.chiselsandbits:chisels-and-bits-api:${project.chiselsAndBitsVersion}"
+
+subsystems {
+    parchment {
+        minecraftVersion = project.parchmentMinecraftVersion
+        mappingsVersion = project.parchmentVersion
+    }
 }
 
 project.sourceSets.main.resources.srcDir "src/datagen/generated"
 
-project.dependencies.minecraft "net.minecraft:joined:${project.minecraftVersion}"
-project.dependencies.implementation fg.deobf("com.communi-suggestu.scena:scena-core:${project.scenaVersion}")
-project.dependencies.implementation fg.deobf("com.communi-suggestu.saecularia-caudices:saecularia-caudices-core:${project.saeculariaCaudicesVersion}")
-
-project.dependencies.implementation fg.deobf("mod.chiselsandbits:chisels-and-bits-api:${project.chiselsAndBitsVersion}")
-
-project.minecraft.mappings channel: "parchment", version: "${project.parchmentMinecraftVersion}-${project.parchmentVersion}-${project.minecraftVersion}"
-project.minecraft.accessTransformer = project(':common').file("accesstransformer.cfg")
-
-//Subsequent code is needed to fix FG
-if (!project.file("build\\fg_cache\\net\\minecraft\\joined\\${project.minecraftVersion}").exists()) {
-    project.file("build\\fg_cache\\net\\minecraft\\joined\\${project.minecraftVersion}").mkdirs()
+sourceSets {
+    configureEach {
+        runs {
+            modIdentifier "flatcoloredblocks"
+        }
+    }
 }

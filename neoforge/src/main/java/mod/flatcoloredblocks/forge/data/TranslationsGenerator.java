@@ -5,21 +5,22 @@ import mod.flatcoloredblocks.core.registrars.Blocks;
 import mod.flatcoloredblocks.core.registrars.Items;
 import mod.flatcoloredblocks.core.util.Constants;
 import net.minecraft.data.DataGenerator;
-import net.minecraftforge.common.data.LanguageProvider;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraft.data.PackOutput;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.common.data.LanguageProvider;
+import net.neoforged.neoforge.data.event.GatherDataEvent;
 
 @Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class TranslationsGenerator extends LanguageProvider
 {
     @SubscribeEvent
     public static void dataGeneratorSetup(final GatherDataEvent event)
-{
-    event.getGenerator().addProvider(true, new TranslationsGenerator(event.getGenerator()));
-}
+    {
+        event.getGenerator().addProvider(true, new TranslationsGenerator(event.getGenerator().getPackOutput()));
+    }
 
-    public TranslationsGenerator(final DataGenerator gen)
+    public TranslationsGenerator(final PackOutput gen)
     {
         super(gen, Constants.MOD_ID, "en_us");
     }

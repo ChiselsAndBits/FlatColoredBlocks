@@ -1,9 +1,11 @@
 package mod.flatcoloredblocks.core.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -13,11 +15,19 @@ import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("deprecation")
 public class ColoredWoolCarpetBlock extends ColoredBlock {
+
+    private static final MapCodec<PaintBasinBlock> CODEC = simpleCodec(PaintBasinBlock::new);
+
     protected static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 1.0D, 16.0D);
 
 
     public ColoredWoolCarpetBlock(Properties pProperties) {
         super(pProperties);
+    }
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
     }
 
     @Override

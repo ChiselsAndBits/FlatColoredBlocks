@@ -24,6 +24,6 @@ public final class ClientPacketHandlers
         if (!(heldItem.getItem() instanceof IWithColorItem withColorItem))
             return;
 
-        withColorItem.setColor(heldItem, color);
+        withColorItem.setColor(heldItem, color, player.isCreative());
     }
 }

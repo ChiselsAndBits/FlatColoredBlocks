@@ -9,6 +9,7 @@ import mod.flatcoloredblocks.core.block.entity.PaintContainingBlockEntity;
 import mod.flatcoloredblocks.core.block.entity.PaintMixerBlockEntity;
 import mod.flatcoloredblocks.core.util.Constants;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,7 +17,7 @@ import org.apache.logging.log4j.Logger;
 public final class BlockEntityTypes {
 
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final IRegistrar<BlockEntityType<?>> REGISTRAR = IRegistrar.create(Registry.BLOCK_ENTITY_TYPE_REGISTRY, Constants.MOD_ID);
+    private static final IRegistrar<BlockEntityType<?>> REGISTRAR = IRegistrar.create(Registries.BLOCK_ENTITY_TYPE, Constants.MOD_ID);
 
     private BlockEntityTypes() {
         throw new IllegalStateException("Can not instantiate an instance of: BlockEntityTypes. This is a utility class");

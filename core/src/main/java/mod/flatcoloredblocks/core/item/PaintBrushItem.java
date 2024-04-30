@@ -1,19 +1,15 @@
 package mod.flatcoloredblocks.core.item;
 
 import com.communi.suggestu.scena.core.fluid.IFluidManager;
-import mod.flatcoloredblocks.core.block.ColoredBlock;
 import mod.flatcoloredblocks.core.block.entity.ColoredBlockEntity;
 import mod.flatcoloredblocks.core.block.entity.PaintBasinBlockEntity;
 import mod.flatcoloredblocks.core.registry.ColorizationRegistry;
-import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -57,7 +53,7 @@ public class PaintBrushItem extends PaintContainingItem
                     return false;
                 }
 
-                setColor(pStack, getColor(itemstack));
+                setColor(pStack, getColor(itemstack), false);
                 final int amountToTransfer = Math.min(getCapacity() - getAmount(pStack), paintBucketItem.getAmount(itemstack));
                 setAmount(pStack, getAmount(pStack) + amountToTransfer);
                 paintBucketItem.setAmount(itemstack, paintBucketItem.getAmount(itemstack) - amountToTransfer);
@@ -83,11 +79,17 @@ public class PaintBrushItem extends PaintContainingItem
                 return InteractionResult.PASS;
             }
 
-            if (getAmount(pStack) < PaintBasinBlockEntity.PAINT_CONSUMPTION_ON_PAINT) {
+            if (getAmount(pStack) == 0) {
                 return InteractionResult.PASS;
             }
 
-            setAmount(pStack, getAmount(pStack) - PaintBasinBlockEntity.PAINT_CONSUMPTION_ON_PAINT);
+            if (!player.isCreative()) {
+                if (getAmount(pStack) < PaintBasinBlockEntity.PAINT_CONSUMPTION_ON_PAINT) {
+                    return InteractionResult.PASS;
+                }
+
+                setAmount(pStack, getAmount(pStack) - PaintBasinBlockEntity.PAINT_CONSUMPTION_ON_PAINT);
+            }
             coloredBlock.setColor(getColor(pStack));
             return InteractionResult.SUCCESS;
         }
@@ -96,11 +98,18 @@ public class PaintBrushItem extends PaintContainingItem
         if (vanillaColor.isPresent()) {
             final Optional<BlockState> replacedState = ColorizationRegistry.getInstance().getConversionState(blockState);
             if (replacedState.isPresent()) {
-                if (getAmount(pStack) < PaintBasinBlockEntity.PAINT_CONSUMPTION_ON_PAINT) {
+                if (getAmount(pStack) == 0) {
                     return InteractionResult.PASS;
                 }
 
-                setAmount(pStack, getAmount(pStack) - PaintBasinBlockEntity.PAINT_CONSUMPTION_ON_PAINT);
+                if (!player.isCreative())  {
+                    if (getAmount(pStack) < PaintBasinBlockEntity.PAINT_CONSUMPTION_ON_PAINT) {
+                        return InteractionResult.PASS;
+                    }
+
+                    setAmount(pStack, getAmount(pStack) - PaintBasinBlockEntity.PAINT_CONSUMPTION_ON_PAINT);
+                }
+
                 level.setBlock(targetedPosition, replacedState.get(), 3);
 
                 if (level.getBlockEntity(targetedPosition) instanceof ColoredBlockEntity newColoredBlockEntity) {

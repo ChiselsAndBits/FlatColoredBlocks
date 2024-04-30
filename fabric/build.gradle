@@ -1,7 +1,9 @@
 plugins {
     id 'fabric-loom'
-    id 'com.matthewprenger.cursegradle'
+    id 'net.darkhax.curseforgegradle'
 }
+
+project.ext.remapTaskClass = Class.forName('net.fabricmc.loom.task.RemapJarTask')
 
 project.addCoreProject()
 
@@ -9,21 +11,15 @@ project.dependencies.minecraft "com.mojang:minecraft:${project.minecraftVersion}
 project.dependencies.modImplementation "net.fabricmc:fabric-loader:${project.fabricLoaderVersion}"
 project.dependencies.modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabricVersion}+${project.minecraftVersion}"
 project.dependencies.modImplementation "com.communi-suggestu.scena:scena-fabric:${project.scenaVersion}"
-project.dependencies.modImplementation "com.communi-suggestu.saecularia-caudices:saecularia-caudices-fabric:${project.saeculariaCaudicesVersion}"
 project.dependencies.modRuntimeOnly "mod.chiselsandbits:chisels-and-bits-fabric:${project.chiselsAndBitsVersion}"
 
 project.dependencies.include "com.communi-suggestu.scena:scena-fabric:${project.scenaVersion}"
-project.dependencies.include "com.communi-suggestu.saecularia-caudices:saecularia-caudices-fabric:${project.saeculariaCaudicesVersion}"
 
 project.dependencies.mappings loom.layered() { layer ->
     layer.officialMojangMappings()
     layer.parchment("org.parchmentmc.data:parchment-${project.parchmentMinecraftVersion}:${project.parchmentVersion}@zip")
 }
 
-project.loom.mods.create("flatcoloredblocks", mod -> {
-    mod.sourceSet sourceSets.main
-    mod.sourceSet(project(":core").sourceSets.main, project(":core"))
-})
 project.loom.accessWidenerPath = project(':common').file("accesswidener.accesswidener")
 project.tasks.processResources.from project(':common').file("accesswidener.accesswidener")
 setupResourceProcessing(project.tasks.processResources)
@@ -47,4 +43,28 @@ project.loom {
     }
 }
 
-project.publishToCurseForge(tasks.remapJar)
+if ((opc.hasPropertySet("curseApiKey") || opc.hasPropertySet("CURSEAPIKEY"))) {
+    task curseforge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge) {
+        apiToken = opc.hasPropertySet("curseApiKey") ? opc.getProperty("curseApiKey") : opc.getProperty("CURSEAPIKEY")
+
+        def mainArtifact = upload("691037", tasks.remapJar)
+        opc.getStringListProperty("additionalMinecraftVersions").each { v ->
+            mainArtifact.addGameVersion(v)
+        }
+
+        mainArtifact.releaseType = opc.hasPropertySet("curseReleaseType") ? opc.getProperty("curseReleaseType") : opc.getProperty("CURSERELEASETYPE")
+        if (opc.isFeatureEnabled('reformatedCurseFiles')) {
+            def mainArtifactName = rootProject.name
+            if (opc.isFeatureEnabled('customCurseFileName')) {
+                mainArtifactName = opc.getProperty('customCurseFileName')
+            }
+
+            mainArtifact.displayName = mainArtifactName + " - " + project.version + " - " + mainArtifact.releaseType
+        }
+
+        mainArtifact.changelog = rootProject.file('build/changelog.md')
+        mainArtifact.changelogType = 'markdown'
+
+        dependsOn rootProject.tasks.createChangelog
+    }
+}

@@ -2,6 +2,7 @@ package mod.flatcoloredblocks.core.client.screen.widget;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -28,16 +29,16 @@ public class DynamicItemStackPreviewWidget extends AbstractFlatColoredBlocksWidg
     }
 
     @Override
-    public void renderButton(@NotNull PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick) {
+    public void renderWidget(@NotNull GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
         final float scaleX = (float) width / 16f;
         final float scaleY = (float) height / 16f;
 
-        pPoseStack.pushPose();
-        pPoseStack.translate(x, y, 0);
-        pPoseStack.scale(scaleX, scaleY, 1);
+        graphics.pose().pushPose();
+        graphics.pose().translate(getX(), getY(), 0);
+        graphics.pose().scale(scaleX, scaleY, 1);
 
-        renderItemStack(pPoseStack, stackSupplier.get(), false);
+        renderItemStack(graphics, stackSupplier.get(), false);
 
-        pPoseStack.popPose();
+        graphics.pose().popPose();
     }
 }

@@ -1,0 +1,120 @@
+plugins {
+    id 'net.neoforged.gradle.userdev'
+    id 'net.darkhax.curseforgegradle'
+}
+
+repositories.mavenLocal()
+
+sourceSets {
+    configureEach {
+        runs {
+            modIdentifier "flatcoloredblocks"
+        }
+    }
+}
+
+configurations.create("includedLibraries")
+configurations.implementation.extendsFrom configurations.includedLibraries
+configurations.includedLibraries.transitive false
+
+def libraryConfigs = new HashSet<org.gradle.api.artifacts.Configuration>();
+configurations { configContainer ->
+    sourceSets.each { sourceSet ->
+        def configName = sourceSet.name == "main" ? "forgeLibrary" : sourceSet.name + "ForgeLibrary";
+        def implementationConfigName = sourceSet.name == "main" ? "implementation" : sourceSet.name + "Implementation"
+
+        def libraryConfig = configContainer.maybeCreate(configName)
+        def implementationConfig = configContainer.maybeCreate(implementationConfigName)
+
+        implementationConfig.extendsFrom libraryConfig
+
+        libraryConfigs.add(libraryConfig);
+    }
+}
+
+project.addCoreProject()
+
+subsystems {
+    parchment {
+        minecraftVersion = project.parchmentMinecraftVersion
+        mappingsVersion = project.parchmentVersion
+    }
+}
+
+project.minecraft.accessTransformers.file project(':common').file("accesstransformer.cfg")
+
+
+project.dependencies.implementation "net.neoforged:neoforge:${project.forgeVersion}"
+project.dependencies.includedLibraries ("com.communi-suggestu.scena:scena-neoforge:${project.scenaVersion}") {
+    jarJar.pin(it, project.scenaVersion)
+    jarJar.ranged(it, buildSupportedVersionRange(project.scenaVersion))
+}
+project.dependencies.runtimeOnly "mod.chiselsandbits:chisels-and-bits-neoforge:${project.chiselsAndBitsVersion}"
+
+project.tasks.processResources.from (project(":common").file("accesstransformer.cfg")) {
+    into 'META-INF'
+}
+setupResourceProcessing(project.tasks.processResources)
+
+
+project.runs {
+    client { }
+
+    server { }
+
+    data { dataRun ->
+        dataRun.programArguments.addAll '--mod', "${project.modId.toLowerCase()}",
+                '--output', project(":core").file("src/datagen/generated").absolutePath,
+                '--existing', file('src/main/resources/').absolutePath,
+                '--existing', project(":core").file('src/main/resources/').absolutePath,
+                '--existing-mod', 'scena'
+    }
+
+    configureEach { run ->
+        run.modSource project(":core").sourceSets.main
+        run.modSource sourceSets.main
+
+        run.jvmArguments.addAll "-Dmixin.debug=true", "-Dmixin.debug.export=true"
+        run.dependencies { runDependencies ->
+            libraryConfigs.each { config ->
+                runDependencies.runtime config
+            }
+        }
+    }
+}
+
+tasks.jarJar.configuration project.configurations.includedLibraries
+libraryConfigs.each { config ->
+    tasks.jarJar.configuration config
+}
+tasks.jarJar.archiveClassifier.set("")
+tasks.jar.archiveClassifier.set("slim")
+tasks.assemble.dependsOn tasks.jarJar
+
+if ((opc.hasPropertySet("curseApiKey") || opc.hasPropertySet("CURSEAPIKEY"))) {
+    task curseforge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge) {
+        apiToken = opc.hasPropertySet("curseApiKey") ? opc.getProperty("curseApiKey") : opc.getProperty("CURSEAPIKEY")
+
+        def mainArtifact = upload("238590", tasks.jarJar)
+        opc.getStringListProperty("additionalMinecraftVersions").each { v ->
+            mainArtifact.addGameVersion(v)
+        }
+
+        mainArtifact.releaseType = opc.hasPropertySet("curseReleaseType") ? opc.getProperty("curseReleaseType") : opc.getProperty("CURSERELEASETYPE")
+        if (opc.isFeatureEnabled('reformatedCurseFiles')) {
+            def mainArtifactName = rootProject.name
+            if (opc.isFeatureEnabled('customCurseFileName')) {
+                mainArtifactName = opc.getProperty('customCurseFileName')
+            }
+
+            mainArtifact.displayName = mainArtifactName + " - " + project.version + " - " + mainArtifact.releaseType
+        }
+
+        mainArtifact.changelog = rootProject.file('build/changelog.md')
+        mainArtifact.changelogType = 'markdown'
+
+        dependsOn rootProject.tasks.createChangelog
+    }
+}
+
+

@@ -1,6 +1,7 @@
 package mod.flatcoloredblocks.core.block;
 
 import com.google.common.collect.ImmutableMap;
+import com.mojang.serialization.MapCodec;
 import mod.flatcoloredblocks.core.block.entity.PaintBasinBlockEntity;
 import mod.flatcoloredblocks.core.block.entity.PaintMixerBlockEntity;
 import mod.flatcoloredblocks.core.registrars.BlockEntityTypes;
@@ -29,6 +30,8 @@ import java.util.stream.Stream;
 
 public class PaintBasinBlock extends BaseEntityBlock
 {
+    private static final MapCodec<PaintBasinBlock> CODEC = simpleCodec(PaintBasinBlock::new);
+
     private static final VoxelShape SHAPE = Stream.of(
             Block.box(0, 4, 0, 16, 15, 2),
             Block.box(1, 15, 1, 15, 16, 2),
@@ -52,6 +55,11 @@ public class PaintBasinBlock extends BaseEntityBlock
     public PaintBasinBlock(final Properties pProperties)
     {
         super(pProperties);
+    }
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
     }
 
     @SuppressWarnings("deprecation")

@@ -1,6 +1,5 @@
 package mod.flatcoloredblocks.core.client.registrars;
 
-import com.communi.suggestu.scena.core.client.textures.ITextureManager;
 import mod.flatcoloredblocks.core.util.Constants;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
@@ -19,6 +18,9 @@ public final class Textures
     public static void onClientConstruction() {
         LOGGER.info("Registering Textures");
 
-        ITextureManager.getInstance().registerTextures(TextureAtlas.LOCATION_BLOCKS, registrar -> registrar.registerTextureToAtlas(new ResourceLocation(Constants.MOD_ID, "block/paint_still")));
+        // TODO Create datagen:
+        //ITextureManager.getInstance().registerTextures(TextureAtlas.LOCATION_BLOCKS, registrar -> registrar.registerTextureToAtlas(new ResourceLocation(Constants.MOD_ID, "block/paint_still")));
+
+        //throw new IllegalStateException("Missing datagen");
     }
 }

@@ -1,8 +1,8 @@
 package mod.flatcoloredblocks.core.client.screen;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
@@ -21,7 +21,7 @@ public class AbstractFlatColoredBlocksScreen extends Screen
     private boolean isInitialized = false;
 
     private final List<IFlatColoredBlocksWidget> widgets = Lists.newArrayList();
-    private final List<Widget> renderables = Lists.newArrayList();
+    private final List<Renderable> renderables = Lists.newArrayList();
 
     /**
      * Creates a new screen, playing the narration message when opened.
@@ -44,13 +44,13 @@ public class AbstractFlatColoredBlocksScreen extends Screen
     }
 
     @Override
-    public <T extends GuiEventListener & Widget & NarratableEntry> @NotNull T addRenderableWidget(final @NotNull T button)
+    public <T extends GuiEventListener & Renderable & NarratableEntry> @NotNull T addRenderableWidget(final @NotNull T button)
     {
         return super.addRenderableWidget(button);
     }
 
     @Override
-    protected <T extends Widget> @NotNull T addRenderableOnly(final @NotNull T widget)
+    protected <T extends Renderable> @NotNull T addRenderableOnly(final @NotNull T widget)
     {
         final T resultingWidget =  super.addRenderableOnly(widget);
         this.renderables.add(resultingWidget);
@@ -69,8 +69,8 @@ public class AbstractFlatColoredBlocksScreen extends Screen
             ((IFlatColoredBlocksWidget) widget).init();
         }
 
-        if (resultingWidget instanceof Widget) {
-            this.renderables.add((Widget) resultingWidget);
+        if (resultingWidget instanceof Renderable) {
+            this.renderables.add((Renderable) resultingWidget);
         }
 
         return resultingWidget;
@@ -85,7 +85,7 @@ public class AbstractFlatColoredBlocksScreen extends Screen
             this.widgets.remove(listener);
             ((IFlatColoredBlocksWidget) listener).removed();
         }
-        if (listener instanceof Widget) {
+        if (listener instanceof Renderable) {
             this.renderables.remove(listener);
         }
     }
@@ -128,13 +128,14 @@ public class AbstractFlatColoredBlocksScreen extends Screen
     }
 
     @Override
-    public void render(final @NotNull PoseStack poseStack, final int mouseX, final int mouseY, final float partialTickTime)
-    {
-        this.fillGradient(poseStack, 0, 0, this.width, this.height, -1072689136, -804253680);
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTickTime) {
+        super.render(graphics, mouseX, mouseY, partialTickTime);
 
-        final  List<Widget> renderTargets = new ArrayList<>(this.renderables);
-        for(Widget widget : renderTargets) {
-            widget.render(poseStack, mouseX, mouseY, partialTickTime);
+        graphics.fillGradient(0, 0, this.width, this.height, -1072689136, -804253680);
+
+        final  List<Renderable> renderTargets = new ArrayList<>(this.renderables);
+        for(Renderable widget : renderTargets) {
+            widget.render(graphics, mouseX, mouseY, partialTickTime);
         }
     }
 }

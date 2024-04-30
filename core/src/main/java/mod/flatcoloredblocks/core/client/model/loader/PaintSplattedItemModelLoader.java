@@ -14,24 +14,22 @@ import com.google.common.collect.Lists;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
-import com.mojang.math.Quaternion;
 import com.mojang.math.Transformation;
-import com.mojang.math.Vector3f;
 import mod.flatcoloredblocks.core.registrars.Fluids;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.client.resources.model.*;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.util.Collection;
 import java.util.Set;
 import java.util.function.Function;
+
+import static com.communi.suggestu.scena.core.util.TransformationUtils.quatFromXYZ;
 
 public final class PaintSplattedItemModelLoader implements IModelSpecificationLoader<PaintSplattedItemModelLoader.PaintSplattedItemModel>
 {
@@ -55,17 +53,62 @@ public final class PaintSplattedItemModelLoader implements IModelSpecificationLo
     public static final class PaintSplattedItemModel implements IModelSpecification<PaintSplattedItemModel> {
 
         // Depth offsets to prevent Z-fighting
-        private static final Transformation FLUID_TRANSFORM = new Transformation(Vector3f.ZERO, Quaternion.ONE, new Vector3f(1.002f, 1, 1.002f), Quaternion.ONE);
+        private static final Transformation FLUID_TRANSFORM = getMatrix(0, 0, 0, 0, 0, 0, 1.005f);
+
+        private static Transformation getMatrix(
+                final float transX,
+                final float transY,
+                final float transZ,
+                final float rotX,
+                final float rotY,
+                final float rotZ,
+                final float scaleXYZ )
+        {
+            final Vector3f translation = new Vector3f( transX, transY, transZ );
+            final Vector3f scale = new Vector3f( scaleXYZ, scaleXYZ, scaleXYZ );
+            final Quaternionf rotation = quatFromXYZ(new Vector3f(rotX, rotY, rotZ), true);
+
+            return new Transformation(translation, rotation, scale, null);
+        }
 
         public static RenderTypeGroup getLayerRenderTypes()
         {
             return new RenderTypeGroup(RenderType.translucent(), RenderType.entityTranslucent(TextureAtlas.LOCATION_BLOCKS));
         }
 
+        /*
+        @Override
+        public Collection<Material> getTextures(final IModelBakingContext iModelBakingContext, final Function<ResourceLocation, UnbakedModel> function, final Set<Pair<String, String>> set)
+        {
+            if (iModelBakingContext.getMaterial("base").isEmpty())
+            {
+                throw new IllegalArgumentException("Missing base material");
+            }
+
+            if (iModelBakingContext.getMaterial("paint").isEmpty())
+            {
+                throw new IllegalArgumentException("Missing paint material");
+            }
+
+            final Material fluidMaterial = getFluidMaterial();
+            final Material baseMaterial = iModelBakingContext.getMaterial("base").get();
+            final Material fluidMaskMaterial = iModelBakingContext.getMaterial("paint").get();
+            return Lists.newArrayList(baseMaterial, fluidMaskMaterial, fluidMaterial);
+        }
+        */
+
+        @NotNull
+        private static Material getFluidMaterial()
+        {
+            final ResourceLocation stillFluidTexture = IFluidManager.getInstance().getVariantHandlerFor(Fluids.PAINT.fluid().get())
+                                                               .orElseThrow()
+                                                               .getStillTexture(new FluidInformation(Fluids.PAINT.fluid().get())).orElseThrow();
+
+            return new Material(TextureAtlas.LOCATION_BLOCKS, stillFluidTexture);
+        }
 
         @Override
-        public BakedModel bake(final IModelBakingContext iModelBakingContext, final ModelBakery modelBakery, final Function<Material, TextureAtlasSprite> spriteGetter, final ModelState modelState, final ResourceLocation resourceLocation)
-        {
+        public BakedModel bake(IModelBakingContext iModelBakingContext, ModelBaker modelBaker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ResourceLocation resourceLocation) {
             if (iModelBakingContext.getMaterial("base").isEmpty())
             {
                 throw new IllegalArgumentException("Missing base material");
@@ -85,14 +128,14 @@ public final class PaintSplattedItemModelLoader implements IModelSpecificationLo
 
             // We need to disable GUI 3D and block lighting for this to render properly
             var itemContext = SimpleModelBakingContext.SimpleModelBakingContextBuilder.builder().withIsGui3d(false).withUseBlockLight(false).build();
-            var modelBuilder = CombiningModel.Baked.builder(itemContext, fluidSprite, iModelBakingContext.getItemOverrides(), iModelBakingContext.getTransforms());
+            var modelBuilder = CombiningModel.Baked.builder(itemContext, fluidSprite, iModelBakingContext.getItemOverrides(modelBaker), iModelBakingContext.getTransforms());
 
             var renderTypes = getLayerRenderTypes();
 
             if (baseSprite != null)
             {
                 // Base texture
-                var unbaked = UnbakedGeometryHelper.createUnbakedItemElements(0, baseSprite);
+                var unbaked = UnbakedGeometryHelper.createUnbakedItemElements(0, baseSprite.contents());
                 UnbakedGeometryHelper.bakeElements(modelBuilder, unbaked, name -> baseSprite, modelState, resourceLocation, renderTypes);
             }
 
@@ -111,35 +154,6 @@ public final class PaintSplattedItemModelLoader implements IModelSpecificationLo
             modelBuilder.setParticle(fluidSprite);
 
             return modelBuilder.build();
-        }
-
-        @Override
-        public Collection<Material> getTextures(final IModelBakingContext iModelBakingContext, final Function<ResourceLocation, UnbakedModel> function, final Set<Pair<String, String>> set)
-        {
-            if (iModelBakingContext.getMaterial("base").isEmpty())
-            {
-                throw new IllegalArgumentException("Missing base material");
-            }
-
-            if (iModelBakingContext.getMaterial("paint").isEmpty())
-            {
-                throw new IllegalArgumentException("Missing paint material");
-            }
-
-            final Material fluidMaterial = getFluidMaterial();
-            final Material baseMaterial = iModelBakingContext.getMaterial("base").get();
-            final Material fluidMaskMaterial = iModelBakingContext.getMaterial("paint").get();
-            return Lists.newArrayList(baseMaterial, fluidMaskMaterial, fluidMaterial);
-        }
-
-        @NotNull
-        private static Material getFluidMaterial()
-        {
-            final ResourceLocation stillFluidTexture = IFluidManager.getInstance().getVariantHandlerFor(Fluids.PAINT.fluid().get())
-                                                               .orElseThrow()
-                                                               .getStillTexture(new FluidInformation(Fluids.PAINT.fluid().get())).orElseThrow();
-
-            return new Material(TextureAtlas.LOCATION_BLOCKS, stillFluidTexture);
         }
     }
 

@@ -1,21 +1,25 @@
 package mod.flatcoloredblocks.core.recipe;
 
-import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
 import mod.flatcoloredblocks.core.item.ColoredBlockItem;
 import mod.flatcoloredblocks.core.registrars.Blocks;
 import net.minecraft.Util;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class WoolCarpetRecipeSerializer implements RecipeSerializer<WoolCarpetRecipeSerializer.WoolCarpetRecipe> {
 
     private static final WoolCarpetRecipeSerializer INSTANCE = new WoolCarpetRecipeSerializer();
+
+    private static final Codec<WoolCarpetRecipe> CODEC = Codec.unit(new WoolCarpetRecipe());
 
     public static WoolCarpetRecipeSerializer getInstance()
     {
@@ -27,30 +31,26 @@ public class WoolCarpetRecipeSerializer implements RecipeSerializer<WoolCarpetRe
     }
 
     @Override
-    public WoolCarpetRecipe fromJson(ResourceLocation pRecipeId, JsonObject pSerializedRecipe) {
-        return new WoolCarpetRecipe(pRecipeId);
+    public Codec<WoolCarpetRecipe> codec() {
+        return CODEC;
     }
 
     @Override
-    public WoolCarpetRecipe fromNetwork(ResourceLocation pRecipeId, FriendlyByteBuf pBuffer) {
-        return new WoolCarpetRecipe(pRecipeId);
+    public @NotNull WoolCarpetRecipe fromNetwork(@NotNull FriendlyByteBuf pBuffer) {
+        return new WoolCarpetRecipe();
     }
 
     @Override
-    public void toNetwork(FriendlyByteBuf pBuffer, WoolCarpetRecipe pRecipe) {
-        pBuffer.writeResourceLocation(pRecipe.getId());
+    public void toNetwork(@NotNull FriendlyByteBuf pBuffer, @NotNull WoolCarpetRecipe pRecipe) {
     }
 
-    public class WoolCarpetRecipe implements CraftingRecipe {
+    public static class WoolCarpetRecipe implements CraftingRecipe {
 
-        private final ResourceLocation id;
-
-        public WoolCarpetRecipe(ResourceLocation id) {
-            this.id = id;
+        public WoolCarpetRecipe() {
         }
 
         @Override
-        public boolean matches(CraftingContainer pContainer, Level pLevel) {
+        public boolean matches(@NotNull CraftingContainer pContainer, @Nullable Level pLevel) {
 
             Integer row = findWoolRow(pContainer);
             if (row == null) return false;
@@ -82,15 +82,15 @@ public class WoolCarpetRecipeSerializer implements RecipeSerializer<WoolCarpetRe
         }
 
         @Override
-        public ItemStack assemble(CraftingContainer pContainer) {
-            if (!matches(pContainer, null)) {
+        public @NotNull ItemStack assemble(@NotNull CraftingContainer craftingContainer, @NotNull RegistryAccess registryAccess) {
+            if (!matches(craftingContainer, null)) {
                 return ItemStack.EMPTY;
             }
 
-            Integer row = findWoolRow(pContainer);
+            Integer row = findWoolRow(craftingContainer);
             if (row == null) return ItemStack.EMPTY;
 
-            final ColorResult color = getColor(pContainer, row, 0);
+            final ColorResult color = getColor(craftingContainer, row, 0);
             if (!color.valid()) return ItemStack.EMPTY;
 
             return Util.make(new ItemStack(Blocks.COLORED_WOOL_CARPET.get()), stack -> Blocks.COLORED_WOOL_CARPET.get().setColor(stack, color.color()));
@@ -102,17 +102,12 @@ public class WoolCarpetRecipeSerializer implements RecipeSerializer<WoolCarpetRe
         }
 
         @Override
-        public ItemStack getResultItem() {
+        public @NotNull ItemStack getResultItem(@NotNull RegistryAccess registryAccess) {
             return new ItemStack(Blocks.COLORED_WOOL_CARPET.get());
         }
 
         @Override
-        public ResourceLocation getId() {
-            return id;
-        }
-
-        @Override
-        public RecipeSerializer<?> getSerializer() {
+        public @NotNull RecipeSerializer<?> getSerializer() {
             return WoolCarpetRecipeSerializer.getInstance();
         }
 
@@ -154,6 +149,11 @@ public class WoolCarpetRecipeSerializer implements RecipeSerializer<WoolCarpetRe
                 }
             }
             return row;
+        }
+
+        @Override
+        public @NotNull CraftingBookCategory category() {
+            return CraftingBookCategory.BUILDING;
         }
 
         private record ColorResult(int color, boolean valid, boolean air) {

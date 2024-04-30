@@ -1,15 +1,11 @@
 package mod.flatcoloredblocks.core.item;
 
 import com.communi.suggestu.scena.core.fluid.IFluidManager;
-import mod.flatcoloredblocks.core.ColorNameManager;
 import mod.flatcoloredblocks.core.block.entity.PaintContainingBlockEntity;
-import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -77,7 +73,7 @@ public class PaintBucketItem extends PaintContainingItem
 
         final int extractedAmount = paintContainingBlockEntity.extractPaint(amountToExtract);
 
-        setColor(stack, containedColor.get());
+        setColor(stack, containedColor.get(), false);
         addAmount(stack, extractedAmount);
         return InteractionResult.SUCCESS;
     }

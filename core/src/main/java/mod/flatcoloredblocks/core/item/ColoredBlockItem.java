@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class ColoredBlockItem extends BlockItem implements IWithColorItem
 {
@@ -44,8 +45,13 @@ public class ColoredBlockItem extends BlockItem implements IWithColorItem
     }
 
     @Override
-    public void setColor(ItemStack target, int value) {
+    public void setColor(ItemStack target, int value, boolean setByCreativePlayer) {
         coloredBlock.setColor(target, value);
+    }
+
+    @Override
+    public void fillItemCategory(@NotNull Consumer<ItemStack> pItems) {
+        coloredBlock.fillItemCategory(pItems);
     }
 
     @Override

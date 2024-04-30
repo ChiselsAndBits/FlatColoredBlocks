@@ -3,11 +3,9 @@ package mod.flatcoloredblocks.core.client.blockentityrenderer;
 import com.communi.suggestu.scena.core.client.rendering.type.IRenderTypeManager;
 import com.communi.suggestu.scena.core.client.utils.FluidCuboidUtils;
 import com.communi.suggestu.scena.core.fluid.FluidInformation;
-import com.communi.suggestu.scena.core.fluid.IFluidManager;
+import com.communi.suggestu.scena.core.util.TransformationUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
 import mod.flatcoloredblocks.core.block.entity.PaintContainingBlockEntity;
 import mod.flatcoloredblocks.core.fluid.FluidTank;
 import net.minecraft.client.Minecraft;
@@ -17,10 +15,13 @@ import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.Direction;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -95,9 +96,9 @@ public class PaintBasinOrMixerBlockEntitySpecialRenderer<Z extends PaintContaini
         if (!stack.isEmpty()) {
             pPoseStack.pushPose();
             pPoseStack.translate(0.75, 15/16f, 0.75);
-            pPoseStack.mulPose(Quaternion.fromXYZDegrees(new Vector3f(45, 45, 0)));
+            pPoseStack.mulPose(TransformationUtils.quatFromXYZ(new Vector3f(45, 45, 0), true));
             pPoseStack.scale(0.33f, 0.33f, 0.33f);
-            Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemTransforms.TransformType.FIXED, pPackedLight, pPackedOverlay, pPoseStack, pBufferSource, 0);
+            Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.FIXED, pPackedLight, pPackedOverlay, pPoseStack, pBufferSource, pBlockEntity.getLevel(), 0);
             pPoseStack.popPose();
         }
     }

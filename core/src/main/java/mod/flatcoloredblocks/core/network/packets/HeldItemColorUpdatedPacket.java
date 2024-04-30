@@ -46,6 +46,6 @@ public final class HeldItemColorUpdatedPacket extends ModPacket
         if (!(heldItem.getItem() instanceof IWithColorItem withColorItem))
             return;
 
-        withColorItem.setColor(heldItem, color);
+        withColorItem.setColor(heldItem, color, playerEntity.isCreative());
     }
 }

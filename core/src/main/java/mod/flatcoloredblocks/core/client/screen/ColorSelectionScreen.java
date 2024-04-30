@@ -77,7 +77,7 @@ public class ColorSelectionScreen extends AbstractFlatColoredBlocksScreen {
     }
 
     private void setColor(int newColor) {
-        source.setColor(target, newColor);
+        source.setColor(target, newColor, true);
         FlatColoredBlocks.instance().getNetworkChannel().sendToServer(new HeldItemColorUpdatedPacket(newColor));
     }
 

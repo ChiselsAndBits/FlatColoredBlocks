@@ -1,6 +1,7 @@
 package mod.flatcoloredblocks.core.block;
 
 import com.communi.suggestu.scena.core.fluid.IFluidManager;
+import com.mojang.serialization.MapCodec;
 import mod.flatcoloredblocks.core.block.entity.PaintMixerBlockEntity;
 import mod.flatcoloredblocks.core.fluid.FluidTank;
 import mod.flatcoloredblocks.core.registrars.BlockEntityTypes;
@@ -44,6 +45,7 @@ import java.util.stream.Stream;
 
 public class PaintMixerBlock extends HorizontalDirectionalBlock implements EntityBlock
 {
+    private static final MapCodec<PaintMixerBlock> CODEC = simpleCodec(PaintMixerBlock::new);
     private static final VoxelShape SHAPE = Stream.of(
             Block.box(0, 4, 0, 16, 15, 2),
             Block.box(1, 15, 1, 15, 16, 2),
@@ -68,6 +70,11 @@ public class PaintMixerBlock extends HorizontalDirectionalBlock implements Entit
     {
         super(pProperties);
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
+    }
+
+    @Override
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return CODEC;
     }
 
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {

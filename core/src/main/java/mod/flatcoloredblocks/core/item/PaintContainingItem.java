@@ -1,12 +1,9 @@
 package mod.flatcoloredblocks.core.item;
 
-import com.communi.suggestu.scena.core.fluid.IFluidManager;
 import mod.flatcoloredblocks.core.ColorNameManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
-import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -15,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public abstract class PaintContainingItem extends Item implements IWithColorItem
 {
@@ -29,45 +27,42 @@ public abstract class PaintContainingItem extends Item implements IWithColorItem
         this.capacity = capacity;
     }
 
-
     @Override
-    public void fillItemCategory(final @NotNull CreativeModeTab pCategory, final @NotNull NonNullList<ItemStack> pItems)
+    public void fillItemCategory(final @NotNull Consumer<ItemStack> pItems)
     {
-        if (this.allowedIn(pCategory)) {
-            pItems.add(new ItemStack(this));
-            pItems.add(Util.make(new ItemStack(this), (pStack) -> {
-                pStack.getOrCreateTag().putInt("color", 0xFFFF0000);
-                pStack.getOrCreateTag().putInt("amount", getCapacity());
-            }));
-            pItems.add(Util.make(new ItemStack(this), (pStack) -> {
-                pStack.getOrCreateTag().putInt("color", 0xFF00FF00);
-                pStack.getOrCreateTag().putInt("amount", getCapacity());
-            }));
-            pItems.add(Util.make(new ItemStack(this), (pStack) -> {
-                pStack.getOrCreateTag().putInt("color", 0xFF0000FF);
-                pStack.getOrCreateTag().putInt("amount", getCapacity());
-            }));
-            pItems.add(Util.make(new ItemStack(this), (pStack) -> {
-                pStack.getOrCreateTag().putInt("color", 0xFFFFFF00);
-                pStack.getOrCreateTag().putInt("amount", getCapacity());
-            }));
-            pItems.add(Util.make(new ItemStack(this), (pStack) -> {
-                pStack.getOrCreateTag().putInt("color", 0xFF00FFFF);
-                pStack.getOrCreateTag().putInt("amount", getCapacity());
-            }));
-            pItems.add(Util.make(new ItemStack(this), (pStack) -> {
-                pStack.getOrCreateTag().putInt("color", 0xFFFF00FF);
-                pStack.getOrCreateTag().putInt("amount", getCapacity());
-            }));
-            pItems.add(Util.make(new ItemStack(this), (pStack) -> {
-                pStack.getOrCreateTag().putInt("color", 0xFFFFFFFF);
-                pStack.getOrCreateTag().putInt("amount", getCapacity());
-            }));
-            pItems.add(Util.make(new ItemStack(this), (pStack) -> {
-                pStack.getOrCreateTag().putInt("color", 0xFF000000);
-                pStack.getOrCreateTag().putInt("amount", getCapacity());
-            }));
-        }
+        pItems.accept(new ItemStack(this));
+        pItems.accept(Util.make(new ItemStack(this), (pStack) -> {
+            pStack.getOrCreateTag().putInt("color", 0xFFFF0000);
+            pStack.getOrCreateTag().putInt("amount", getCapacity());
+        }));
+        pItems.accept(Util.make(new ItemStack(this), (pStack) -> {
+            pStack.getOrCreateTag().putInt("color", 0xFF00FF00);
+            pStack.getOrCreateTag().putInt("amount", getCapacity());
+        }));
+        pItems.accept(Util.make(new ItemStack(this), (pStack) -> {
+            pStack.getOrCreateTag().putInt("color", 0xFF0000FF);
+            pStack.getOrCreateTag().putInt("amount", getCapacity());
+        }));
+        pItems.accept(Util.make(new ItemStack(this), (pStack) -> {
+            pStack.getOrCreateTag().putInt("color", 0xFFFFFF00);
+            pStack.getOrCreateTag().putInt("amount", getCapacity());
+        }));
+        pItems.accept(Util.make(new ItemStack(this), (pStack) -> {
+            pStack.getOrCreateTag().putInt("color", 0xFF00FFFF);
+            pStack.getOrCreateTag().putInt("amount", getCapacity());
+        }));
+        pItems.accept(Util.make(new ItemStack(this), (pStack) -> {
+            pStack.getOrCreateTag().putInt("color", 0xFFFF00FF);
+            pStack.getOrCreateTag().putInt("amount", getCapacity());
+        }));
+        pItems.accept(Util.make(new ItemStack(this), (pStack) -> {
+            pStack.getOrCreateTag().putInt("color", 0xFFFFFFFF);
+            pStack.getOrCreateTag().putInt("amount", getCapacity());
+        }));
+        pItems.accept(Util.make(new ItemStack(this), (pStack) -> {
+            pStack.getOrCreateTag().putInt("color", 0xFF000000);
+            pStack.getOrCreateTag().putInt("amount", getCapacity());
+        }));
     }
 
     public int getCapacity()
@@ -83,9 +78,12 @@ public abstract class PaintContainingItem extends Item implements IWithColorItem
         return pStack.getOrCreateTag().getInt(COLOR);
     }
 
-    public final void setColor(final ItemStack pStack, final int pColor)
+    public final void setColor(final ItemStack pStack, final int pColor, boolean setByCreativePlayer)
     {
         pStack.getOrCreateTag().putInt(COLOR, pColor);
+        if (setByCreativePlayer) {
+            setAmount(pStack, getCapacity());
+        }
     }
 
     public final int getAmount(final ItemStack pStack)
