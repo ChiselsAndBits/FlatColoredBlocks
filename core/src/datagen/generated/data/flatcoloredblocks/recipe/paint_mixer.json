@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "paint_mixer",
+  "key": {
+    "B": {
+      "item": "flatcoloredblocks:paint_basin"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "S": {
+      "tag": "minecraft:wooden_slabs"
+    }
+  },
+  "pattern": [
+    "SSS",
+    " I ",
+    " B "
+  ],
+  "result": {
+    "count": 1,
+    "id": "flatcoloredblocks:paint_mixer"
+  }
+}

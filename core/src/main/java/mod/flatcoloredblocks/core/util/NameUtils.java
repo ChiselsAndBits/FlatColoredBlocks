@@ -13,7 +13,7 @@ public final class NameUtils {
 
     @NotNull
     public static MutableComponent getName(int color, Component blockName) {
-        final Component colorName = ColorNameManager.getInstance().getNameSuffixed(color);
+        final Component colorName = ColorNameManager.getInstance().getNamePrefixed(color);
 
         return Component.translatable("item.flatcoloredblocks.colored_block.with_contents", colorName, blockName);
     }

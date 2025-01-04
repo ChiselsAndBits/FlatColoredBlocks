@@ -1573,6 +1573,7 @@
   "color.flatcoloredblocks.zorba": "Zorba",
   "color.flatcoloredblocks.zuccini": "Zuccini",
   "color.flatcoloredblocks.zumthor": "Zumthor",
+  "gui.flatcoloredblocks.color_selection.title": "Select Color for %s",
   "item.flatcoloredblocks.colored_block.with_contents": "%s %s",
   "item.flatcoloredblocks.paint_brush": "Empty Paint Roller",
   "item.flatcoloredblocks.paint_brush.with_contents": "Paint Roller with %s mB of %s Paint",
@@ -1582,5 +1583,9 @@
   "item.flatcoloredblocks.tooltip.color.green": "Green: %d",
   "item.flatcoloredblocks.tooltip.color.red": "Red: %d",
   "itemGroup.flatcoloredblocks.blocks": "Flat Colored Blocks (Examples)",
-  "itemGroup.flatcoloredblocks.tools": "Flat Colored Blocks (Tools)"
+  "itemGroup.flatcoloredblocks.tools": "Flat Colored Blocks (Tools)",
+  "key.flatcoloredblocks.select_color_menu": "Open Color Selection Menu",
+  "key_categories.flatcoloredblocks": "Flat Colored Blocks",
+  "widget.flatcoloredblocks.hue_selector": "Select Hue",
+  "widget.flatcoloredblocks.saturation_and_value_selector": "Select Saturation and Value"
 }

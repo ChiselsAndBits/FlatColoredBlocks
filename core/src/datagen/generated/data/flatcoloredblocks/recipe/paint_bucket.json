@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "paint_bucket",
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "N": {
+      "item": "minecraft:iron_nugget"
+    }
+  },
+  "pattern": [
+    " N ",
+    "I I",
+    "III"
+  ],
+  "result": {
+    "count": 1,
+    "id": "flatcoloredblocks:paint_bucket"
+  }
+}

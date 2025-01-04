@@ -1,5 +1,7 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
+import java.nio.file.Files
+
 plugins {
     id "net.neoforged.gradle.common"
 }
@@ -15,6 +17,18 @@ project.version = opc.buildVersionNumberWithOffset(
         opc.getIntProperty("sourceVersionElementIndex"),
         opc.getIntProperty("mcVersionElementIndex")
 )
+
+allprojects { Project project ->
+    project.ext.isRunningWithIdea = {
+        final File DotIdeaDirectory = new File(project.getProjectDir(), ".idea");
+        final File GradleXml = new File(DotIdeaDirectory, "gradle.xml");
+        try {
+            return new String(Files.readAllBytes(GradleXml.toPath())).contains("<option name=\"delegatedBuild\" value=\"false\" />");
+        } catch (IOException ignored) {
+            return false;
+        }
+    }
+}
 
 //Configure extension utility methods on all subprojects.
 subprojects { Project subProject ->
@@ -70,15 +84,20 @@ subprojects { Project subProject ->
                         return file
                     }}
 
-
-            def remapCommonJarTask = subProject.tasks.register("remap${coreProject.name.capitalize()}Jar", subProject.ext.remapTaskClass) {
-                input = coreProject.tasks.jar.archiveFile
-                archiveClassifier = "${coreProject.name}-fabric"
+            def addFMJFileToJarTask = subProject.tasks.create("addFmjTo${coreProject.name.capitalize()}Jar", Jar) {
+                from(subProject.zipTree(coreProject.tasks.jar.archiveFile))
                 from(fmjFile)
+                archiveClassifier = "${coreProject.name}-source-fmj-included"
+            }
+
+            def remapCommonJarTask = subProject.tasks.create("remap${coreProject.name.capitalize()}Jar", subProject.ext.remapTaskClass) {
+                input = addFMJFileToJarTask.archiveFile
+                archiveClassifier = "${coreProject.name}-fabric"
+                dependsOn addFMJFileToJarTask
             }
 
             subProject.remapJar {
-                nestedJars.from(remapCommonJarTask.get().archiveFile)
+                nestedJars.from(remapCommonJarTask.archiveFile)
             }
         }
     }
@@ -114,23 +133,32 @@ subprojects { Project subProject ->
                 "scenaVersion"              : project.scenaVersion,
                 "fabricVersion"             : project.fabricVersion,
                 "fabricLoaderVersion"       : project.fabricLoaderVersion,
+                "license"                   : project.license,
         ]
 
         return propertiesToExpand
     }
 
-    subProject.ext.setupResourceProcessing = { copyTask ->
-        copyTask.rename({ fileName ->
-            if (fileName != "mixins.json") {
-                return fileName
-            } else {
-                return "${rootProject.name.toLowerCase()}.mixins.json"
+    subProject.ext.setupResourceProcessing = { SourceSet sourceSet ->
+        subProject.tasks.named(sourceSet.processResourcesTaskName, {Task copyTask ->
+            def resourcesDir = sourceSet.resources.srcDirs[0]
+            def templateDir = resourcesDir.parentFile.toPath().resolve("templates").toFile()
+            if (templateDir.exists()) {
+                copyTask.from(templateDir)
             }
+
+            copyTask.rename({ fileName ->
+                if (fileName != "mixins.json") {
+                    return fileName
+                } else {
+                    return "${rootProject.name.toLowerCase()}.mixins.json"
+                }
+            })
+            copyTask.filesMatching(["META-INF/neoforge.mods.toml", "pack.mcmeta", "mixins.json", "chiselsandbits.mixins.json".toString(), "${rootProject.name.toLowerCase()}.mixins.json".toString(), "fabric.mod.json"]) {
+                filter(ReplaceTokens, tokens: getIdentifiers())
+            }
+            copyTask.getInputs().properties(getIdentifiers())
         })
-        copyTask.filesMatching(["META-INF/mods.toml", "pack.mcmeta", "mixins.json", "${rootProject.name.toLowerCase()}.mixins.json".toString(), "fabric.mod.json"]) {
-            filter(ReplaceTokens, tokens: getIdentifiers())
-        }
-        copyTask.getInputs().properties(getIdentifiers())
     }
 
     subProject.tasks.withType(Jar.class).configureEach { jarTask ->
@@ -274,5 +302,15 @@ task("createChangelog") {
         }
 
         out.close()
+    }
+}
+
+if (isRunningWithIdea()) {
+    idea {
+        project {
+            runs {
+                runWithIdea()
+            }
+        }
     }
 }

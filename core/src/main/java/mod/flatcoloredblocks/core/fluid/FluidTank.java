@@ -1,8 +1,10 @@
 package mod.flatcoloredblocks.core.fluid;
 
 import com.communi.suggestu.scena.core.fluid.FluidInformation;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
 import org.apache.commons.lang3.Validate;
@@ -60,11 +62,16 @@ public class FluidTank
         if (pTag.contains("fluid"))
         {
             final String fluidName = pTag.getString("fluid");
-            final Fluid fluid = BuiltInRegistries.FLUID.get(new ResourceLocation(fluidName));
+            final Fluid fluid = BuiltInRegistries.FLUID.get(ResourceLocation.parse(fluidName));
             final int amount = pTag.getInt("amount");
             final CompoundTag data = pTag.getCompound("data");
 
-            setContents(new FluidInformation(fluid, amount, data));
+            final DataComponentPatch patch =
+                DataComponentPatch.CODEC.parse(NbtOps.INSTANCE, data)
+                    .result()
+                    .orElseThrow(() -> new IllegalStateException("Failed to parse data component patch"));
+
+            setContents(new FluidInformation(fluid, amount, patch));
         }
         else
         {
@@ -78,7 +85,7 @@ public class FluidTank
         {
             pTag.putString("fluid", BuiltInRegistries.FLUID.getKey(getContents().get().fluid()).toString());
             pTag.putInt("amount", (int) getContents().get().amount());
-            pTag.put("data", getContents().get().data());
+            pTag.put("data", DataComponentPatch.CODEC.encodeStart(NbtOps.INSTANCE, getContents().get().data()).result().orElseThrow());
         }
         return pTag;
     }

@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Matrix4fStack;
 
 /**
  * All flat colored blocks widgets inherit from this class.
@@ -67,10 +68,10 @@ public abstract class AbstractFlatColoredBlocksWidget extends AbstractWidget imp
     }
 
     public void renderItemStack(GuiGraphics graphics, @NotNull ItemStack ingredient, final boolean renderDecorations) {
-        PoseStack modelViewStack = RenderSystem.getModelViewStack();
-        modelViewStack.pushPose();
+        Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
+        modelViewStack.pushMatrix();
         {
-            modelViewStack.mulPoseMatrix(graphics.pose().last().pose());
+            modelViewStack.mul(graphics.pose().last().pose());
 
             RenderSystem.enableDepthTest();
 
@@ -83,7 +84,7 @@ public abstract class AbstractFlatColoredBlocksWidget extends AbstractWidget imp
 
             RenderSystem.disableBlend();
         }
-        modelViewStack.popPose();
+        modelViewStack.popMatrix();
         // Restore model-view matrix now that the item has been rendered
         RenderSystem.applyModelViewMatrix();
     }

@@ -11,6 +11,7 @@ import net.minecraft.stats.Stats;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
@@ -73,7 +74,7 @@ public class PaintMixerBlock extends HorizontalDirectionalBlock implements Entit
     }
 
     @Override
-    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+    protected @NotNull MapCodec<? extends HorizontalDirectionalBlock> codec() {
         return CODEC;
     }
 
@@ -101,7 +102,6 @@ public class PaintMixerBlock extends HorizontalDirectionalBlock implements Entit
         return blockentity != null && blockentity.triggerEvent(pId, pParam);
     }
 
-    @SuppressWarnings("deprecation")
     @Nullable
     @Override
     public MenuProvider getMenuProvider(final @NotNull BlockState pState, final Level pLevel, final @NotNull BlockPos pPos)
@@ -110,30 +110,17 @@ public class PaintMixerBlock extends HorizontalDirectionalBlock implements Entit
         return blockentity instanceof MenuProvider ? (MenuProvider)blockentity : null;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
-    public @NotNull InteractionResult use(final @NotNull BlockState pState, final @NotNull Level pLevel, final @NotNull BlockPos pPos, final @NotNull Player pPlayer, final @NotNull InteractionHand pHand, final @NotNull BlockHitResult pHit)
-    {
-        if (!pLevel.isClientSide)
+    protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState pState, Level pLevel, @NotNull BlockPos pPos, @NotNull Player pPlayer, @NotNull BlockHitResult pHit) {
+        if (!pLevel.isClientSide())
         {
             BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
             if (blockEntity instanceof PaintMixerBlockEntity paintMixerBlockEntity)
             {
-                final ItemStack stack = pPlayer.getItemInHand(pHand);
-                if (!stack.isEmpty()) {
-                    if (paintMixerBlockEntity.canPlaceItem(0, stack)) {
-                        final ItemStack toInsert = stack.split(1);
-                        paintMixerBlockEntity.setItem(0, toInsert);
-                    } else if (IFluidManager.getInstance().get(stack).isPresent()) {
-                        IFluidManager.getInstance().get(stack).ifPresent(fluid -> {
-                            if (fluid.fluid().is(FluidTags.WATER)) {
-                                paintMixerBlockEntity.insertWater(fluid.amount());
-                            }
-                        });
-                    }
-                } else if (stack.isEmpty() && !paintMixerBlockEntity.getItem(0).isEmpty()) {
+                if (!paintMixerBlockEntity.getItem(0).isEmpty()) {
                     pPlayer.addItem(paintMixerBlockEntity.getItem(0));
                     paintMixerBlockEntity.setItem(0, ItemStack.EMPTY);
+                    return InteractionResult.SUCCESS;
                 }
             }
 
@@ -142,7 +129,35 @@ public class PaintMixerBlock extends HorizontalDirectionalBlock implements Entit
         return InteractionResult.PASS;
     }
 
-    @SuppressWarnings("deprecation")
+    @Override
+    protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack pStack, @NotNull BlockState pState, Level pLevel, @NotNull BlockPos pPos, @NotNull Player pPlayer, @NotNull InteractionHand pHand, @NotNull BlockHitResult pHit) {
+        if (!pLevel.isClientSide())
+        {
+            BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
+            if (blockEntity instanceof PaintMixerBlockEntity paintMixerBlockEntity)
+            {
+                if (paintMixerBlockEntity.canPlaceItem(0, pStack)) {
+                    final ItemStack toInsert = pStack.split(1);
+                    paintMixerBlockEntity.setItem(0, toInsert);
+                    return ItemInteractionResult.SUCCESS;
+                } else if (IFluidManager.getInstance().get(pStack).isPresent()) {
+                    return IFluidManager.getInstance().get(pStack).map(fluid -> {
+                        if (fluid.fluid().is(FluidTags.WATER)) {
+                            paintMixerBlockEntity.insertWater(fluid.amount());
+                            final ItemStack stack = IFluidManager.getInstance().extractFrom(pStack, fluid.amount());
+                            pPlayer.setItemInHand(pHand, stack);
+                            return ItemInteractionResult.SUCCESS;
+                        }
+
+                        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+                    }).orElse(ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION);
+                }
+            }
+        }
+
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    }
+
     @Override
     public @NotNull VoxelShape getShape(@NotNull BlockState pState, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull CollisionContext pContext) {
         return SHAPE;

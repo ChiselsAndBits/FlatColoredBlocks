@@ -1,39 +1,43 @@
 package mod.flatcoloredblocks.core.compat.chiselsandbits;
 
 import com.communi.suggestu.scena.core.fluid.FluidInformation;
+import com.mojang.serialization.MapCodec;
+import mod.chiselsandbits.api.blockinformation.BlockInformation;
 import mod.chiselsandbits.api.variant.state.IStateVariant;
 import mod.chiselsandbits.api.variant.state.IStateVariantProvider;
 import mod.flatcoloredblocks.core.block.ColoredBlock;
 import mod.flatcoloredblocks.core.block.entity.ColoredBlockEntity;
 import mod.flatcoloredblocks.core.item.ColoredBlockItem;
+import mod.flatcoloredblocks.core.util.Constants;
 import mod.flatcoloredblocks.core.util.NameUtils;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 public class ColoredStateVariantProvider implements IStateVariantProvider {
 
-    private final Supplier<ColoredBlock> blockGetter;
-
-    public ColoredStateVariantProvider(Supplier<ColoredBlock> blockGetter) {
-        this.blockGetter = blockGetter;
+    @Override
+    public ResourceLocation getRegistryName() {
+        return ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "color");
     }
 
     @Override
     public Optional<IStateVariant> getStateVariant(BlockState blockState, Optional<BlockEntity> optional) {
-        if (blockState.getBlock() != blockGetter.get())
-            return Optional.empty();
-
         return optional.filter(ColoredBlockEntity.class::isInstance)
                 .map(ColoredBlockEntity.class::cast)
                 .map(be -> new ColoredStateVariant(be.getColor()));
@@ -47,9 +51,6 @@ public class ColoredStateVariantProvider implements IStateVariantProvider {
     @Override
     public Optional<IStateVariant> getStateVariant(BlockState blockState, ItemStack itemStack) {
         if (itemStack.getItem() instanceof ColoredBlockItem coloredBlockItem) {
-            if (coloredBlockItem.getColoredBlock() != blockGetter.get())
-                return Optional.empty();
-
             return Optional.of(new ColoredStateVariant(coloredBlockItem.getColoredBlock().getColor(itemStack)));
         }
 
@@ -62,52 +63,28 @@ public class ColoredStateVariantProvider implements IStateVariantProvider {
     }
 
     @Override
-    public Collection<IStateVariant> getAllDefaultVariants(BlockState blockState) {
-        final Collection<IStateVariant> defaultVariants = new ArrayList<>();
-        blockGetter.get().getDefaultColors().forEach(color -> defaultVariants.add(new ColoredStateVariant(color)));
-        return defaultVariants;
-    }
-
-    @Override
-    public CompoundTag serializeNBT(IStateVariant iStateVariant) {
-        if (!(iStateVariant instanceof ColoredStateVariant coloredStateVariant))
-            return new CompoundTag();
-
-        final CompoundTag tag = new CompoundTag();
-        tag.putInt("color", coloredStateVariant.getColor());
-        return tag;
-    }
-
-    @Override
-    public IStateVariant deserializeNBT(CompoundTag compoundTag) {
-        if (!compoundTag.contains("color"))
-            return ColoredStateVariant.WHITE;
-
-        return new ColoredStateVariant(compoundTag.getInt("color"));
-    }
-
-    @Override
-    public void serializeInto(FriendlyByteBuf friendlyByteBuf, IStateVariant iStateVariant) {
-        if (!(iStateVariant instanceof ColoredStateVariant coloredStateVariant)) {
-            friendlyByteBuf.writeInt(-1);
-            return;
+    public Collection<? extends IStateVariant> getAllDefaultVariants(BlockState blockState) {
+        if (blockState.getBlock() instanceof ColoredBlock coloredBlock) {
+            final List<IStateVariant> variants = new ArrayList<>();
+            for (int color : coloredBlock.getDefaultColors()) {
+                variants.add(new ColoredStateVariant(color));
+            }
+            return variants;
         }
-
-        friendlyByteBuf.writeInt(coloredStateVariant.getColor());
+        return List.of();
     }
 
     @Override
-    public IStateVariant deserializeFrom(FriendlyByteBuf friendlyByteBuf) {
-        return new ColoredStateVariant(friendlyByteBuf.readInt());
-    }
-
-    @Override
-    public Optional<ItemStack> getItemStack(IStateVariant iStateVariant) {
-        if (!(iStateVariant instanceof ColoredStateVariant coloredStateVariant))
+    public Optional<ItemStack> getItemStack(BlockInformation blockInformation) {
+        final IStateVariant iStateVariant = blockInformation.variant().orElseThrow();
+        if (!(iStateVariant instanceof ColoredStateVariant(int color)))
             return Optional.empty();
 
-        final ItemStack stack = new ItemStack(blockGetter.get());
-        blockGetter.get().setColor(stack, coloredStateVariant.getColor());
+        if (!(blockInformation.blockState().getBlock() instanceof ColoredBlock coloredBlock))
+            return Optional.empty();
+
+        final ItemStack stack = new ItemStack(coloredBlock);
+        coloredBlock.setColor(stack, color);
         return Optional.of(stack);
     }
 
@@ -117,10 +94,56 @@ public class ColoredStateVariantProvider implements IStateVariantProvider {
     }
 
     @Override
-    public Optional<Component> getName(IStateVariant iStateVariant) {
-        if (!(iStateVariant instanceof ColoredStateVariant coloredStateVariant))
+    public Optional<Component> getName(BlockInformation blockInformation) {
+        final IStateVariant iStateVariant = blockInformation.variant().orElseThrow();
+        if (!(iStateVariant instanceof ColoredStateVariant(int color)))
             return Optional.empty();
 
-        return Optional.of(NameUtils.getName(coloredStateVariant.getColor(), this.blockGetter.get().getName()));
+        if (!(blockInformation.blockState().getBlock() instanceof ColoredBlock coloredBlock))
+            return Optional.empty();
+
+        return Optional.of(NameUtils.getName(color, coloredBlock.getName()));
+    }
+
+    @Override
+    public MapCodec<? extends IStateVariant> mapCodec() {
+        return ColoredStateVariant.MAP_CODEC;
+    }
+
+    @Override
+    public StreamCodec<? super RegistryFriendlyByteBuf, ? extends IStateVariant> streamCodec() {
+        return ColoredStateVariant.STREAM_CODEC;
+    }
+
+    @Override
+    public void setFullBlock(LevelAccessor levelAccessor, BlockPos blockPos, BlockInformation blockInformation) {
+        final IStateVariant iStateVariant = blockInformation.variant().orElseThrow();
+        if (!(iStateVariant instanceof ColoredStateVariant(int color)))
+            return;
+
+        if (!(blockInformation.blockState().getBlock() instanceof ColoredBlock coloredBlock))
+            return;
+
+        levelAccessor.setBlock(
+                blockPos,
+                coloredBlock.defaultBlockState(),
+                Block.UPDATE_ALL
+        );
+        final BlockEntity blockEntity = levelAccessor.getBlockEntity(blockPos);
+        if (blockEntity instanceof ColoredBlockEntity coloredBlockEntity) {
+            coloredBlockEntity.setColor(color);
+        }
+    }
+
+    @Override
+    public @NotNull Optional<Integer> getBeaconColorMultiplier(BlockInformation blockInformation, LevelReader levelReader, BlockPos blockPos, BlockPos blockPos1) {
+        if (!(blockInformation.blockState().getBlock() instanceof ColoredBlock))
+            return Optional.empty();
+
+        final IStateVariant iStateVariant = blockInformation.variant().orElseThrow();
+        if (!(iStateVariant instanceof ColoredStateVariant(int color)))
+            return Optional.empty();
+
+        return Optional.of(color);
     }
 }

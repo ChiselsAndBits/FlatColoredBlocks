@@ -3,6 +3,7 @@ package mod.flatcoloredblocks.core.block;
 import com.google.common.collect.ImmutableList;
 import mod.flatcoloredblocks.core.block.entity.ColoredBlockEntity;
 import mod.flatcoloredblocks.core.registrars.BlockEntityTypes;
+import mod.flatcoloredblocks.core.registrars.DataComponentTypes;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -73,18 +74,12 @@ public abstract class ColoredBlock extends BaseEntityBlock
     }
 
     public void setColor(final ItemStack stack, final int color) {
-        stack.getOrCreateTag().putInt("color", color);
+        stack.set(DataComponentTypes.COLOR.get(), color);
     }
 
     public int getColor(final ItemStack stack)
     {
-        if (!stack.hasTag() || stack.getTag() == null)
-            return 0XFFFFFFFF;
-
-        if (!stack.getTag().contains("color"))
-            return 0XFFFFFFFF;
-
-        return stack.getTag().getInt("color");
+        return stack.getOrDefault(DataComponentTypes.COLOR.get(), 0xFFFFFFFF);
     }
 
     public Collection<Integer> getDefaultColors() {

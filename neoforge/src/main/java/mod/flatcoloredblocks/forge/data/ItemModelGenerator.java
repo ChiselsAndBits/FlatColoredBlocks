@@ -8,6 +8,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.CustomLoaderBuilder;
@@ -15,7 +16,7 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import org.jetbrains.annotations.NotNull;
 
-@Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Constants.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class ItemModelGenerator extends BlockStateProvider
 {
 
@@ -68,7 +69,7 @@ public class ItemModelGenerator extends BlockStateProvider
 
         itemModels().getBuilder("paint_bucket")
                     .texture("layer0", "item/paint_bucket")
-                    .parent(itemModels().getExistingFile(new ResourceLocation("item/generated")))
+                    .parent(itemModels().getExistingFile(ResourceLocation.withDefaultNamespace("item/generated")))
                     .guiLight(BlockModel.GuiLight.FRONT)
                     .transforms()
                     .transform(ItemDisplayContext.GROUND)
@@ -97,7 +98,7 @@ public class ItemModelGenerator extends BlockStateProvider
                     .end()
                     .end()
                     .override()
-                    .predicate(new ResourceLocation(Constants.MOD_ID, "has_paint"), 1)
+                    .predicate(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "has_paint"), 1)
                     .model(bucketWithPaint);
 
         var brushWithPaint = itemModels().getBuilder("paint_brush_with_paint")
@@ -135,7 +136,7 @@ public class ItemModelGenerator extends BlockStateProvider
 
         itemModels().getBuilder("paint_brush")
                     .texture("layer0", "item/paint_brush")
-                    .parent(itemModels().getExistingFile(new ResourceLocation("item/generated")))
+                    .parent(itemModels().getExistingFile(ResourceLocation.withDefaultNamespace("item/generated")))
                     .guiLight(BlockModel.GuiLight.FRONT)
                     .transforms()
                     .transform(ItemDisplayContext.GROUND)
@@ -164,7 +165,7 @@ public class ItemModelGenerator extends BlockStateProvider
                     .end()
                     .end()
                     .override()
-                    .predicate(new ResourceLocation(Constants.MOD_ID, "has_paint"), 1)
+                    .predicate(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "has_paint"), 1)
                     .model(brushWithPaint);
     }
 

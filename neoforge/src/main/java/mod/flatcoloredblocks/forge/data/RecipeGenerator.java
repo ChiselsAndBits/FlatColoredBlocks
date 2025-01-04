@@ -5,6 +5,7 @@ import mod.flatcoloredblocks.core.registrars.Items;
 import mod.flatcoloredblocks.core.util.Constants;
 import mod.flatcoloredblocks.forge.data.builders.PaintBucketRecipeBuilder;
 import mod.flatcoloredblocks.forge.data.builders.WoolCarpetRecipeBuilder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
@@ -16,6 +17,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
@@ -29,18 +31,17 @@ import static net.minecraft.world.item.Items.IRON_NUGGET;
 import static net.minecraft.world.item.Items.SMOOTH_STONE;
 import static net.minecraft.world.item.Items.WATER_BUCKET;
 
-@Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Constants.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class RecipeGenerator extends RecipeProvider
 {
-    private RecipeGenerator(final PackOutput pGenerator)
-    {
-        super(pGenerator);
+    public RecipeGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+        super(output, registries);
     }
 
     @SubscribeEvent
     public static void dataGeneratorSetup(final GatherDataEvent event)
     {
-        event.getGenerator().addProvider(true, new RecipeGenerator(event.getGenerator().getPackOutput()));
+        event.getGenerator().addProvider(true, new RecipeGenerator(event.getGenerator().getPackOutput(), event.getLookupProvider()));
     }
 
     @Override

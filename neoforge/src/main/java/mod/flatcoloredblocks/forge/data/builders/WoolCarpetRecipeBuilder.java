@@ -31,7 +31,7 @@ public class WoolCarpetRecipeBuilder
     }
 
     public void save(RecipeOutput consumer) {
-        final ResourceLocation recipeId = new ResourceLocation(Constants.MOD_ID, "recipes/colored_wool_carpet");
+        final ResourceLocation recipeId = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "recipes/colored_wool_carpet");
 
         Advancement.Builder adv = consumer.advancement()
                 .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(recipeId))

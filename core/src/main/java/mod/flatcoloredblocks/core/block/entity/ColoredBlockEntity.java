@@ -8,13 +8,18 @@ import com.communi.suggestu.scena.core.entity.block.IBlockEntityWithModelData;
 import mod.flatcoloredblocks.core.registrars.BlockEntityTypes;
 import mod.flatcoloredblocks.core.util.ModelDataUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -29,9 +34,8 @@ public final class ColoredBlockEntity extends BlockEntity implements IBlockEntit
     }
 
     @Override
-    public void load(final @NotNull CompoundTag pTag)
-    {
-        super.load(pTag);
+    protected void loadAdditional(@NotNull CompoundTag pTag, HolderLookup.@NotNull Provider pProvider) {
+        super.loadAdditional(pTag, pProvider);
 
         color = 0xFFFFFFFF;
 
@@ -43,9 +47,8 @@ public final class ColoredBlockEntity extends BlockEntity implements IBlockEntit
     }
 
     @Override
-    protected void saveAdditional(final @NotNull CompoundTag pTag)
-    {
-        super.saveAdditional(pTag);
+    protected void saveAdditional(@NotNull CompoundTag pTag, HolderLookup.@NotNull Provider pProvider) {
+        super.saveAdditional(pTag, pProvider);
         pTag.putInt("color", color);
     }
 
@@ -61,9 +64,13 @@ public final class ColoredBlockEntity extends BlockEntity implements IBlockEntit
     }
 
     @Override
-    public @NotNull CompoundTag getUpdateTag()
-    {
-        return super.saveWithFullMetadata();
+    public @NotNull Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.Provider pProvider) {
+        return super.saveWithFullMetadata(pProvider);
     }
 
     public void updateModelData()

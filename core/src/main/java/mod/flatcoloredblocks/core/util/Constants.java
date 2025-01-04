@@ -12,6 +12,6 @@ public class Constants
 
     public static final String MOD_ID = "flatcoloredblocks";
 
-    public static final ResourceLocation COLORED_MODEL_LOADER_ID = new ResourceLocation(Constants.MOD_ID, "colored");
-    public static final ResourceLocation PAINT_SPLATTED_ITEM_LOADER_ID = new ResourceLocation(Constants.MOD_ID, "paint_splatted");
+    public static final ResourceLocation COLORED_MODEL_LOADER_ID = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "colored");
+    public static final ResourceLocation PAINT_SPLATTED_ITEM_LOADER_ID = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "paint_splatted");
 }

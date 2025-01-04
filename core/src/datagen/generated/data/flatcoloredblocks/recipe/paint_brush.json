@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "paint_brush",
+  "key": {
+    "P": {
+      "tag": "minecraft:planks"
+    },
+    "S": {
+      "tag": "c:rods/wooden"
+    },
+    "W": {
+      "tag": "minecraft:wool"
+    }
+  },
+  "pattern": [
+    " PW",
+    " SP",
+    "S  "
+  ],
+  "result": {
+    "count": 1,
+    "id": "flatcoloredblocks:paint_brush"
+  }
+}

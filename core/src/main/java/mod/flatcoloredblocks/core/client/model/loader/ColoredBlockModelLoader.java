@@ -66,7 +66,7 @@ public final class ColoredBlockModelLoader implements IModelSpecificationLoader<
         if (!jsonObject.has("parent"))
             throw new IllegalStateException("Missing parent");
 
-        final ResourceLocation parent = new ResourceLocation(jsonObject.get("parent").getAsString());
+        final ResourceLocation parent = ResourceLocation.parse(jsonObject.get("parent").getAsString());
 
         return new ModelSpecification(parent);
     }
@@ -77,22 +77,14 @@ public final class ColoredBlockModelLoader implements IModelSpecificationLoader<
 
         public ModelSpecification(final ResourceLocation parentModel) {this.parentModel = parentModel;}
 
+
         @Override
-        public BakedModel bake(IModelBakingContext iModelBakingContext, ModelBaker modelBaker, Function<Material, TextureAtlasSprite> function, ModelState modelState, ResourceLocation resourceLocation) {
+        public BakedModel bake(IModelBakingContext iModelBakingContext, ModelBaker modelBaker, Function<Material, TextureAtlasSprite> function, ModelState modelState) {
             final UnbakedModel unbakedModel = modelBaker.getModel(parentModel);
-            final BakedModel parentBakedModel = IModelManager.getInstance().adaptToPlatform(unbakedModel.bake(modelBaker, function, modelState, resourceLocation));
+            final BakedModel parentBakedModel = IModelManager.getInstance().adaptToPlatform(unbakedModel.bake(modelBaker, function, modelState));
 
             return new Baked(parentBakedModel);
         }
-
-        /*
-        @Override
-        public Collection<Material> getTextures(final IModelBakingContext iModelBakingContext, final Function<ResourceLocation, UnbakedModel> function, final Set<Pair<String, String>> set)
-        {
-            final UnbakedModel parentModel = function.apply(this.parentModel);
-
-            return parentModel.getMaterials(function, set);
-        }*/
     }
 
     public static class Baked extends BaseDelegatingSmartModel

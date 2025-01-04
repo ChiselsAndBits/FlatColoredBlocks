@@ -1,16 +1,7 @@
 package mod.flatcoloredblocks.core;
 
 import mod.flatcoloredblocks.core.network.NetworkChannel;
-import mod.flatcoloredblocks.core.registrars.BlockEntityTypes;
-import mod.flatcoloredblocks.core.registrars.Blocks;
-import mod.flatcoloredblocks.core.registrars.ColorizationOverrides;
-import mod.flatcoloredblocks.core.registrars.CreativeModeTabs;
-import mod.flatcoloredblocks.core.registrars.DispenserBehaviors;
-import mod.flatcoloredblocks.core.registrars.Fluids;
-import mod.flatcoloredblocks.core.registrars.Items;
-import mod.flatcoloredblocks.core.registrars.ModelDataKeys;
-import mod.flatcoloredblocks.core.registrars.RecipeSerializers;
-import mod.flatcoloredblocks.core.registrars.SolidPaints;
+import mod.flatcoloredblocks.core.registrars.*;
 import mod.flatcoloredblocks.core.util.Constants;
 
 public class FlatColoredBlocks
@@ -31,6 +22,7 @@ public class FlatColoredBlocks
         ColorizationOverrides.onModConstruction();
         SolidPaints.onModConstruction();
         RecipeSerializers.onModConstruction();
+        DataComponentTypes.onModConstruction();
 
         networkChannel.registerCommonMessages();
     }

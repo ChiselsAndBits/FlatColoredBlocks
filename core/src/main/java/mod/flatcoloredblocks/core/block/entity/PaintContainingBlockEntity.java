@@ -2,9 +2,12 @@ package mod.flatcoloredblocks.core.block.entity;
 
 import com.communi.suggestu.scena.core.fluid.FluidInformation;
 import mod.flatcoloredblocks.core.fluid.FluidTank;
+import mod.flatcoloredblocks.core.registrars.DataComponentTypes;
 import mod.flatcoloredblocks.core.registrars.Fluids;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -20,18 +23,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 
-public abstract class PaintContainingBlockEntity extends BlockEntity implements SingleSlotContainer
-{
+public abstract class PaintContainingBlockEntity extends BlockEntity implements SingleSlotContainer {
     private final FluidTank primaryTank;
 
-    public PaintContainingBlockEntity(final BlockEntityType<?> pType, final BlockPos pPos, final BlockState pBlockState, final FluidTank primaryTank)
-    {
+    public PaintContainingBlockEntity(final BlockEntityType<?> pType, final BlockPos pPos, final BlockState pBlockState, final FluidTank primaryTank) {
         super(pType, pPos, pBlockState);
         this.primaryTank = primaryTank;
     }
 
-    public FluidTank getPrimaryTank()
-    {
+    public FluidTank getPrimaryTank() {
         return primaryTank;
     }
 
@@ -43,13 +43,11 @@ public abstract class PaintContainingBlockEntity extends BlockEntity implements 
         return getPrimaryTank();
     }
 
-    public int insertPaint(final int color, final int amount)
-    {
+    public int insertPaint(final int color, final int amount) {
         final Optional<Integer> currentColor = getColor(getInputTank(color));
         final Optional<FluidInformation> contents = getInputTank(color).getContents();
 
-        if (contents.isPresent() && currentColor.isPresent())
-        {
+        if (contents.isPresent() && currentColor.isPresent()) {
             if (currentColor.get() != color) {
                 return 0;
             }
@@ -59,27 +57,19 @@ public abstract class PaintContainingBlockEntity extends BlockEntity implements 
 
             setChanged();
             return amountToInsert;
-        }
-        else if (contents.isEmpty())
-        {
-            getInputTank(color).setContents(new FluidInformation(Fluids.PAINT.fluid().get(), amount, Util.make(new CompoundTag(), tag -> {
-                tag.putInt("r", color >> 16 & 0xFF);
-                tag.putInt("g", color >> 8 & 0xFF);
-                tag.putInt("b", color & 0xFF);
-            })));
+        } else if (contents.isEmpty()) {
+            getInputTank(color).setContents(new FluidInformation(Fluids.PAINT.fluid().get(), amount, DataComponentPatch.builder()
+                    .set(DataComponentTypes.COLOR.get(), color).build()));
 
             setChanged();
             return amount;
-        }
-        else
-        {
+        } else {
             return 0;
         }
 
     }
 
-    public int extractPaint(final long bucketAmount)
-    {
+    public int extractPaint(final long bucketAmount) {
         if (getOutputTank().getContents().isEmpty())
             return 0;
 
@@ -95,52 +85,49 @@ public abstract class PaintContainingBlockEntity extends BlockEntity implements 
         return getColor(getPrimaryTank());
     }
 
+    @SuppressWarnings({"DataFlowIssue", "OptionalAssignedToNull"})
     public Optional<Integer> getColor(final FluidTank tank) {
         return tank.getContents()
-                       .map(FluidInformation::data)
-                       .map(data -> data.getInt("r") << 16 | data.getInt("g") << 8 | data.getInt("b"));
+                .map(FluidInformation::data)
+                .filter(data -> data.get(DataComponentTypes.COLOR.get()) != null)
+                .flatMap(data -> data.get(DataComponentTypes.COLOR.get()));
     }
 
     public Collection<FluidTank> getTanks() {
         return Collections.singleton(getPrimaryTank());
     }
 
+
     @Override
-    public void load(final @NotNull CompoundTag pTag)
-    {
-        super.load(pTag);
+    protected void loadAdditional(@NotNull CompoundTag pTag, HolderLookup.@NotNull Provider pProvider) {
+        super.loadAdditional(pTag, pProvider);
         getPrimaryTank().readFromNBT(pTag.getCompound("primaryTank"));
     }
 
     @Override
-    protected void saveAdditional(final @NotNull CompoundTag pTag)
-    {
-        super.saveAdditional(pTag);
+    protected void saveAdditional(@NotNull CompoundTag pTag, HolderLookup.@NotNull Provider pProvider) {
+        super.saveAdditional(pTag, pProvider);
         pTag.put("primaryTank", getPrimaryTank().writeToNBT(new CompoundTag()));
     }
 
     @Override
-    public @NotNull CompoundTag getUpdateTag()
-    {
-        final CompoundTag pTag = super.getUpdateTag();
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider pProvider) {
+        final CompoundTag pTag = super.getUpdateTag(pProvider);
         pTag.put("primaryTank", getPrimaryTank().writeToNBT(new CompoundTag()));
         return pTag;
     }
 
     @Override
-    public void setChanged()
-    {
+    public void setChanged() {
         super.setChanged();
-        if (getLevel() != null)
-        {
+        if (getLevel() != null) {
             getLevel().sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
         }
     }
 
     @Nullable
     @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket()
-    {
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
 }

@@ -17,7 +17,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class ColorChannelValueSelectorWidget extends AbstractFlatColoredBlocksWidget {
 
-    private static final WidgetSprites SPRITES = new WidgetSprites(new ResourceLocation("widget/button"), new ResourceLocation("widget/button_disabled"), new ResourceLocation("widget/button_highlighted"));
+    private static final WidgetSprites SPRITES = new WidgetSprites(
+            ResourceLocation.withDefaultNamespace("widget/button"),
+            ResourceLocation.withDefaultNamespace("widget/button_disabled"),
+            ResourceLocation.withDefaultNamespace("widget/button_highlighted"));
 
     private static final int STEPS = 360;
     private static final float STEP = 1f / STEPS;

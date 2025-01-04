@@ -1,14 +1,20 @@
 package mod.flatcoloredblocks.core.recipe;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import io.netty.buffer.ByteBuf;
 import mod.flatcoloredblocks.core.item.ColoredBlockItem;
 import mod.flatcoloredblocks.core.registrars.Blocks;
 import net.minecraft.Util;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
@@ -19,7 +25,9 @@ public class WoolCarpetRecipeSerializer implements RecipeSerializer<WoolCarpetRe
 
     private static final WoolCarpetRecipeSerializer INSTANCE = new WoolCarpetRecipeSerializer();
 
-    private static final Codec<WoolCarpetRecipe> CODEC = Codec.unit(new WoolCarpetRecipe());
+    private static final MapCodec<WoolCarpetRecipe> CODEC = MapCodec.unit(new WoolCarpetRecipe());
+
+    private static final StreamCodec<RegistryFriendlyByteBuf, WoolCarpetRecipe> STREAM_CODEC = StreamCodec.unit(new WoolCarpetRecipe());
 
     public static WoolCarpetRecipeSerializer getInstance()
     {
@@ -31,17 +39,13 @@ public class WoolCarpetRecipeSerializer implements RecipeSerializer<WoolCarpetRe
     }
 
     @Override
-    public Codec<WoolCarpetRecipe> codec() {
+    public MapCodec<WoolCarpetRecipe> codec() {
         return CODEC;
     }
 
     @Override
-    public @NotNull WoolCarpetRecipe fromNetwork(@NotNull FriendlyByteBuf pBuffer) {
-        return new WoolCarpetRecipe();
-    }
-
-    @Override
-    public void toNetwork(@NotNull FriendlyByteBuf pBuffer, @NotNull WoolCarpetRecipe pRecipe) {
+    public StreamCodec<RegistryFriendlyByteBuf, WoolCarpetRecipe> streamCodec() {
+        return STREAM_CODEC;
     }
 
     public static class WoolCarpetRecipe implements CraftingRecipe {
@@ -49,16 +53,18 @@ public class WoolCarpetRecipeSerializer implements RecipeSerializer<WoolCarpetRe
         public WoolCarpetRecipe() {
         }
 
+
+
         @Override
-        public boolean matches(@NotNull CraftingContainer pContainer, @Nullable Level pLevel) {
+        public boolean matches(@NotNull CraftingInput pContainer, @Nullable Level pLevel) {
 
             Integer row = findWoolRow(pContainer);
             if (row == null) return false;
 
-            for (int r = 0; r < pContainer.getHeight(); r++) {
+            for (int r = 0; r < pContainer.height(); r++) {
                 if (r == row) {
                     final ColorResult color = getColor(pContainer, r, 0);
-                    for (int c = 1; c < pContainer.getWidth(); c++) {
+                    for (int c = 1; c < pContainer.width(); c++) {
                         final ColorResult otherColor = getColor(pContainer, r, c);
                         if (!otherColor.valid()) {
                             return false;
@@ -70,8 +76,8 @@ public class WoolCarpetRecipeSerializer implements RecipeSerializer<WoolCarpetRe
                     }
                 }
 
-                for (int c = 0; c < pContainer.getWidth(); c++) {
-                    final ItemStack stack = pContainer.getItem(r * pContainer.getWidth() + c);
+                for (int c = 0; c < pContainer.width(); c++) {
+                    final ItemStack stack = pContainer.getItem(r * pContainer.width() + c);
                     if (!stack.isEmpty()) {
                         return false;
                     }
@@ -82,7 +88,7 @@ public class WoolCarpetRecipeSerializer implements RecipeSerializer<WoolCarpetRe
         }
 
         @Override
-        public @NotNull ItemStack assemble(@NotNull CraftingContainer craftingContainer, @NotNull RegistryAccess registryAccess) {
+        public @NotNull ItemStack assemble(@NotNull CraftingInput craftingContainer, @NotNull HolderLookup.Provider registryAccess) {
             if (!matches(craftingContainer, null)) {
                 return ItemStack.EMPTY;
             }
@@ -102,7 +108,7 @@ public class WoolCarpetRecipeSerializer implements RecipeSerializer<WoolCarpetRe
         }
 
         @Override
-        public @NotNull ItemStack getResultItem(@NotNull RegistryAccess registryAccess) {
+        public @NotNull ItemStack getResultItem(@NotNull HolderLookup.Provider registryAccess) {
             return new ItemStack(Blocks.COLORED_WOOL_CARPET.get());
         }
 
@@ -111,8 +117,8 @@ public class WoolCarpetRecipeSerializer implements RecipeSerializer<WoolCarpetRe
             return WoolCarpetRecipeSerializer.getInstance();
         }
 
-        private ColorResult getColor(final CraftingContainer container, final int row, final int column) {
-            final ItemStack stack = container.getItem(row * container.getWidth() + column);
+        private ColorResult getColor(final CraftingInput container, final int row, final int column) {
+            final ItemStack stack = container.getItem(row * container.width() + column);
             if (stack.isEmpty()) {
                 return ColorResult.empty();
             }
@@ -129,10 +135,10 @@ public class WoolCarpetRecipeSerializer implements RecipeSerializer<WoolCarpetRe
         }
 
         @Nullable
-        private Integer findWoolRow(CraftingContainer pContainer) {
+        private Integer findWoolRow(CraftingInput pContainer) {
             int row = -1;
 
-            for (int i = 0; i < pContainer.getHeight(); i++) {
+            for (int i = 0; i < pContainer.height(); i++) {
                 final ColorResult color = getColor(pContainer, i, 0);
                 if (!color.valid()) {
                     return null;
@@ -169,6 +175,20 @@ public class WoolCarpetRecipeSerializer implements RecipeSerializer<WoolCarpetRe
             public static ColorResult valid(int color) {
                 return new ColorResult(color, true, false);
             }
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            } else {
+                return o instanceof WoolCarpetRecipeSerializer.WoolCarpetRecipe;
+            }
+        }
+
+        @Override
+        public int hashCode() {
+            return 1;
         }
     }
 }

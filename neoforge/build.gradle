@@ -54,7 +54,7 @@ project.dependencies.runtimeOnly "mod.chiselsandbits:chisels-and-bits-neoforge:$
 project.tasks.processResources.from (project(":common").file("accesstransformer.cfg")) {
     into 'META-INF'
 }
-setupResourceProcessing(project.tasks.processResources)
+setupResourceProcessing(project.sourceSets.main)
 
 
 project.runs {
@@ -117,4 +117,8 @@ if ((opc.hasPropertySet("curseApiKey") || opc.hasPropertySet("CURSEAPIKEY"))) {
     }
 }
 
-
+idea {
+    module {
+        excludeDirs += file("src/main/templates")
+    }
+}

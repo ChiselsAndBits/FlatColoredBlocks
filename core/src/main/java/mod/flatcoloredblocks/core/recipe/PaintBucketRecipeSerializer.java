@@ -3,21 +3,27 @@ package mod.flatcoloredblocks.core.recipe;
 import com.communi.suggestu.scena.core.fluid.IFluidManager;
 import com.google.gson.JsonParseException;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import mod.flatcoloredblocks.core.registrars.Items;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
+import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
+import java.util.function.Function;
 
 import static net.minecraft.world.item.Items.WATER_BUCKET;
 
@@ -25,11 +31,19 @@ public class PaintBucketRecipeSerializer implements RecipeSerializer<PaintBucket
 {
     private static final PaintBucketRecipeSerializer INSTANCE = new PaintBucketRecipeSerializer();
 
-    private static final Codec<PaintBucketRecipe> CODEC = RecordCodecBuilder.create(
+    private static final MapCodec<PaintBucketRecipe> CODEC = RecordCodecBuilder.mapCodec(
             instance -> instance.group(
                     DyeColor.CODEC.fieldOf("color").forGetter(PaintBucketRecipe::getDyeColor),
                     Codec.STRING.fieldOf("group").forGetter(PaintBucketRecipe::getGroup)
             ).apply(instance, PaintBucketRecipe::new)
+    );
+
+    private static final StreamCodec<RegistryFriendlyByteBuf, PaintBucketRecipe> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.VAR_INT,
+            recipe -> recipe.dyeColor.getId(),
+            ByteBufCodecs.STRING_UTF8,
+            recipe -> recipe.group,
+            (color, group) -> new PaintBucketRecipe(DyeColor.byId(color), group)
     );
 
     public static PaintBucketRecipeSerializer getInstance()
@@ -42,29 +56,13 @@ public class PaintBucketRecipeSerializer implements RecipeSerializer<PaintBucket
     }
 
     @Override
-    public Codec<PaintBucketRecipe> codec() {
+    public @NotNull MapCodec<PaintBucketRecipe> codec() {
         return CODEC;
     }
 
     @Override
-    public @NotNull PaintBucketRecipe fromNetwork(final @NotNull FriendlyByteBuf pBuffer)
-    {
-        final String colorName = pBuffer.readUtf(100);
-        final String group = pBuffer.readUtf();
-        final DyeColor color = DyeColor.byName(colorName, null);
-        if (color == null)
-        {
-            throw new JsonParseException("Invalid color: " + colorName);
-        }
-
-        return new PaintBucketRecipe(color, group);
-    }
-
-    @Override
-    public void toNetwork(final @NotNull FriendlyByteBuf pBuffer, final @NotNull PaintBucketRecipe pRecipe)
-    {
-        pBuffer.writeUtf(pRecipe.dyeColor.getName(), 100);
-        pBuffer.writeUtf(pRecipe.group);
+    public @NotNull StreamCodec<RegistryFriendlyByteBuf, PaintBucketRecipe> streamCodec() {
+        return STREAM_CODEC;
     }
 
     public static final class PaintBucketRecipe implements CraftingRecipe
@@ -78,13 +76,13 @@ public class PaintBucketRecipeSerializer implements RecipeSerializer<PaintBucket
         }
 
         @Override
-        public boolean matches(final @NotNull CraftingContainer pContainer, final @NotNull Level pLevel)
+        public boolean matches(final @NotNull CraftingInput pContainer, final @NotNull Level pLevel)
         {
             boolean hasEmptyPaintBucket = false;
             boolean hasDye = false;
             boolean hasWaterBucket = false;
 
-            for (int i = 0; i < pContainer.getContainerSize(); i++)
+            for (int i = 0; i < pContainer.size(); i++)
             {
                 final ItemStack stack = pContainer.getItem(i);
                 if (stack.isEmpty())
@@ -122,8 +120,7 @@ public class PaintBucketRecipeSerializer implements RecipeSerializer<PaintBucket
         }
 
         @Override
-        public @NotNull ItemStack assemble(final @NotNull CraftingContainer pContainer, @NotNull RegistryAccess registryAccess)
-        {
+        public @NotNull ItemStack assemble(@NotNull CraftingInput craftingInput, HolderLookup.@NotNull Provider provider) {
             final ItemStack stack = new ItemStack(Items.PAINT_BUCKET.get());
             Items.PAINT_BUCKET.get().setAmount(stack, (int) IFluidManager.getInstance().getBucketAmount());
             Items.PAINT_BUCKET.get().setColor(stack, getColor(), false);
@@ -161,7 +158,7 @@ public class PaintBucketRecipeSerializer implements RecipeSerializer<PaintBucket
         }
 
         @Override
-        public @NotNull ItemStack getResultItem(@NotNull RegistryAccess registryAccess)
+        public @NotNull ItemStack getResultItem(HolderLookup.@NotNull Provider provider)
         {
             return new ItemStack(Items.PAINT_BUCKET.get());
         }
@@ -181,6 +178,17 @@ public class PaintBucketRecipeSerializer implements RecipeSerializer<PaintBucket
         @Override
         public @NotNull CraftingBookCategory category() {
             return CraftingBookCategory.BUILDING;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof PaintBucketRecipe that)) return false;
+            return getDyeColor() == that.getDyeColor() && Objects.equals(getGroup(), that.getGroup());
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(getDyeColor(), getGroup());
         }
     }
 }

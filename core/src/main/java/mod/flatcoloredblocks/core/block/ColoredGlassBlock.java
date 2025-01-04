@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class ColoredGlassBlock extends ColoredBlock
 {
-
     private static final MapCodec<ColoredGlassBlock> CODEC = simpleCodec(ColoredGlassBlock::new);
 
     public ColoredGlassBlock(final Properties pProperties)
@@ -22,21 +21,18 @@ public class ColoredGlassBlock extends ColoredBlock
     }
 
     @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
+    protected @NotNull MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
     }
 
-    @SuppressWarnings("deprecation")
     public boolean skipRendering(@NotNull BlockState blockState, BlockState otherState, @NotNull Direction direction) {
         return otherState.is(this) || super.skipRendering(blockState, otherState, direction);
     }
 
-    @SuppressWarnings("deprecation")
     public @NotNull VoxelShape getVisualShape(@NotNull BlockState blockState, @NotNull BlockGetter blockGetter, @NotNull BlockPos blockPos, @NotNull CollisionContext context) {
         return Shapes.empty();
     }
 
-    @SuppressWarnings("deprecation")
     public float getShadeBrightness(@NotNull BlockState blockState, @NotNull BlockGetter blockGetter, @NotNull BlockPos blockPos) {
         return 1.0F;
     }

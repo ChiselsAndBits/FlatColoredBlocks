@@ -22,7 +22,7 @@ project.dependencies.mappings loom.layered() { layer ->
 
 project.loom.accessWidenerPath = project(':common').file("accesswidener.accesswidener")
 project.tasks.processResources.from project(':common').file("accesswidener.accesswidener")
-setupResourceProcessing(project.tasks.processResources)
+setupResourceProcessing(project.sourceSets.main)
 
 project.remapJar.addNestedDependencies = true
 
@@ -66,5 +66,42 @@ if ((opc.hasPropertySet("curseApiKey") || opc.hasPropertySet("CURSEAPIKEY"))) {
         mainArtifact.changelogType = 'markdown'
 
         dependsOn rootProject.tasks.createChangelog
+    }
+}
+
+def ideaSyncRunModifier = project.tasks.register("ideaSyncRunModifier") {
+    doLast {
+        def runConfigurationsDir = project.rootProject.file(".idea/runConfigurations")
+        runConfigurationsDir.listFiles().each { file ->
+            if (!file.name.endsWith(".xml")) {
+                return
+            }
+
+            def content = file.text
+            def targetContent = "<option name=\"Gradle.BeforeRunTask\" enabled=\"true\" tasks=\"processResources\" externalProjectPath=\"\$PROJECT_DIR\$/fabric\" vmOptions=\"\" scriptParameters=\"-PrunsWithIdea=true\" />"
+            def alternativeTarget = "<option enabled=\"true\" externalProjectPath=\"\$PROJECT_DIR\$/fabric\" name=\"Gradle.BeforeRunTask\" scriptParameters=\"-PrunsWithIdea=true\" tasks=\"processResources\" vmOptions=\"\"/>"
+            def beforeMarker = "</method>"
+            if (content.contains(targetContent) || content.contains(alternativeTarget)) {
+                return
+            }
+
+            def contentParts = content.split(beforeMarker)
+            if (contentParts.size() != 2) {
+                return
+            }
+
+            def newContent = contentParts[0] + targetContent + beforeMarker + contentParts[1]
+            file.write(newContent)
+        }
+    }
+}
+
+tasks.named("ideaSyncTask") {
+    finalizedBy(ideaSyncRunModifier)
+}
+
+idea {
+    module {
+        excludeDirs += file("src/main/templates")
     }
 }

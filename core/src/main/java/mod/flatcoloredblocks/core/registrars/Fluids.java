@@ -14,7 +14,7 @@ public final class Fluids
     private static final Logger LOGGER    = LogManager.getLogger();
 
     public static final FluidRegistration PAINT = IFluidManager.getInstance().registerFluidAndVariant(
-            new ResourceLocation(Constants.MOD_ID, "paint"),
+            ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "paint"),
             PaintFluid::new,
             PaintFluid.VariantHandler::new
         );

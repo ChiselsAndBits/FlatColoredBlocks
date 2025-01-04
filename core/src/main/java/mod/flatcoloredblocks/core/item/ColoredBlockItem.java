@@ -32,12 +32,11 @@ public class ColoredBlockItem extends BlockItem implements IWithColorItem
     }
 
     @Override
-    public void appendHoverText(final @NotNull ItemStack pStack, @Nullable final Level pLevel, final @NotNull List<Component> pTooltipComponents, final @NotNull TooltipFlag pIsAdvanced)
-    {
+    public void appendHoverText(@NotNull ItemStack pStack, @NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pIsAdvanced) {
         final int color = coloredBlock.getColor(pStack);
 
         HoverTextUtils.appendColorHoverText(pTooltipComponents, color);
-        super.appendHoverText(pStack, pLevel, pTooltipComponents, pIsAdvanced);
+        super.appendHoverText(pStack, pContext, pTooltipComponents, pIsAdvanced);
     }
 
     public ColoredBlock getColoredBlock() {

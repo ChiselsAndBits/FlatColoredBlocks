@@ -4,12 +4,17 @@ import com.communi.suggestu.scena.core.fluid.FluidInformation;
 import com.communi.suggestu.scena.core.fluid.IFluidManager;
 import mod.flatcoloredblocks.core.fluid.FluidTank;
 import mod.flatcoloredblocks.core.registrars.BlockEntityTypes;
+import mod.flatcoloredblocks.core.registrars.DataComponentTypes;
 import mod.flatcoloredblocks.core.registrars.Fluids;
 import mod.flatcoloredblocks.core.registry.ColorizationRegistry;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -103,8 +108,6 @@ public final class PaintMixerBlockEntity extends PaintContainingBlockEntity impl
     }
 
     public void onPowerChanged(final boolean isPowered) {
-
-
         if (isPowered) {
             final Set<ColorizationData> colorizationData = new HashSet<>();
             handleColorizationInTank(colorizationData, leftInputTank);
@@ -122,15 +125,14 @@ public final class PaintMixerBlockEntity extends PaintContainingBlockEntity impl
                 final int blue = (int) colorizationData.stream().mapToLong(data -> (long) (data.blue() * data.fluidImpressionFactor() * data.pigmentAmount())).sum() / totalSum;
                 final int totalFluidAmount = (int) colorizationData.stream().mapToLong(ColorizationData::fluidAmount).sum();
 
+                final int color = FastColor.ARGB32.color(0xFF, red, green, blue);
+
                 leftInputTank.clear();
                 rightInputTank.clear();
                 solidColorPaint = ItemStack.EMPTY;
 
-                getPrimaryTank().setContents(new FluidInformation(Fluids.PAINT.fluid().get(), totalFluidAmount, Util.make(new CompoundTag(), tag -> {
-                    tag.putInt("r", red);
-                    tag.putInt("g", green);
-                    tag.putInt("b", blue);
-                })));
+                getPrimaryTank().setContents(new FluidInformation(Fluids.PAINT.fluid().get(), totalFluidAmount, DataComponentPatch.builder()
+                        .set(DataComponentTypes.COLOR.get(), color).build()));
 
                 setChanged();
             }
@@ -150,25 +152,29 @@ public final class PaintMixerBlockEntity extends PaintContainingBlockEntity impl
         }
     }
 
+
     @Override
-    public void load(final @NotNull CompoundTag pTag) {
-        super.load(pTag);
+    protected void loadAdditional(@NotNull CompoundTag pTag, HolderLookup.@NotNull Provider pProvider) {
+        super.loadAdditional(pTag, pProvider);
+
         leftInputTank.readFromNBT(pTag.getCompound("leftInputTank"));
         rightInputTank.readFromNBT(pTag.getCompound("rightInputTank"));
-        solidColorPaint = ItemStack.of(pTag.getCompound("solidColorPaint"));
+
+        CompoundTag solidColorPaintData = pTag.getCompound("solidColorPaint");
+        solidColorPaint = ItemStack.OPTIONAL_CODEC.parse(NbtOps.INSTANCE, solidColorPaintData).result().orElse(ItemStack.EMPTY);
     }
 
     @Override
-    protected void saveAdditional(final @NotNull CompoundTag pTag) {
-        super.saveAdditional(pTag);
+    protected void saveAdditional(@NotNull CompoundTag pTag, HolderLookup.@NotNull Provider pProvider) {
+        super.saveAdditional(pTag, pProvider);
         pTag.put("leftInputTank", leftInputTank.writeToNBT(new CompoundTag()));
         pTag.put("rightInputTank", rightInputTank.writeToNBT(new CompoundTag()));
-        pTag.put("solidColorPaint", solidColorPaint.save(new CompoundTag()));
+        pTag.put("solidColorPaint", ItemStack.OPTIONAL_CODEC.encodeStart(NbtOps.INSTANCE, solidColorPaint).result().orElseThrow());
     }
 
     @Override
-    public @NotNull CompoundTag getUpdateTag() {
-        return saveWithFullMetadata();
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider pProvider) {
+        return saveWithFullMetadata(pProvider);
     }
 
     @Override

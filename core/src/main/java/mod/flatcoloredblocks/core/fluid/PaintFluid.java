@@ -4,15 +4,14 @@ import com.communi.suggestu.scena.core.fluid.FluidInformation;
 import com.communi.suggestu.scena.core.fluid.FluidWithHandler;
 import com.communi.suggestu.scena.core.fluid.IFluidManager;
 import com.communi.suggestu.scena.core.fluid.IFluidVariantHandler;
+import mod.flatcoloredblocks.core.registrars.DataComponentTypes;
 import mod.flatcoloredblocks.core.registrars.Fluids;
 import mod.flatcoloredblocks.core.util.Constants;
-import net.minecraft.client.renderer.block.LiquidBlockRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
@@ -25,6 +24,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -158,21 +158,24 @@ public class PaintFluid extends FluidWithHandler
                                 .orElse(0);
         }
 
+        @SuppressWarnings({"OptionalAssignedToNull"})
         @Override
         public int getTintColor(final FluidInformation fluidInformation)
         {
-            final int alpha = fluidInformation.data().getInt("a") & 0xFF;
-            final int red = fluidInformation.data().getInt("r") & 0xFF;
-            final int green = fluidInformation.data().getInt("g") & 0xFF;
-            final int blue = fluidInformation.data().getInt("b") & 0xFF;
+            @Nullable
+            final Optional<? extends Integer> color = fluidInformation.data().get(DataComponentTypes.COLOR.get());
 
-            return (alpha << 24) | (red << 16) | (green << 8) | blue;
+            if (color == null || color.isEmpty()) {
+                return 0xFFFFFFFF;
+            }
+
+            return color.get();
         }
 
         @Override
         public Optional<ResourceLocation> getStillTexture(final FluidInformation fluidInformation)
         {
-            return Optional.of(new ResourceLocation(Constants.MOD_ID, "block/paint_still"));
+            return Optional.of(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "block/paint_still"));
         }
 
         @Override

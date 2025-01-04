@@ -79,7 +79,7 @@ public class BakedQuadBuilder implements IVertexConsumer {
         if (texture == null) {
             throw new IllegalStateException("texture not set");
         }
-        int[] packed = new int[DefaultVertexFormat.BLOCK.getIntegerSize() * 4];
+        int[] packed = new int[DefaultVertexFormat.BLOCK.getVertexSize()]; //Normally devide by 4 bytes in an int, and then multiply with 4 vertices
         for (int v = 0; v < 4; v++) {
             for (int e = 0; e < SIZE; e++) {
                 LightUtil.pack(unpackedData[v][e], packed, DefaultVertexFormat.BLOCK, v, e);

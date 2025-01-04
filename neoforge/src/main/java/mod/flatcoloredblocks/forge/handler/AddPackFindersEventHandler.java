@@ -4,12 +4,13 @@ import com.mojang.logging.LogUtils;
 import mod.flatcoloredblocks.core.FlatColoredBlocks;
 import mod.flatcoloredblocks.core.util.Constants;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.packs.PackResources;
-import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.PathPackResources;
+import net.minecraft.server.packs.*;
+import net.minecraft.server.packs.repository.KnownPack;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
 import org.jetbrains.annotations.NotNull;
@@ -17,8 +18,9 @@ import org.slf4j.Logger;
 
 import java.net.URISyntaxException;
 import java.nio.file.Path;
+import java.util.Optional;
 
-@Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Constants.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class AddPackFindersEventHandler {
 
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -29,23 +31,28 @@ public class AddPackFindersEventHandler {
             try {
                 Path coreJarPath = Path.of(FlatColoredBlocks.class.getProtectionDomain().getCodeSource().getLocation().toURI());
 
+                final PackLocationInfo packLocationInfo = new PackLocationInfo(
+                        "flatcoloredblocks-core",
+                        Component.literal("Flat Colored Blocks - Core"),
+                        PackSource.BUILT_IN,
+                        Optional.of(
+                                new KnownPack(Constants.MOD_ID, "core", ModList.get().getModFileById(Constants.MOD_ID).versionString())
+                        )
+                );
+
                 final PackResources packResources = new PathPackResources(
-                        "flatcoloredblocks-core",
-                        coreJarPath,
-                        true
+                        packLocationInfo,
+                        coreJarPath
                 );
 
-                final Pack corePack = Pack.readMetaAndCreate(
-                        "flatcoloredblocks-core",
-                        Component.literal("FlatColoredBlocks Core"),
-                        true,
+                final Pack pack = Pack.readMetaAndCreate(
+                        packLocationInfo,
                         new SinglePackResourceResourcesSupplier(packResources),
-                        PackType.CLIENT_RESOURCES,
-                        Pack.Position.BOTTOM,
-                        PackSource.BUILT_IN
+                        event.getPackType(),
+                        new PackSelectionConfig(true, Pack.Position.TOP, true)
                 );
 
-                registrar.accept(corePack);
+                registrar.accept(pack);
             } catch (URISyntaxException e) {
                 LOGGER.error("Failed to inject Core Resource Pack. FCB Assets will not be loaded!", e);
             }
@@ -55,12 +62,12 @@ public class AddPackFindersEventHandler {
     private record SinglePackResourceResourcesSupplier(PackResources packResources) implements Pack.ResourcesSupplier {
 
         @Override
-        public @NotNull PackResources openPrimary(@NotNull String s) {
+        public @NotNull PackResources openPrimary(@NotNull PackLocationInfo packLocationInfo) {
             return packResources();
         }
 
         @Override
-        public @NotNull PackResources openFull(@NotNull String s, Pack.@NotNull Info info) {
+        public @NotNull PackResources openFull(@NotNull PackLocationInfo packLocationInfo, Pack.@NotNull Metadata metadata) {
             return packResources();
         }
     }

@@ -1,6 +1,7 @@
 package mod.flatcoloredblocks.core.item;
 
 import mod.flatcoloredblocks.core.ColorNameManager;
+import mod.flatcoloredblocks.core.registrars.DataComponentTypes;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
@@ -32,36 +33,36 @@ public abstract class PaintContainingItem extends Item implements IWithColorItem
     {
         pItems.accept(new ItemStack(this));
         pItems.accept(Util.make(new ItemStack(this), (pStack) -> {
-            pStack.getOrCreateTag().putInt("color", 0xFFFF0000);
-            pStack.getOrCreateTag().putInt("amount", getCapacity());
+            pStack.set(DataComponentTypes.COLOR.get(), 0xFF000000);
+            pStack.set(DataComponentTypes.AMOUNT.get(), getCapacity());
         }));
         pItems.accept(Util.make(new ItemStack(this), (pStack) -> {
-            pStack.getOrCreateTag().putInt("color", 0xFF00FF00);
-            pStack.getOrCreateTag().putInt("amount", getCapacity());
+            pStack.set(DataComponentTypes.COLOR.get(), 0xFF00FF00);
+            pStack.set(DataComponentTypes.AMOUNT.get(), getCapacity());
         }));
         pItems.accept(Util.make(new ItemStack(this), (pStack) -> {
-            pStack.getOrCreateTag().putInt("color", 0xFF0000FF);
-            pStack.getOrCreateTag().putInt("amount", getCapacity());
+            pStack.set(DataComponentTypes.COLOR.get(), 0xFF0000FF);
+            pStack.set(DataComponentTypes.AMOUNT.get(), getCapacity());
         }));
         pItems.accept(Util.make(new ItemStack(this), (pStack) -> {
-            pStack.getOrCreateTag().putInt("color", 0xFFFFFF00);
-            pStack.getOrCreateTag().putInt("amount", getCapacity());
+            pStack.set(DataComponentTypes.COLOR.get(), 0xFFFFFF00);
+            pStack.set(DataComponentTypes.AMOUNT.get(), getCapacity());
         }));
         pItems.accept(Util.make(new ItemStack(this), (pStack) -> {
-            pStack.getOrCreateTag().putInt("color", 0xFF00FFFF);
-            pStack.getOrCreateTag().putInt("amount", getCapacity());
+            pStack.set(DataComponentTypes.COLOR.get(), 0xFF00FFFF);
+            pStack.set(DataComponentTypes.AMOUNT.get(), getCapacity());
         }));
         pItems.accept(Util.make(new ItemStack(this), (pStack) -> {
-            pStack.getOrCreateTag().putInt("color", 0xFFFF00FF);
-            pStack.getOrCreateTag().putInt("amount", getCapacity());
+            pStack.set(DataComponentTypes.COLOR.get(), 0xFFFF00FF);
+            pStack.set(DataComponentTypes.AMOUNT.get(), getCapacity());
         }));
         pItems.accept(Util.make(new ItemStack(this), (pStack) -> {
-            pStack.getOrCreateTag().putInt("color", 0xFFFFFFFF);
-            pStack.getOrCreateTag().putInt("amount", getCapacity());
+            pStack.set(DataComponentTypes.COLOR.get(), 0xFFFFFFFF);
+            pStack.set(DataComponentTypes.AMOUNT.get(), getCapacity());
         }));
         pItems.accept(Util.make(new ItemStack(this), (pStack) -> {
-            pStack.getOrCreateTag().putInt("color", 0xFF000000);
-            pStack.getOrCreateTag().putInt("amount", getCapacity());
+            pStack.set(DataComponentTypes.COLOR.get(), 0xFF000000);
+            pStack.set(DataComponentTypes.AMOUNT.get(), getCapacity());
         }));
     }
 
@@ -72,15 +73,12 @@ public abstract class PaintContainingItem extends Item implements IWithColorItem
 
     public final int getColor(final ItemStack pStack)
     {
-        if (!pStack.hasTag())
-            return 0;
-
-        return pStack.getOrCreateTag().getInt(COLOR);
+        return pStack.getOrDefault(DataComponentTypes.COLOR.get(), 0);
     }
 
     public final void setColor(final ItemStack pStack, final int pColor, boolean setByCreativePlayer)
     {
-        pStack.getOrCreateTag().putInt(COLOR, pColor);
+        pStack.set(DataComponentTypes.COLOR.get(), pColor);
         if (setByCreativePlayer) {
             setAmount(pStack, getCapacity());
         }
@@ -88,18 +86,12 @@ public abstract class PaintContainingItem extends Item implements IWithColorItem
 
     public final int getAmount(final ItemStack pStack)
     {
-        if (!pStack.hasTag())
-            return 0;
-
-        return pStack.getOrCreateTag().getInt(AMOUNT);
+        return pStack.getOrDefault(DataComponentTypes.AMOUNT.get(), 0);
     }
 
     public final void setAmount(final ItemStack pStack, final int pAmount)
     {
-        pStack.getOrCreateTag().putInt(AMOUNT, Math.max(0, Math.min(pAmount, capacity)));
-        if (pAmount == 0) {
-            pStack.setTag(null);
-        }
+        pStack.set(DataComponentTypes.AMOUNT.get(), Math.min(Math.max(0, pAmount), getCapacity()));
     }
 
     public final void addAmount(final ItemStack pStack, final int pAmount)
@@ -137,7 +129,7 @@ public abstract class PaintContainingItem extends Item implements IWithColorItem
     }
 
     @Override
-    public void appendHoverText(final @NotNull ItemStack pStack, @Nullable final Level pLevel, final @NotNull List<Component> pTooltipComponents, final @NotNull TooltipFlag pIsAdvanced)
+    public void appendHoverText(final @NotNull ItemStack pStack, @Nullable final TooltipContext pLevel, final @NotNull List<Component> pTooltipComponents, final @NotNull TooltipFlag pIsAdvanced)
     {
         if (hasAmount(pStack)) {
             final int color = getColor(pStack);

@@ -24,7 +24,7 @@ public final class ItemProperties
                 registrar -> {
                     registrar.registerItemModelProperty(
                             Items.PAINT_BUCKET.get(),
-                            new ResourceLocation(Constants.MOD_ID, "has_paint"),
+                            ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "has_paint"),
                             (pStack, pLevel, pEntity, pSeed) -> {
                                 if (!(pStack.getItem() instanceof PaintContainingItem paintContainingItem))
                                     return 0f;
@@ -34,7 +34,7 @@ public final class ItemProperties
                     );
                     registrar.registerItemModelProperty(
                             Items.PAINT_BRUSH.get(),
-                            new ResourceLocation(Constants.MOD_ID, "has_paint"),
+                            ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "has_paint"),
                             (pStack, pLevel, pEntity, pSeed) -> {
                                 if (!(pStack.getItem() instanceof PaintContainingItem paintContainingItem))
                                     return 0f;

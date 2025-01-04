@@ -8,6 +8,7 @@ import mod.flatcoloredblocks.core.registrars.BlockEntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -58,7 +59,7 @@ public class PaintBasinBlock extends BaseEntityBlock
     }
 
     @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
+    protected @NotNull MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
     }
 
@@ -83,26 +84,38 @@ public class PaintBasinBlock extends BaseEntityBlock
     }
 
     @Override
-    public @NotNull InteractionResult use(final @NotNull BlockState pState, final @NotNull Level pLevel, final @NotNull BlockPos pPos, final @NotNull Player pPlayer, final @NotNull InteractionHand pHand, final @NotNull BlockHitResult pHit)
-    {
-        if (!pLevel.isClientSide)
+    protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState blockState, @NotNull Level level, @NotNull BlockPos blockPos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
+        if (!level.isClientSide())
         {
-            BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
+            BlockEntity blockEntity = level.getBlockEntity(blockPos);
             if (blockEntity instanceof PaintBasinBlockEntity paintBasinBlockEntity)
             {
-                final ItemStack stack = pPlayer.getItemInHand(pHand);
-                if (!stack.isEmpty() && paintBasinBlockEntity.canPlaceItem(0, stack)) {
-                    final ItemStack toInsert = stack.split(1);
-                    paintBasinBlockEntity.setItem(0, toInsert);
-                }
-                else if (stack.isEmpty() && !paintBasinBlockEntity.getItem(0).isEmpty()) {
-                    pPlayer.addItem(paintBasinBlockEntity.getItem(0));
+                if (!paintBasinBlockEntity.getItem(0).isEmpty()) {
+                    player.addItem(paintBasinBlockEntity.getItem(0));
                     paintBasinBlockEntity.setItem(0, ItemStack.EMPTY);
+                    return InteractionResult.SUCCESS;
                 }
             }
 
         }
 
         return InteractionResult.PASS;
+    }
+
+    @Override
+    protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState blockState, @NotNull Level level, @NotNull BlockPos blockPos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
+        if (!level.isClientSide())
+        {
+            BlockEntity blockEntity = level.getBlockEntity(blockPos);
+            if (blockEntity instanceof PaintBasinBlockEntity paintBasinBlockEntity)
+            {
+                if (paintBasinBlockEntity.canPlaceItem(0, stack)) {
+                    paintBasinBlockEntity.setItem(0, stack.split(1));
+                    return ItemInteractionResult.SUCCESS;
+                }
+            }
+        }
+
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 }

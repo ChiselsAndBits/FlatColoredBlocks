@@ -76,39 +76,17 @@ public final class PaintSplattedItemModelLoader implements IModelSpecificationLo
             return new RenderTypeGroup(RenderType.translucent(), RenderType.entityTranslucent(TextureAtlas.LOCATION_BLOCKS));
         }
 
-        /*
-        @Override
-        public Collection<Material> getTextures(final IModelBakingContext iModelBakingContext, final Function<ResourceLocation, UnbakedModel> function, final Set<Pair<String, String>> set)
-        {
-            if (iModelBakingContext.getMaterial("base").isEmpty())
-            {
-                throw new IllegalArgumentException("Missing base material");
-            }
-
-            if (iModelBakingContext.getMaterial("paint").isEmpty())
-            {
-                throw new IllegalArgumentException("Missing paint material");
-            }
-
-            final Material fluidMaterial = getFluidMaterial();
-            final Material baseMaterial = iModelBakingContext.getMaterial("base").get();
-            final Material fluidMaskMaterial = iModelBakingContext.getMaterial("paint").get();
-            return Lists.newArrayList(baseMaterial, fluidMaskMaterial, fluidMaterial);
-        }
-        */
-
         @NotNull
         private static Material getFluidMaterial()
         {
-            final ResourceLocation stillFluidTexture = IFluidManager.getInstance().getVariantHandlerFor(Fluids.PAINT.fluid().get())
-                                                               .orElseThrow()
+            final ResourceLocation stillFluidTexture = Fluids.PAINT.variantHandler().get()
                                                                .getStillTexture(new FluidInformation(Fluids.PAINT.fluid().get())).orElseThrow();
 
             return new Material(TextureAtlas.LOCATION_BLOCKS, stillFluidTexture);
         }
 
         @Override
-        public BakedModel bake(IModelBakingContext iModelBakingContext, ModelBaker modelBaker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ResourceLocation resourceLocation) {
+        public BakedModel bake(IModelBakingContext iModelBakingContext, ModelBaker modelBaker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState) {
             if (iModelBakingContext.getMaterial("base").isEmpty())
             {
                 throw new IllegalArgumentException("Missing base material");
@@ -136,7 +114,7 @@ public final class PaintSplattedItemModelLoader implements IModelSpecificationLo
             {
                 // Base texture
                 var unbaked = UnbakedGeometryHelper.createUnbakedItemElements(0, baseSprite.contents());
-                UnbakedGeometryHelper.bakeElements(modelBuilder, unbaked, name -> baseSprite, modelState, resourceLocation, renderTypes);
+                UnbakedGeometryHelper.bakeElements(modelBuilder, unbaked, name -> baseSprite, modelState, renderTypes);
             }
 
             if (fluidSprite != null)
@@ -147,7 +125,7 @@ public final class PaintSplattedItemModelLoader implements IModelSpecificationLo
                     // Fluid layer
                     var transformedState = new SimpleModelState(modelState.getRotation().compose(FLUID_TRANSFORM), modelState.isUvLocked());
                     var unbaked = UnbakedGeometryHelper.createUnbakedItemMaskElements(1, templateSprite); // Use template as mask
-                    UnbakedGeometryHelper.bakeElements(modelBuilder, unbaked, $ -> fluidSprite, transformedState, resourceLocation, renderTypes); // Bake with fluid texture
+                    UnbakedGeometryHelper.bakeElements(modelBuilder, unbaked, $ -> fluidSprite, transformedState, renderTypes); // Bake with fluid texture
                 }
             }
 

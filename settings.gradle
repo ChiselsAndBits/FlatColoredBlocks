@@ -10,12 +10,12 @@ pluginManagement.repositories.maven { url = 'https://maven.fabricmc.net/' }
 pluginManagement.repositories.gradlePluginPortal()
 pluginManagement.repositories.mavenCentral()
 
-var neogradleVersion = "7.0.106"
+var neogradleVersion = "[7.0.174,8)"
 
 pluginManagement.resolutionStrategy.setDefaultPluginVersion(DefaultPluginId.of("net.neoforged.gradle.common"), neogradleVersion)
 pluginManagement.resolutionStrategy.setDefaultPluginVersion(DefaultPluginId.of("net.neoforged.gradle.userdev"), neogradleVersion)
 pluginManagement.resolutionStrategy.setDefaultPluginVersion(DefaultPluginId.of("net.neoforged.gradle.vanilla"), neogradleVersion)
-pluginManagement.resolutionStrategy.setDefaultPluginVersion(DefaultPluginId.of("fabric-loom"), "1.5-SNAPSHOT")
+pluginManagement.resolutionStrategy.setDefaultPluginVersion(DefaultPluginId.of("fabric-loom"), "1.+")
 pluginManagement.resolutionStrategy.setDefaultPluginVersion(DefaultPluginId.of("net.darkhax.curseforgegradle"), "1.1.17")
 
 rootProject.name = "flatcoloredblocks"

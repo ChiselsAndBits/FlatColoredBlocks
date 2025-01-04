@@ -7,6 +7,8 @@ import mod.chiselsandbits.api.plugin.ChiselsAndBitsPlugin;
 import mod.chiselsandbits.api.plugin.IChiselsAndBitsPlugin;
 import mod.chiselsandbits.api.variant.state.IStateVariantManager;
 import mod.flatcoloredblocks.core.registrars.Blocks;
+import mod.flatcoloredblocks.core.util.Constants;
+import net.minecraft.resources.ResourceLocation;
 
 @ChiselsAndBitsPlugin
 public class FCBCandBPlugin implements IChiselsAndBitsPlugin {
@@ -18,10 +20,7 @@ public class FCBCandBPlugin implements IChiselsAndBitsPlugin {
 
     @Override
     public void onConstruction() {
-        IStateVariantManager.getInstance().registerProvider(Blocks.COLORED_CONCRETE::get, new ColoredStateVariantProvider(Blocks.COLORED_CONCRETE::get));
-        IStateVariantManager.getInstance().registerProvider(Blocks.COLORED_GLASS::get, new ColoredStateVariantProvider(Blocks.COLORED_GLASS::get));
-        IStateVariantManager.getInstance().registerProvider(Blocks.COLORED_WOOL::get, new ColoredStateVariantProvider(Blocks.COLORED_WOOL::get));
-        IStateVariantManager.getInstance().registerProvider(Blocks.COLORED_WOOL_CARPET::get, new ColoredStateVariantProvider(Blocks.COLORED_WOOL_CARPET::get));
+        StateVariantProviders.onModConstruction();
     }
 
     @Override
@@ -30,7 +29,6 @@ public class FCBCandBPlugin implements IChiselsAndBitsPlugin {
             IClientStateVariantManager.getInstance().registerStateVariantProvider(Blocks.COLORED_CONCRETE::get, new ClientColoredStateVariantProvider());
             IClientStateVariantManager.getInstance().registerStateVariantProvider(Blocks.COLORED_GLASS::get, new ClientColoredStateVariantProvider());
             IClientStateVariantManager.getInstance().registerStateVariantProvider(Blocks.COLORED_WOOL::get, new ClientColoredStateVariantProvider());
-            IClientStateVariantManager.getInstance().registerStateVariantProvider(Blocks.COLORED_WOOL_CARPET::get, new ClientColoredStateVariantProvider());
         });
     }
 }
