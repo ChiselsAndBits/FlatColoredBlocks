@@ -11,6 +11,7 @@ project.dependencies.minecraft "com.mojang:minecraft:${project.minecraftVersion}
 project.dependencies.modImplementation "net.fabricmc:fabric-loader:${project.fabricLoaderVersion}"
 project.dependencies.modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabricVersion}+${project.minecraftVersion}"
 project.dependencies.modImplementation "com.communi-suggestu.scena:scena-fabric:${project.scenaVersion}"
+project.dependencies.modCompileOnly "mod.chiselsandbits:chisels-and-bits-api:${project.chiselsAndBitsVersion}"
 project.dependencies.modRuntimeOnly "mod.chiselsandbits:chisels-and-bits-fabric:${project.chiselsAndBitsVersion}"
 
 project.dependencies.include "com.communi-suggestu.scena:scena-fabric:${project.scenaVersion}"

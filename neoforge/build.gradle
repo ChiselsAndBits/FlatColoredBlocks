@@ -50,6 +50,7 @@ project.dependencies.includedLibraries ("com.communi-suggestu.scena:scena-neofor
     jarJar.ranged(it, buildSupportedVersionRange(project.scenaVersion))
 }
 project.dependencies.runtimeOnly "mod.chiselsandbits:chisels-and-bits-neoforge:${project.chiselsAndBitsVersion}"
+project.dependencies.compileOnly "mod.chiselsandbits:chisels-and-bits-api:${project.chiselsAndBitsVersion}"
 
 project.tasks.processResources.from (project(":common").file("accesstransformer.cfg")) {
     into 'META-INF'
@@ -74,7 +75,6 @@ project.runs {
         run.modSource project(":core").sourceSets.main
         run.modSource sourceSets.main
 
-        run.jvmArguments.addAll "-Dmixin.debug=true", "-Dmixin.debug.export=true"
         run.dependencies { runDependencies ->
             libraryConfigs.each { config ->
                 runDependencies.runtime config

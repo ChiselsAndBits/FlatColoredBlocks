@@ -10,10 +10,8 @@ import mod.flatcoloredblocks.core.registrars.Blocks;
 import mod.flatcoloredblocks.core.util.Constants;
 import net.minecraft.resources.ResourceLocation;
 
-@ChiselsAndBitsPlugin
 public class FCBCandBPlugin implements IChiselsAndBitsPlugin {
 
-    @Override
     public String getId() {
         return "flat-colored-blocks";
     }

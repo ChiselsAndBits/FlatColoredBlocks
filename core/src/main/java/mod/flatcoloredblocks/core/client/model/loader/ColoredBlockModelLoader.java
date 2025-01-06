@@ -1,6 +1,7 @@
 package mod.flatcoloredblocks.core.client.model.loader;
 
 import com.communi.suggestu.scena.core.client.models.IModelManager;
+import com.communi.suggestu.scena.core.client.models.baked.BlockStateAwareQuad;
 import com.communi.suggestu.scena.core.client.models.baked.IDataAwareBakedModel;
 import com.communi.suggestu.scena.core.client.models.baked.base.BaseDelegatingSmartModel;
 import com.communi.suggestu.scena.core.client.models.baked.simple.NullBakedModel;
@@ -13,7 +14,7 @@ import com.communi.suggestu.scena.core.client.rendering.type.IRenderTypeManager;
 import com.communi.suggestu.scena.core.client.utils.LightUtil;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
-import com.mojang.datafixers.util.Pair;
+import com.mojang.logging.LogUtils;
 import mod.flatcoloredblocks.core.block.ColoredBlock;
 import mod.flatcoloredblocks.core.client.model.baked.BakedQuadAdapter;
 import mod.flatcoloredblocks.core.registrars.ModelDataKeys;
@@ -26,14 +27,16 @@ import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.*;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import org.apache.commons.compress.utils.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,7 +45,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -66,26 +68,34 @@ public final class ColoredBlockModelLoader implements IModelSpecificationLoader<
         if (!jsonObject.has("parent"))
             throw new IllegalStateException("Missing parent");
 
-        final ResourceLocation parent = ResourceLocation.parse(jsonObject.get("parent").getAsString());
+        if (!jsonObject.has("mimickedBlock"))
+            throw new IllegalStateException("Missing mimickedBlock");
 
-        return new ModelSpecification(parent);
+        final ResourceLocation parent = ResourceLocation.parse(jsonObject.get("parent").getAsString());
+        final ResourceLocation mimickedBlock = ResourceLocation.parse(jsonObject.get("mimickedBlock").getAsString());
+
+        return new ModelSpecification(parent, mimickedBlock);
     }
 
-    public static class ModelSpecification implements IModelSpecification<ModelSpecification> {
-
-        private final ResourceLocation parentModel;
-
-        public ModelSpecification(final ResourceLocation parentModel) {this.parentModel = parentModel;}
-
+    public record ModelSpecification(ResourceLocation parentModel,
+                                     ResourceLocation mimickedBlock) implements IModelSpecification<ModelSpecification> {
 
         @Override
-        public BakedModel bake(IModelBakingContext iModelBakingContext, ModelBaker modelBaker, Function<Material, TextureAtlasSprite> function, ModelState modelState) {
-            final UnbakedModel unbakedModel = modelBaker.getModel(parentModel);
-            final BakedModel parentBakedModel = IModelManager.getInstance().adaptToPlatform(unbakedModel.bake(modelBaker, function, modelState));
+            public BakedModel bake(IModelBakingContext iModelBakingContext, ModelBaker modelBaker, Function<Material, TextureAtlasSprite> function, ModelState modelState) {
+                final UnbakedModel unbakedModel = modelBaker.getModel(parentModel);
+                final BakedModel parentBakedModel = IModelManager.getInstance().adaptToPlatform(unbakedModel.bake(modelBaker, function, modelState));
 
-            return new Baked(parentBakedModel);
+                final Block block;
+                if (!BuiltInRegistries.BLOCK.containsKey(mimickedBlock)) {
+                    LogUtils.getLogger().error("Unknown block: {} falling back to stone", mimickedBlock);
+                    block = Blocks.STONE;
+                } else {
+                    block = BuiltInRegistries.BLOCK.get(mimickedBlock);
+                }
+
+                return new Baked(parentBakedModel, block);
+            }
         }
-    }
 
     public static class Baked extends BaseDelegatingSmartModel
     {
@@ -136,13 +146,15 @@ public final class ColoredBlockModelLoader implements IModelSpecificationLoader<
         private record QuadRenderData(RenderType renderType, QuadCullingDirection cullingDirection) {}
         private record RecoloredQuadRenderData(QuadRenderData quadRenderData, int color) {}
 
+        private final Block mimickedBlock;
         private final Map<QuadRenderData, List<BakedQuad>> parentQuads = new ConcurrentHashMap<>();
         private final Map<RecoloredQuadRenderData, List<BakedQuad>> coloredQuads = new ConcurrentHashMap<>();
         private final Map<Integer, BakedModel> stackModels = new ConcurrentHashMap<>();
 
-        public Baked(final BakedModel delegate)
+        public Baked(final BakedModel delegate, Block block)
         {
             super(delegate);
+            mimickedBlock = block;
         }
 
         @Override
@@ -238,7 +250,7 @@ public final class ColoredBlockModelLoader implements IModelSpecificationLoader<
             for (final BakedQuad parentQuad : parentQuads) {
                 final BakedQuadAdapter adapter = new BakedQuadAdapter(color);
                 LightUtil.put(adapter, parentQuad);
-                coloredQuads.add(adapter.build());
+                coloredQuads.add(new BlockStateAwareQuad(adapter.build(), mimickedBlock.defaultBlockState()));
             }
 
             return coloredQuads;
