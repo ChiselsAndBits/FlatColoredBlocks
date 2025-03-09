@@ -32,7 +32,7 @@ tableau {
         })
     }
     curse {
-        id = '238590'
+        id = 238590
 
         relationships {
             tool('chisels-bits')
