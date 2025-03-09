@@ -32,26 +32,4 @@ public class Fabric implements ModInitializer {
         this.flatColoredBlocks = flatColoredBlocks;
     }
 
-    public static final class Client implements ClientModInitializer
-    {
-
-        private FlatColoredBlocksClient flatColoredBlocksClient;
-
-        public Client()
-        {
-            LOGGER.info("Initialized formula-forge client");
-            PlatformInitializationHandler.getInstance().onInit(platform -> setFlatColoredBlocksClient(new FlatColoredBlocksClient()));
-        }
-
-        @Override
-        public void onInitializeClient()
-        {
-            //Noop for now.
-        }
-
-        public void setFlatColoredBlocksClient(final FlatColoredBlocksClient flatColoredBlocksClient)
-        {
-            this.flatColoredBlocksClient = flatColoredBlocksClient;
-        }
-    }
 }
