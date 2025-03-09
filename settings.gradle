@@ -11,6 +11,8 @@ pluginManagement {
         }
         gradlePluginPortal()
     }
+
+    includeBuild('../Tableau')
 }
 
 plugins {
