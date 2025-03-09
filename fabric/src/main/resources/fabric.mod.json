@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "$project.mod.id",
+  "version": "$version",
+
+  "name": "$name",
+  "description": "$project.description",
+  "authors": [
+    "$project.author"
+  ],
+
+  "license": "$project.license",
+  "icon": "pack.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "${project.package}.Fabric"
+    ],
+    "client": [
+      "${project.package}.client.FabricClient"
+    ]
+  },
+  "accessWidener" : "accesswidener.accesswidener",
+
+  "depends": {
+    "fabricloader": ">=$project.fabric.loader.version",
+    "fabric": "=>$project.fabric.api.version",
+    "minecraft": [${minecraft.range.fabric.get()}],
+    "java": ">=${java.version.get()}",
+    "scena": "$dependencies.com.communi_suggestu.scena.fabric.npm"
+  },
+  "suggests": {
+  }
+}

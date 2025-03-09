@@ -1,6 +1,7 @@
 package mod.flatcoloredblocks.forge.data;
 
 import mod.flatcoloredblocks.core.util.Constants;
+import mod.flatcoloredblocks.forge.data.builders.ColorItemModelLoaderBuilder;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.data.DataGenerator;
@@ -167,6 +168,37 @@ public class ItemModelGenerator extends BlockStateProvider
                     .override()
                     .predicate(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "has_paint"), 1)
                     .model(brushWithPaint);
+
+        itemModels().withExistingParent("solid_dye", "white_dye")
+                .guiLight(BlockModel.GuiLight.FRONT)
+                .transforms()
+                .transform(ItemDisplayContext.GROUND)
+                .rotation(0, 0, 0)
+                .translation(0, 2, 0)
+                .scale(0.5f, 0.5f, 0.5f)
+                .end()
+                .transform(ItemDisplayContext.HEAD)
+                .rotation(0, 180, 0)
+                .translation(0, 13, 7)
+                .scale(1, 1, 1)
+                .end()
+                .transform(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND)
+                .rotation(0, 0, 0)
+                .translation(0, 3, 1)
+                .scale(0.55f, 0.55f, 0.55f)
+                .end()
+                .transform(ItemDisplayContext.FIRST_PERSON_RIGHT_HAND)
+                .rotation(0, -90, 25)
+                .translation(1.13f, 3.2f, 1.13f)
+                .scale(0.68f, 0.68f, 0.68f)
+                .end()
+                .transform(ItemDisplayContext.FIXED)
+                .rotation(0, 180, 0)
+                .scale(1, 1, 1)
+                .end()
+                .end()
+                .customLoader(ColorItemModelLoaderBuilder::new)
+                .end();
     }
 
     @Override

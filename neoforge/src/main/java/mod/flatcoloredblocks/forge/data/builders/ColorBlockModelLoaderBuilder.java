@@ -1,7 +1,6 @@
 package mod.flatcoloredblocks.forge.data.builders;
 
 import com.google.gson.JsonObject;
-import mod.flatcoloredblocks.core.client.model.loader.ColoredBlockModelLoader;
 import mod.flatcoloredblocks.core.util.Constants;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.model.generators.CustomLoaderBuilder;
@@ -14,7 +13,7 @@ public class ColorBlockModelLoaderBuilder extends CustomLoaderBuilder<ItemModelB
     private final ResourceLocation mimickedBlock;
 
     public ColorBlockModelLoaderBuilder(ItemModelBuilder parent, ExistingFileHelper existingFileHelper, ResourceLocation mimickedBlock) {
-        super(Constants.COLORED_MODEL_LOADER_ID, parent, existingFileHelper, true);
+        super(Constants.COLORED_BLOCK_MODEL_LOADER_ID, parent, existingFileHelper, true);
         this.mimickedBlock = mimickedBlock;
     }
 

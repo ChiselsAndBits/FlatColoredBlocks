@@ -64,12 +64,19 @@ public class FluidTank
             final String fluidName = pTag.getString("fluid");
             final Fluid fluid = BuiltInRegistries.FLUID.get(ResourceLocation.parse(fluidName));
             final int amount = pTag.getInt("amount");
-            final CompoundTag data = pTag.getCompound("data");
 
-            final DataComponentPatch patch =
-                DataComponentPatch.CODEC.parse(NbtOps.INSTANCE, data)
-                    .result()
-                    .orElseThrow(() -> new IllegalStateException("Failed to parse data component patch"));
+            final DataComponentPatch patch;
+            if (pTag.contains("data")) {
+                final CompoundTag data = pTag.getCompound("data");
+
+
+                patch = DataComponentPatch.CODEC.parse(NbtOps.INSTANCE, data)
+                        .result()
+                        .orElseThrow(() -> new IllegalStateException("Failed to parse data component patch"));
+            } else {
+                patch = DataComponentPatch.EMPTY;
+            }
+
 
             setContents(new FluidInformation(fluid, amount, patch));
         }
@@ -85,7 +92,8 @@ public class FluidTank
         {
             pTag.putString("fluid", BuiltInRegistries.FLUID.getKey(getContents().get().fluid()).toString());
             pTag.putInt("amount", (int) getContents().get().amount());
-            pTag.put("data", DataComponentPatch.CODEC.encodeStart(NbtOps.INSTANCE, getContents().get().data()).result().orElseThrow());
+            if (getContents().get().data() != null)
+                pTag.put("data", DataComponentPatch.CODEC.encodeStart(NbtOps.INSTANCE, getContents().get().data()).result().orElseThrow());
         }
         return pTag;
     }

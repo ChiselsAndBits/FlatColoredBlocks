@@ -5,6 +5,7 @@ import com.mojang.serialization.MapCodec;
 import mod.flatcoloredblocks.core.block.entity.PaintMixerBlockEntity;
 import mod.flatcoloredblocks.core.fluid.FluidTank;
 import mod.flatcoloredblocks.core.registrars.BlockEntityTypes;
+import mod.flatcoloredblocks.core.registrars.Items;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.stats.Stats;
@@ -137,13 +138,22 @@ public class PaintMixerBlock extends HorizontalDirectionalBlock implements Entit
             if (blockEntity instanceof PaintMixerBlockEntity paintMixerBlockEntity)
             {
                 if (paintMixerBlockEntity.canPlaceItem(0, pStack)) {
-                    final ItemStack toInsert = pStack.split(1);
+                    final ItemStack toInsert;
+                    if (!pPlayer.isCreative())
+                        toInsert = pStack.split(1);
+                    else {
+                        toInsert = pStack.copy();
+                        toInsert.setCount(1);
+                    }
                     paintMixerBlockEntity.setItem(0, toInsert);
                     return ItemInteractionResult.SUCCESS;
                 } else if (IFluidManager.getInstance().get(pStack).isPresent()) {
                     return IFluidManager.getInstance().get(pStack).map(fluid -> {
                         if (fluid.fluid().is(FluidTags.WATER)) {
                             paintMixerBlockEntity.insertWater(fluid.amount());
+                            if (pPlayer.isCreative())
+                                return ItemInteractionResult.SUCCESS;
+
                             final ItemStack stack = IFluidManager.getInstance().extractFrom(pStack, fluid.amount());
                             pPlayer.setItemInHand(pHand, stack);
                             return ItemInteractionResult.SUCCESS;
@@ -151,11 +161,13 @@ public class PaintMixerBlock extends HorizontalDirectionalBlock implements Entit
 
                         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
                     }).orElse(ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION);
+                } else if (pStack.getItem() == Items.PAINT_BUCKET.get()) {
+                    Items.PAINT_BUCKET.get().onInteract(pLevel, pPos, pStack, pPlayer);
                 }
             }
         }
 
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return ItemInteractionResult.SUCCESS;
     }
 
     @Override

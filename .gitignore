@@ -111,3 +111,4 @@ gradle-app.setting
 **/runs/**
 **/run/**
 **/repo/**
+**/.cache

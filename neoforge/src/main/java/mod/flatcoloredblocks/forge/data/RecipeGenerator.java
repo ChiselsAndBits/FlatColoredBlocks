@@ -4,6 +4,7 @@ import mod.flatcoloredblocks.core.registrars.Blocks;
 import mod.flatcoloredblocks.core.registrars.Items;
 import mod.flatcoloredblocks.core.util.Constants;
 import mod.flatcoloredblocks.forge.data.builders.PaintBucketRecipeBuilder;
+import mod.flatcoloredblocks.forge.data.builders.SolidDyeRecipeBuilder;
 import mod.flatcoloredblocks.forge.data.builders.WoolCarpetRecipeBuilder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
@@ -56,6 +57,13 @@ public class RecipeGenerator extends RecipeProvider
                                     .unlockedBy("has_water", has(WATER_BUCKET))
                                     .save(pFinishedRecipeConsumer);
         }
+
+        PaintBucketRecipeBuilder.solid()
+                .group("colored_paint_bucket")
+                .unlockedBy("has_bucket", has(Items.PAINT_BUCKET.get()))
+                .unlockedBy("has_dye", has(Items.SOLID_DYE.get()))
+                .unlockedBy("has_water", has(WATER_BUCKET))
+                .save(pFinishedRecipeConsumer);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, Items.PAINT_BUCKET.get(), 1)
                            .group("paint_bucket")
@@ -110,5 +118,9 @@ public class RecipeGenerator extends RecipeProvider
         WoolCarpetRecipeBuilder.create()
                  .unlockedBy("has_wool", has(Items.COLORED_WOOL.get()))
                  .save(pFinishedRecipeConsumer);
+
+        SolidDyeRecipeBuilder.create()
+                .unlockedBy("has_white_dye", has(net.minecraft.world.item.Items.WHITE_DYE))
+                .save(pFinishedRecipeConsumer);
     }
 }

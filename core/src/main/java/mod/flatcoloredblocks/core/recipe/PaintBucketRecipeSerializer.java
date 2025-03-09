@@ -1,29 +1,24 @@
 package mod.flatcoloredblocks.core.recipe;
 
 import com.communi.suggestu.scena.core.fluid.IFluidManager;
-import com.google.gson.JsonParseException;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import mod.flatcoloredblocks.core.item.SolidDyeItem;
 import mod.flatcoloredblocks.core.registrars.Items;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
-import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
-import java.util.function.Function;
 
 import static net.minecraft.world.item.Items.WATER_BUCKET;
 
@@ -33,17 +28,20 @@ public class PaintBucketRecipeSerializer implements RecipeSerializer<PaintBucket
 
     private static final MapCodec<PaintBucketRecipe> CODEC = RecordCodecBuilder.mapCodec(
             instance -> instance.group(
+                    Codec.BOOL.fieldOf("solidDye").forGetter(PaintBucketRecipe::isSolidDye),
                     DyeColor.CODEC.fieldOf("color").forGetter(PaintBucketRecipe::getDyeColor),
                     Codec.STRING.fieldOf("group").forGetter(PaintBucketRecipe::getGroup)
             ).apply(instance, PaintBucketRecipe::new)
     );
 
     private static final StreamCodec<RegistryFriendlyByteBuf, PaintBucketRecipe> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.BOOL,
+            recipe -> recipe.solidDye,
             ByteBufCodecs.VAR_INT,
             recipe -> recipe.dyeColor.getId(),
             ByteBufCodecs.STRING_UTF8,
             recipe -> recipe.group,
-            (color, group) -> new PaintBucketRecipe(DyeColor.byId(color), group)
+            (solid,color, group) -> new PaintBucketRecipe(solid, DyeColor.byId(color), group)
     );
 
     public static PaintBucketRecipeSerializer getInstance()
@@ -67,10 +65,12 @@ public class PaintBucketRecipeSerializer implements RecipeSerializer<PaintBucket
 
     public static final class PaintBucketRecipe implements CraftingRecipe
     {
+        private final boolean solidDye;
         private final DyeColor dyeColor;
         private final String group;
 
-        public PaintBucketRecipe(final DyeColor dyeColor, final String group) {
+        public PaintBucketRecipe(boolean solidDye, final DyeColor dyeColor, final String group) {
+            this.solidDye = solidDye;
             this.dyeColor = dyeColor;
             this.group = group;
         }
@@ -103,11 +103,16 @@ public class PaintBucketRecipeSerializer implements RecipeSerializer<PaintBucket
                         return false;
 
                     hasWaterBucket = true;
-                } else if (stack.getItem() instanceof DyeItem dyeItem) {
+                } else if (stack.getItem() instanceof DyeItem dyeItem && !solidDye) {
                     if (hasDye)
                         return false;
 
                     if (!dyeItem.getDyeColor().equals(dyeColor))
+                        return false;
+
+                    hasDye = true;
+                } else if (stack.getItem() instanceof SolidDyeItem && solidDye) {
+                    if (hasDye)
                         return false;
 
                     hasDye = true;
@@ -123,11 +128,21 @@ public class PaintBucketRecipeSerializer implements RecipeSerializer<PaintBucket
         public @NotNull ItemStack assemble(@NotNull CraftingInput craftingInput, HolderLookup.@NotNull Provider provider) {
             final ItemStack stack = new ItemStack(Items.PAINT_BUCKET.get());
             Items.PAINT_BUCKET.get().setAmount(stack, (int) IFluidManager.getInstance().getBucketAmount());
-            Items.PAINT_BUCKET.get().setColor(stack, getColor(), false);
+            Items.PAINT_BUCKET.get().setColor(stack, getColor(craftingInput), false);
             return stack;
         }
 
-        public int getColor() {
+        public int getColor(CraftingInput input) {
+            if (solidDye) {
+                for (int i = 0; i < input.size(); i++) {
+                    if (input.getItem(i).getItem() == Items.SOLID_DYE.get()) {
+                        return Items.SOLID_DYE.get().getColor(input.getItem(i));
+                    }
+                }
+
+                throw new IllegalStateException("Could not find solid dye");
+            }
+
             return switch (dyeColor) {
                 case WHITE -> 0xFFFFFF;
                 case RED -> 0xFF0000;
@@ -139,6 +154,10 @@ public class PaintBucketRecipeSerializer implements RecipeSerializer<PaintBucket
                 case CYAN -> 0x00FFFF;
                 default -> dyeColor.getFireworkColor();
             };
+        }
+
+        public boolean isSolidDye() {
+            return solidDye;
         }
 
         public DyeColor getDyeColor() {

@@ -40,8 +40,9 @@ public final class CreativeModeTabs
                 output.accept(Items.PAINT_MIXER.get());
                 output.accept(Items.PAINT_BASIN.get());
 
-                registerColoredBlockItem(output, Items.PAINT_BRUSH.get());
-                registerColoredBlockItem(output, Items.PAINT_BUCKET.get());
+                registerColoredItem(output, Items.PAINT_BRUSH.get());
+                registerColoredItem(output, Items.PAINT_BUCKET.get());
+                registerColoredItem(output, Items.SOLID_DYE.get());
             })
             .build());
 
@@ -63,16 +64,16 @@ public final class CreativeModeTabs
             })
             .title(Component.translatable("itemGroup.flatcoloredblocks.blocks"))
             .displayItems((parameters, output) -> {
-                registerColoredBlockItem(output, Blocks.COLORED_CONCRETE.get());
-                registerColoredBlockItem(output, Blocks.COLORED_GLASS.get());
-                registerColoredBlockItem(output, Blocks.COLORED_WOOL.get());
-                registerColoredBlockItem(output, Blocks.COLORED_WOOL_CARPET.get());
+                registerColoredItem(output, Blocks.COLORED_CONCRETE.get());
+                registerColoredItem(output, Blocks.COLORED_GLASS.get());
+                registerColoredItem(output, Blocks.COLORED_WOOL.get());
+                registerColoredItem(output, Blocks.COLORED_WOOL_CARPET.get());
             })
             .build());
 
-    private static void registerColoredBlockItem(CreativeModeTab.Output pOutput, ItemLike candidate) {
+    private static void registerColoredItem(CreativeModeTab.Output pOutput, ItemLike candidate) {
         if (candidate instanceof Block) {
-            registerColoredBlockItem(pOutput, candidate.asItem());
+            registerColoredItem(pOutput, candidate.asItem());
             return;
         }
 

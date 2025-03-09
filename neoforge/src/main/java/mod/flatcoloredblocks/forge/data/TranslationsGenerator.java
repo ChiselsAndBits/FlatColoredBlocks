@@ -37,6 +37,7 @@ public class TranslationsGenerator extends LanguageProvider
         addBlock(Blocks.COLORED_WOOL_CARPET, "Carpet");
         addItem(Items.PAINT_BUCKET, "Empty Paint Bucket");
         addItem(Items.PAINT_BRUSH, "Empty Paint Roller");
+        addItem(Items.SOLID_DYE, "Solid %s Dye");
 
         add("itemGroup.flatcoloredblocks.tools", "Flat Colored Blocks (Tools)");
         add("itemGroup.flatcoloredblocks.blocks", "Flat Colored Blocks (Examples)");

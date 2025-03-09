@@ -4,6 +4,7 @@ import com.communi.suggestu.scena.core.fluid.IFluidManager;
 import mod.flatcoloredblocks.core.item.ColoredBlockItem;
 import mod.flatcoloredblocks.core.item.PaintBrushItem;
 import mod.flatcoloredblocks.core.item.PaintBucketItem;
+import mod.flatcoloredblocks.core.item.SolidDyeItem;
 import mod.flatcoloredblocks.core.util.Constants;
 import com.communi.suggestu.scena.core.registries.deferred.IRegistrar;
 import com.communi.suggestu.scena.core.registries.deferred.IRegistryObject;
@@ -33,6 +34,7 @@ public final class Items
     public final static IRegistryObject<BlockItem> COLORED_GLASS = ITEM_REGISTRAR.register("colored_glass", () -> new ColoredBlockItem(Blocks.COLORED_GLASS.get(), new Item.Properties()));
     public final static IRegistryObject<PaintBucketItem> PAINT_BUCKET = ITEM_REGISTRAR.register("paint_bucket", () -> new PaintBucketItem(new Item.Properties().stacksTo(1)));
     public final static IRegistryObject<PaintBrushItem> PAINT_BRUSH = ITEM_REGISTRAR.register("paint_brush", () -> new PaintBrushItem(new Item.Properties().stacksTo(1)));
+    public final static IRegistryObject<SolidDyeItem> SOLID_DYE = ITEM_REGISTRAR.register("solid_dye", () -> new SolidDyeItem(new Item.Properties().stacksTo(64)));
 
     public static void onModConstruction() {
         LOGGER.info("Registering items");

@@ -6,8 +6,9 @@ import mod.flatcoloredblocks.core.fluid.FluidTank;
 import mod.flatcoloredblocks.core.registrars.BlockEntityTypes;
 import mod.flatcoloredblocks.core.registrars.DataComponentTypes;
 import mod.flatcoloredblocks.core.registrars.Fluids;
+import mod.flatcoloredblocks.core.registrars.Items;
 import mod.flatcoloredblocks.core.registry.ColorizationRegistry;
-import net.minecraft.Util;
+import mod.flatcoloredblocks.core.util.ColorizationData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentPatch;
@@ -113,7 +114,9 @@ public final class PaintMixerBlockEntity extends PaintContainingBlockEntity impl
             handleColorizationInTank(colorizationData, leftInputTank);
             handleColorizationInTank(colorizationData, rightInputTank);
 
-            if (!solidColorPaint.isEmpty()) {
+            if (solidColorPaint.getItem() == Items.SOLID_DYE.get()) {
+                colorizationData.add(new ColorizationData(Items.SOLID_DYE.get().getColor(solidColorPaint), 1, 0, IFluidManager.getInstance().getBucketAmount()));
+            } else if (!solidColorPaint.isEmpty()) {
                 final Optional<Integer> solidColor = ColorizationRegistry.getInstance().getColorFor(solidColorPaint);
                 solidColor.ifPresent(integer -> colorizationData.add(new ColorizationData(integer, 1, 0, IFluidManager.getInstance().getBucketAmount())));
             }
@@ -143,7 +146,7 @@ public final class PaintMixerBlockEntity extends PaintContainingBlockEntity impl
     private void handleColorizationInTank(Set<ColorizationData> colorizationData, final FluidTank tank) {
         if (tank.getAmount() > 0) {
             if (tank.getContents().map(contents -> contents.fluid().is(FluidTags.WATER)).orElse(false)) {
-                colorizationData.add(new ColorizationData(0xFFFFFF, 0, tank.getAmount(), tank.getAmount()));
+                colorizationData.add(new ColorizationData(0xFFFFFF, 0, tank.getAmount(), 0));
                 return;
             }
 
@@ -190,7 +193,7 @@ public final class PaintMixerBlockEntity extends PaintContainingBlockEntity impl
 
     @Override
     public boolean canPlaceItem(final int pIndex, final @NotNull ItemStack pStack) {
-        return ColorizationRegistry.getInstance().getColorFor(pStack).isPresent();
+        return pStack.getItem() == Items.SOLID_DYE.get() || ColorizationRegistry.getInstance().getColorFor(pStack).isPresent();
     }
 
     public void insertWater(long amount) {
@@ -199,20 +202,7 @@ public final class PaintMixerBlockEntity extends PaintContainingBlockEntity impl
         } else if (rightInputTank.isEmpty()) {
             rightInputTank.setContents(new FluidInformation(WATER, amount, null));
         }
+        setChanged();
     }
 
-    record ColorizationData(int color, float fluidImpressionFactor, long fluidAmount, long pigmentAmount) {
-
-        public int red() {
-            return (color >> 16) & 0xFF;
-        }
-
-        public int green() {
-            return (color >> 8) & 0xFF;
-        }
-
-        public int blue() {
-            return color & 0xFF;
-        }
-    }
 }

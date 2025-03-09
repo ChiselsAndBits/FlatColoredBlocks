@@ -1,108 +1,49 @@
 plugins {
-    id 'fabric-loom'
-    id 'net.darkhax.curseforgegradle'
+    id 'com.ldtteam.tableau.maven-publishing' version '0.0.63'
+    id 'com.communi-suggestu.obumbratio' version '0.0.7'
 }
 
-project.ext.remapTaskClass = Class.forName('net.fabricmc.loom.task.RemapJarTask')
-
-project.addCoreProject()
-
-project.dependencies.minecraft "com.mojang:minecraft:${project.minecraftVersion}"
-project.dependencies.modImplementation "net.fabricmc:fabric-loader:${project.fabricLoaderVersion}"
-project.dependencies.modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabricVersion}+${project.minecraftVersion}"
-project.dependencies.modImplementation "com.communi-suggestu.scena:scena-fabric:${project.scenaVersion}"
-project.dependencies.modCompileOnly "mod.chiselsandbits:chisels-and-bits-api:${project.chiselsAndBitsVersion}"
-project.dependencies.modRuntimeOnly "mod.chiselsandbits:chisels-and-bits-fabric:${project.chiselsAndBitsVersion}"
-
-project.dependencies.include "com.communi-suggestu.scena:scena-fabric:${project.scenaVersion}"
-
-project.dependencies.mappings loom.layered() { layer ->
-    layer.officialMojangMappings()
-    layer.parchment("org.parchmentmc.data:parchment-${project.parchmentMinecraftVersion}:${project.parchmentVersion}@zip")
-}
-
-project.loom.accessWidenerPath = project(':common').file("accesswidener.accesswidener")
-project.tasks.processResources.from project(':common').file("accesswidener.accesswidener")
-setupResourceProcessing(project.sourceSets.main)
-
-project.remapJar.addNestedDependencies = true
-
-project.loom {
-    runs {
-        client {
-            client()
-            setConfigName("Fabric Client")
-            ideConfigGenerated(true)
-            runDir("runs/client")
-        }
-        server {
-            server()
-            setConfigName("Fabric Server")
-            ideConfigGenerated(true)
-            runDir("runs/server")
-        }
+platform {
+    fabric {
+        loaderVersion = rootProject.property('fabric.loader.version')
+        apiVersion = rootProject.property('fabric.api.version')
+        accessWideners = rootProject.file("common/accesswidener.accesswidener")
     }
 }
 
-if ((opc.hasPropertySet("curseApiKey") || opc.hasPropertySet("CURSEAPIKEY"))) {
-    task curseforge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge) {
-        apiToken = opc.hasPropertySet("curseApiKey") ? opc.getProperty("curseApiKey") : opc.getProperty("CURSEAPIKEY")
-
-        def mainArtifact = upload("691037", tasks.remapJar)
-        opc.getStringListProperty("additionalMinecraftVersions").each { v ->
-            mainArtifact.addGameVersion(v)
+tableau {
+    project {
+        group = "mod.flatcoloredblocks"
+        publisher = "flatcoloredblocks"
+        versioning {
+            version = environmentVariable("VERSION")
+                    .orElse(property("local.version"))
+            suffix = ""
         }
-
-        mainArtifact.releaseType = opc.hasPropertySet("curseReleaseType") ? opc.getProperty("curseReleaseType") : opc.getProperty("CURSERELEASETYPE")
-        if (opc.isFeatureEnabled('reformatedCurseFiles')) {
-            def mainArtifactName = rootProject.name
-            if (opc.isFeatureEnabled('customCurseFileName')) {
-                mainArtifactName = opc.getProperty('customCurseFileName')
-            }
-
-            mainArtifact.displayName = mainArtifactName + " - " + project.version + " - " + mainArtifact.releaseType
-        }
-
-        mainArtifact.changelog = rootProject.file('build/changelog.md')
-        mainArtifact.changelogType = 'markdown'
-
-        dependsOn rootProject.tasks.createChangelog
+    }
+    maven {
+        publishToLDTTeamMaven('chisels-and-bits-flatcoloredblocks')
+        publishLocally()
+        pom({
+            usingMitLicense()
+            usingGit()
+        })
     }
 }
 
-def ideaSyncRunModifier = project.tasks.register("ideaSyncRunModifier") {
-    doLast {
-        def runConfigurationsDir = project.rootProject.file(".idea/runConfigurations")
-        runConfigurationsDir.listFiles().each { file ->
-            if (!file.name.endsWith(".xml")) {
-                return
-            }
-
-            def content = file.text
-            def targetContent = "<option name=\"Gradle.BeforeRunTask\" enabled=\"true\" tasks=\"processResources\" externalProjectPath=\"\$PROJECT_DIR\$/fabric\" vmOptions=\"\" scriptParameters=\"-PrunsWithIdea=true\" />"
-            def alternativeTarget = "<option enabled=\"true\" externalProjectPath=\"\$PROJECT_DIR\$/fabric\" name=\"Gradle.BeforeRunTask\" scriptParameters=\"-PrunsWithIdea=true\" tasks=\"processResources\" vmOptions=\"\"/>"
-            def beforeMarker = "</method>"
-            if (content.contains(targetContent) || content.contains(alternativeTarget)) {
-                return
-            }
-
-            def contentParts = content.split(beforeMarker)
-            if (contentParts.size() != 2) {
-                return
-            }
-
-            def newContent = contentParts[0] + targetContent + beforeMarker + contentParts[1]
-            file.write(newContent)
-        }
-    }
+shaders {
+    enable()
+    sodium()
+    fabric()
 }
 
-tasks.named("ideaSyncTask") {
-    finalizedBy(ideaSyncRunModifier)
-}
+dependencies {
+    modImplementation "com.communi-suggestu.saecularia-caudices:fabric:${project.property('communi.suggestu.saecularia.caudices.version')}"
+    include "com.communi-suggestu.saecularia-caudices:fabric:${project.property('communi.suggestu.saecularia.caudices.version')}"
 
-idea {
-    module {
-        excludeDirs += file("src/main/templates")
-    }
+    modImplementation "com.communi-suggestu.scena:fabric:${project.property('communi.suggestu.scena.version')}"
+    include "com.communi-suggestu.scena:fabric:${project.property('communi.suggestu.scena.version')}"
+
+    modCompileOnly "mod.chiselsandbits:api:${project.property('chisels.and.bits.version')}"
+    modRuntimeOnly "mod.chiselsandbits:fabric:${project.property('chisels.and.bits.version')}"
 }

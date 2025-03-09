@@ -1,0 +1,5 @@
+{
+  "parent": "minecraft:item/white_concrete",
+  "loader": "flatcoloredblocks:colored_block",
+  "mimickedBlock": "minecraft:white_concrete"
+}

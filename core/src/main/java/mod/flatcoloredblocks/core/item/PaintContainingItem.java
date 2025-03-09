@@ -33,7 +33,7 @@ public abstract class PaintContainingItem extends Item implements IWithColorItem
     {
         pItems.accept(new ItemStack(this));
         pItems.accept(Util.make(new ItemStack(this), (pStack) -> {
-            pStack.set(DataComponentTypes.COLOR.get(), 0xFF000000);
+            pStack.set(DataComponentTypes.COLOR.get(), 0xFFFF0000);
             pStack.set(DataComponentTypes.AMOUNT.get(), getCapacity());
         }));
         pItems.accept(Util.make(new ItemStack(this), (pStack) -> {

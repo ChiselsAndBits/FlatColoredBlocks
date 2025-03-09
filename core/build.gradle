@@ -1,26 +1,37 @@
 plugins {
-    id ("net.neoforged.gradle.vanilla")
+    id 'com.ldtteam.tableau.maven-publishing' version '0.0.63'
 }
 
-project.minecraft.accessTransformers.file project(":common").file("accesstransformer.cfg")
-
-project.dependencies.implementation "net.minecraft:client:${project.minecraftVersion}"
-project.dependencies.implementation "com.communi-suggestu.scena:scena-core:${project.scenaVersion}"
-project.dependencies.implementation "mod.chiselsandbits:chisels-and-bits-api:${project.chiselsAndBitsVersion}"
-
-subsystems {
-    parchment {
-        minecraftVersion = project.parchmentMinecraftVersion
-        mappingsVersion = project.parchmentVersion
+platform {
+    project {
+        library()
+        accessTransformers.from(rootProject.files('common/accesstransformer.cfg'))
     }
 }
 
-project.sourceSets.main.resources.srcDir "src/datagen/generated"
-
-sourceSets {
-    configureEach {
-        runs {
-            modIdentifier "flatcoloredblocks"
+tableau {
+    project {
+        group = "mod.flatcoloredblocks"
+        publisher = "flatcoloredblocks"
+        versioning {
+            version = environmentVariable("VERSION")
+                    .orElse(property("local.version"))
+            suffix = ""
         }
     }
+    maven {
+        publishToLDTTeamMaven('chisels-and-bits-flatcoloredblocks')
+        publishLocally()
+        pom({
+            usingMitLicense()
+            usingGit()
+        })
+    }
+}
+
+dependencies {
+    api "com.communi-suggestu.saecularia-caudices:core:${project.property('communi.suggestu.saecularia.caudices.version')}"
+    api "com.communi-suggestu.scena:core:${project.property('communi.suggestu.scena.version')}"
+
+    compileOnly "mod.chiselsandbits:api:${project.property('chisels.and.bits.version')}"
 }

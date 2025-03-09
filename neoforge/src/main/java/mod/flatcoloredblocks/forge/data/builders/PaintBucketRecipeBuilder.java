@@ -15,18 +15,23 @@ import net.minecraft.world.item.DyeColor;
 
 import java.util.Map;
 
-public class PaintBucketRecipeBuilder
-{
+public class PaintBucketRecipeBuilder {
+    private final boolean solid;
     private final DyeColor dyeColor;
     private String group;
     private final Map<String, Criterion<?>> criterionMap = Maps.newHashMap();
 
-    private PaintBucketRecipeBuilder(final DyeColor dyeColor) {
+    private PaintBucketRecipeBuilder(boolean solid, final DyeColor dyeColor) {
+        this.solid = solid;
         this.dyeColor = dyeColor;
     }
 
     public static PaintBucketRecipeBuilder bucket(DyeColor color) {
-        return new PaintBucketRecipeBuilder(color);
+        return new PaintBucketRecipeBuilder(false, color);
+    }
+
+    public static PaintBucketRecipeBuilder solid() {
+        return new PaintBucketRecipeBuilder(true, DyeColor.WHITE);
     }
 
     public PaintBucketRecipeBuilder unlockedBy(String criterionName, Criterion<?> crit) {
@@ -40,7 +45,10 @@ public class PaintBucketRecipeBuilder
     }
 
     public void save(RecipeOutput consumer) {
-        final ResourceLocation recipeId = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "recipes/paint_bucket_" + dyeColor.getName());
+        final ResourceLocation recipeId = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "paint_bucket_" + (
+                solid ?
+                        "solid" :
+                        dyeColor.getName()));
 
         Advancement.Builder adv = consumer.advancement()
                 .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(recipeId))
@@ -49,7 +57,7 @@ public class PaintBucketRecipeBuilder
         this.criterionMap.forEach(adv::addCriterion);
 
         consumer.accept(recipeId,
-                new PaintBucketRecipeSerializer.PaintBucketRecipe(this.dyeColor, this.group == null ? "" : this.group),
-                adv.build(recipeId.withPrefix("recipes/" + RecipeCategory.TOOLS.getFolderName() + "/")));
+                new PaintBucketRecipeSerializer.PaintBucketRecipe(this.solid, this.dyeColor, this.group == null ? "" : this.group),
+                adv.build(recipeId.withPrefix("recipe/" + RecipeCategory.TOOLS.getFolderName() + "/")));
     }
 }

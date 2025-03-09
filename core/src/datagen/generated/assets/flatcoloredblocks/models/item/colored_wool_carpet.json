@@ -1,5 +1,0 @@
-{
-  "parent": "minecraft:item/white_carpet",
-  "loader": "flatcoloredblocks:colored",
-  "mimickedBlock": "minecraft:white_carpet"
-}

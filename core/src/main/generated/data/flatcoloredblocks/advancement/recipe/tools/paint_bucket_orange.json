@@ -1,0 +1,54 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_bucket": {
+      "conditions": {
+        "items": [
+          {
+            "items": "flatcoloredblocks:paint_bucket"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_dye": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:orange_dye"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "flatcoloredblocks:paint_bucket_orange"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_water": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:water_bucket"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_water",
+      "has_dye",
+      "has_bucket"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "flatcoloredblocks:paint_bucket_orange"
+    ]
+  }
+}

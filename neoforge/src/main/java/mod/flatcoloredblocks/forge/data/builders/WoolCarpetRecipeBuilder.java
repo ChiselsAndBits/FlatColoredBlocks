@@ -31,7 +31,7 @@ public class WoolCarpetRecipeBuilder
     }
 
     public void save(RecipeOutput consumer) {
-        final ResourceLocation recipeId = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "recipes/colored_wool_carpet");
+        final ResourceLocation recipeId = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "colored_wool_carpet");
 
         Advancement.Builder adv = consumer.advancement()
                 .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(recipeId))
@@ -42,7 +42,7 @@ public class WoolCarpetRecipeBuilder
         consumer.accept(
                 recipeId,
                 new WoolCarpetRecipeSerializer.WoolCarpetRecipe(),
-                adv.build(recipeId.withPrefix("recipes/" + RecipeCategory.DECORATIONS.getFolderName() + "/"))
+                adv.build(recipeId.withPrefix("recipe/" + RecipeCategory.DECORATIONS.getFolderName() + "/"))
         );
     }
 }
