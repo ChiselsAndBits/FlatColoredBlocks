@@ -1,6 +1,6 @@
 plugins {
-    id 'com.ldtteam.tableau.maven-publishing' version '0.0.67'
-    id 'com.ldtteam.tableau.curseforge' version '0.0.67'
+    id 'com.ldtteam.tableau.maven-publishing' version '0.0.68'
+    id 'com.ldtteam.tableau.curseforge' version '0.0.68'
     id 'com.communi-suggestu.obumbratio' version '0.0.7'
 }
 
@@ -33,10 +33,15 @@ tableau {
         })
     }
     curse {
-        id = 691037
+        id = Integer.parseInt(rootProject.property('curse.id.fabric'))
 
         relationships {
             tool('chisels-bits-for-fabric')
+        }
+    }
+    sourceSets {
+        main {
+            isSourcesPublished = false
         }
     }
 }
