@@ -81,4 +81,5 @@ jobs:
         env:
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
+          CURSE_API_KEY: ${{ secrets.CURSE_API_KEY }}
           VERSION: ${{ steps.extract-major-minor.outputs.joined }}.${{ steps.extract-patch.outputs.count }}
