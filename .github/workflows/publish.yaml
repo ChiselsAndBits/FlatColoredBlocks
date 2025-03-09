@@ -47,6 +47,35 @@ jobs:
         with:
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
+      - id: tagLocalBuild
+        name: "🏷️ Tag local build"
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "github@chisels-and-bits.com"
+          git tag -f -a "${{ steps.extract-major-minor.outputs.joined }}.${{ steps.extract-patch.outputs.count }}" -m "${{ steps.extract-major-minor.outputs.joined }}.${{ steps.extract-patch.outputs.count }}"
+          git push --tags
+
+      - id: getPreviousTag
+        name: "📝 Get previous tag"
+        run: |
+          previous_tag=$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))
+          echo "Previous tag: ${previous_tag}"
+          echo "previous_tag=${previous_tag}" >> "$GITHUB_OUTPUT"
+
+      - id: generateReleaseChangelog
+        name: "📝 Generate release changelog"
+        run: |
+          echo "# Changelog" > changelog.md
+          echo "" >> changelog.md
+          echo "[Full Changelog](${{ github.server_url }}/${{ github.repository }}/compare/${{ steps.getPreviousTag.outputs.previous_tag }}..${{ needs.compute-version.outputs.tag_version }})" >> changelog.md
+          echo "" >> changelog.md
+          echo "Changelog of version: ${{ steps.extract-major-minor.outputs.joined }}"
+          echo "### Commits:" >> changelog.md
+          echo "" >> changelog.md
+          echo "$(git log --pretty=format:"- %s ([commit](${{ github.server_url }}/${{ github.repository }}/commit/%H))" ${{ steps.getPreviousTag.outputs.previous_tag }}..${{ needs.compute-version.outputs.tag_version }})" >> changelog.md
+          echo "" >> changelog.md
+          sed -i -E "s|\(#([[:digit:]]+)\)|([#\1](${{ github.server_url }}/${{ github.repository }}/pull/\1))|" changelog.md
+
       - name: Publish to Maven
         run: ./gradlew publish
         env:
