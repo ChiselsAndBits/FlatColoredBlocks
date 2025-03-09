@@ -69,7 +69,7 @@ jobs:
           echo "" >> changelog.md
           echo "[Full Changelog](${{ github.server_url }}/${{ github.repository }}/compare/${{ steps.getPreviousTag.outputs.previous_tag }}..${{ needs.compute-version.outputs.tag_version }})" >> changelog.md
           echo "" >> changelog.md
-          echo "Changelog of version: ${{ steps.extract-major-minor.outputs.joined }}"
+          echo "Changelog of version: ${{ steps.extract-major-minor.outputs.joined }}.${{ steps.extract-patch.outputs.count }}"
           echo "### Commits:" >> changelog.md
           echo "" >> changelog.md
           echo "$(git log --pretty=format:"- %s ([commit](${{ github.server_url }}/${{ github.repository }}/commit/%H))" ${{ steps.getPreviousTag.outputs.previous_tag }}..${{ needs.compute-version.outputs.tag_version }})" >> changelog.md
