@@ -1,5 +1,5 @@
 plugins {
-    id 'com.ldtteam.tableau.maven-publishing' version '0.0.65'
+    id 'com.ldtteam.tableau.maven-publishing' version '0.0.66'
     id 'com.ldtteam.tableau.curseforge' version '0.0.66'
     id 'com.communi-suggestu.obumbratio' version '0.0.7'
 }
