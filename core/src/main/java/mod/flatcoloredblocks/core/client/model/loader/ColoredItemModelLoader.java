@@ -79,8 +79,7 @@ public final class ColoredItemModelLoader implements IModelSpecificationLoader<C
 
         @Override
             public BakedModel bake(IModelBakingContext iModelBakingContext, ModelBaker modelBaker, Function<Material, TextureAtlasSprite> function, ModelState modelState) {
-                final UnbakedModel unbakedModel = modelBaker.getModel(parentModel);
-                final BakedModel parentBakedModel = IModelManager.getInstance().adaptToPlatform(unbakedModel.bake(modelBaker, function, modelState));
+                final BakedModel parentBakedModel = modelBaker.bake(parentModel, modelState);
 
                 return new Baked(parentBakedModel);
             }
@@ -243,7 +242,7 @@ public final class ColoredItemModelLoader implements IModelSpecificationLoader<C
 
         private BakedModel buildStackModel(final ItemStack stack, int color)
         {
-            color = IRenderingManager.getInstance().adaptVertexColor(color);
+            //color = IRenderingManager.getInstance().adaptVertexColor(color);
             final SimpleBakedModel.Builder builder = new SimpleBakedModel.Builder(
                     useAmbientOcclusion(),
                     usesBlockLight(),

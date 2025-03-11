@@ -82,8 +82,7 @@ public final class ColoredBlockModelLoader implements IModelSpecificationLoader<
 
         @Override
             public BakedModel bake(IModelBakingContext iModelBakingContext, ModelBaker modelBaker, Function<Material, TextureAtlasSprite> function, ModelState modelState) {
-                final UnbakedModel unbakedModel = modelBaker.getModel(parentModel);
-                final BakedModel parentBakedModel = IModelManager.getInstance().adaptToPlatform(unbakedModel.bake(modelBaker, function, modelState));
+                final BakedModel parentBakedModel = modelBaker.bake(parentModel, modelState);
 
                 final Block block;
                 if (!BuiltInRegistries.BLOCK.containsKey(mimickedBlock)) {
